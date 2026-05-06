@@ -6,6 +6,7 @@ import { useWorkingSessionsRange } from '@/features/scheduling/queries'
 import { format, addMinutes, parseISO } from 'date-fns'
 import type { Task } from '@repo/shared/types'
 import type { CalendarEvent } from '@repo/shared/types'
+import { googleColorIdToHex, colorTokenToHex } from '../lib/colors'
 
 export interface EventAttendee {
   email: string
@@ -152,7 +153,7 @@ export function useCalendarItems(dateRange: { from: string; to: string }) {
       const id: string = ev.id ?? `${startStr}-${ev.summary ?? ev.title ?? 'event'}`
       const title: string = ev.title ?? ev.summary ?? '(untitled)'
       const isAllDay: boolean = ev.isAllDay ?? Boolean(ev.start?.date && !ev.start?.dateTime)
-      const color: string = ev.color ?? ev.calendarColor ?? 'purple'
+      const color: string = googleColorIdToHex(ev.colorId) ?? colorTokenToHex(ev.color) ?? colorTokenToHex(ev.calendarColor) ?? 'purple'
 
       const accessRole = (ev as any).calendarAccessRole as string | null | undefined
       const isReadOnly = Boolean(
