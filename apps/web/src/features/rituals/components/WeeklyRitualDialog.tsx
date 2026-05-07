@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/shared/components/ui/dialog'
 import { Button } from '@/shared/components/ui/button'
@@ -35,6 +36,7 @@ function mondayOfWeekInTz(d: Date, tz: string): string {
  *   2. Pick 3–5 weekly objectives → creates Goal{horizon: WEEK}
  */
 export function WeeklyPlanDialog({ instance, open, onClose }: Props) {
+  const { t } = useTranslation('rituals')
   const tz = useUserTimezone()
   const [phase, setPhase] = useState<'checkin' | 'objectives' | 'done'>('checkin')
   const [checkin, setCheckin] = useState('')
@@ -77,7 +79,7 @@ export function WeeklyPlanDialog({ instance, open, onClose }: Props) {
       setObjectives(r.objectives.slice(0, 5).concat(Array(Math.max(0, 3 - r.objectives.length)).fill('')))
       setRationale(r.rationale)
     } catch (err) {
-      toast.error((err as Error).message || 'AI suggestion failed')
+      toast.error((err as Error).message || t('weeklyPlan.aiSuggestionFailed'))
     } finally {
       setSuggesting(false)
     }
@@ -110,7 +112,7 @@ export function WeeklyPlanDialog({ instance, open, onClose }: Props) {
       try {
         await addReflection.mutateAsync({ ritualInstanceId: instance.id, promptKey: 'vision_checkin', body: checkin.trim() })
       } catch (err) {
-        toast.error((err as Error).message || 'Failed to save')
+        toast.error((err as Error).message || t('weeklyPlan.failedToSaveRitual'))
         return
       }
     }
@@ -142,18 +144,27 @@ export function WeeklyPlanDialog({ instance, open, onClose }: Props) {
     const weekStartDate = mondayOfWeekInTz(new Date(), tz)
     let created = 0
     let failed = 0
+    let lastError: unknown = null
     for (const title of titles) {
       try {
         await goalsApi.createWeeklyGoal({ weekStartDate, title, status: 'planned' } as any)
         created++
-      } catch {
+      } catch (err) {
         failed++
+        lastError = err
       }
     }
     qc.invalidateQueries({ queryKey: ['goals'] })
     setCreating(false)
-    if (created > 0) toast.success(`Created ${created} weekly objective${created === 1 ? '' : 's'}`)
-    if (failed > 0) toast.warning(`${failed} failed to save`)
+    if (created > 0) toast.success(t('weeklyPlan.createdObjectives', { count: created }))
+    if (failed > 0) {
+      const detail = lastError instanceof Error ? lastError.message : ''
+      toast.error(detail ? `${t('weeklyPlan.failedToSave', { count: failed })}: ${detail}` : t('weeklyPlan.failedToSave', { count: failed }))
+    }
+    if (created === 0 && failed > 0) {
+      // Don't mark the ritual as completed if nothing got saved.
+      return
+    }
     await finalize(created)
   }
 
@@ -167,9 +178,9 @@ export function WeeklyPlanDialog({ instance, open, onClose }: Props) {
           snapshot: { vision_checkin: checkin.trim() || null, objectivesCreated, objectives: objectives.filter(Boolean) },
         },
       })
-      toast.success('Weekly Plan complete')
+      toast.success(t('weeklyPlan.completeToast'))
     } catch (err) {
-      toast.error((err as Error).message || 'Failed to complete')
+      toast.error((err as Error).message || t('weeklyPlan.failedToComplete'))
       return
     }
     onClose()
@@ -188,28 +199,28 @@ export function WeeklyPlanDialog({ instance, open, onClose }: Props) {
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Weekly Plan</DialogTitle>
+          <DialogTitle>{t('weeklyPlan.title')}</DialogTitle>
           <DialogDescription>
-            Step {phase === 'checkin' ? 1 : 2} of 2 — {phase === 'checkin' ? 'Vision check-in' : 'Pick your objectives'}
+            {phase === 'checkin' ? t('weeklyPlan.stepCheckin') : t('weeklyPlan.stepObjectives')}
           </DialogDescription>
         </DialogHeader>
 
         {phase === 'checkin' && (
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground">
-              Look at your active 1-year goals. Anything to retire? Anything newly urgent?
+              {t('weeklyPlan.checkinHint')}
             </p>
             <textarea
               autoFocus
               rows={4}
               value={checkin}
               onChange={(e) => setCheckin(e.target.value)}
-              placeholder="Optional — one or two lines."
+              placeholder={t('weeklyPlan.checkinPlaceholder')}
               className="w-full rounded-md border border-border bg-background p-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             />
             <div className="flex items-center justify-between">
-              <Button variant="ghost" size="sm" onClick={skip}>Skip ritual</Button>
-              <Button onClick={advance} disabled={addReflection.isPending}>Next</Button>
+              <Button variant="ghost" size="sm" onClick={skip}>{t('buttons.skip')}</Button>
+              <Button onClick={advance} disabled={addReflection.isPending}>{t('buttons.next')}</Button>
             </div>
           </div>
         )}
@@ -218,7 +229,7 @@ export function WeeklyPlanDialog({ instance, open, onClose }: Props) {
           <div className="space-y-3">
             <div className="flex items-start justify-between gap-3">
               <p className="text-sm text-muted-foreground flex-1">
-                3–5 concrete outcomes. These become Weekly Goals you can attach tasks to.
+                {t('weeklyPlan.objectivesHint')}
               </p>
               <button
                 type="button"
@@ -227,12 +238,12 @@ export function WeeklyPlanDialog({ instance, open, onClose }: Props) {
                 className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1 text-xs hover:bg-accent/40 disabled:opacity-60 whitespace-nowrap"
               >
                 <Sparkles className="h-3 w-3" />
-                {suggesting ? 'Thinking…' : 'Suggest with AI'}
+                {suggesting ? t('weeklyPlan.thinking') : t('weeklyPlan.suggestWithAi')}
               </button>
             </div>
             {rationale && (
               <div className="rounded-md border border-border bg-card/60 p-2 text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">AI rationale:</span> {rationale}
+                <span className="font-medium text-foreground">{t('weeklyPlan.aiRationale')}</span> {rationale}
               </div>
             )}
             <div className="space-y-2">
@@ -244,7 +255,7 @@ export function WeeklyPlanDialog({ instance, open, onClose }: Props) {
                     value={val}
                     onChange={(e) => updateObjective(i, e.target.value)}
                     onKeyDown={(e) => handleObjectiveKeyDown(e, i)}
-                    placeholder="e.g. Ship v2 auth flow"
+                    placeholder={t('weeklyPlan.objectivePlaceholder')}
                     className="h-9"
                   />
                   {objectives.length > 1 && (
@@ -256,18 +267,18 @@ export function WeeklyPlanDialog({ instance, open, onClose }: Props) {
               ))}
               {objectives.length < 5 && (
                 <Button variant="ghost" size="sm" onClick={addObjective} className="text-xs text-muted-foreground">
-                  + Add objective
+                  {t('weeklyPlan.addObjective')}
                 </Button>
               )}
             </div>
             <div className="flex items-center justify-between pt-2">
-              <Button variant="ghost" size="sm" onClick={() => setPhase('checkin')} disabled={creating}>Back</Button>
+              <Button variant="ghost" size="sm" onClick={() => setPhase('checkin')} disabled={creating}>{t('buttons.back')}</Button>
               <div className="flex items-center gap-2">
                 <Button variant="ghost" onClick={() => finalize(0)} disabled={creating}>
-                  Skip
+                  {t('weeklyPlan.skip')}
                 </Button>
                 <Button onClick={savePlan} disabled={creating}>
-                  {creating ? 'Saving…' : 'Save plan'}
+                  {creating ? t('weeklyPlan.saving') : t('weeklyPlan.savePlan')}
                 </Button>
               </div>
             </div>
@@ -279,6 +290,7 @@ export function WeeklyPlanDialog({ instance, open, onClose }: Props) {
 }
 
 export function WeeklyReviewDialog({ instance, open, onClose }: Props) {
+  const { t } = useTranslation('rituals')
   const tz = useUserTimezone()
   const weekStart = mondayOfWeekInTz(new Date(instance.scheduledFor), tz)
   const alignmentQuery = useQuery({
@@ -300,30 +312,33 @@ export function WeeklyReviewDialog({ instance, open, onClose }: Props) {
       instance={instance}
       open={open}
       onClose={onClose}
-      title="Weekly Review"
+      title={t('weeklyReview.title')}
       hint={
         <div className="space-y-2">
-          <p>Honest retrospection beats harder work. Skip prompts you can't answer.</p>
+          <p>{t('weeklyReview.hint')}</p>
           {a && a.total > 0 && (
             <div className="rounded-md bg-muted/40 p-3 text-xs space-y-2">
               <div>
-                Alignment:{' '}
+                {t('weeklyReview.alignment')}{' '}
                 <span className={`font-semibold tabular-nums ${toneClass}`}>{a.alignmentPct}%</span>{' '}
                 <span className="text-muted-foreground">
-                  ({a.aligned} of {a.total} completed tasks linked to a goal)
+                  {t('weeklyReview.alignmentDetail', { aligned: a.aligned, total: a.total })}
                 </span>
               </div>
               {a.unaligned > 0 && a.sampleUnaligned.length > 0 && (
                 <div className="text-muted-foreground">
-                  Unaligned sample: {a.sampleUnaligned.slice(0, 3).join(', ')}
-                  {a.sampleUnaligned.length > 3 ? '…' : ''}
+                  {t('weeklyReview.unalignedSample', {
+                    sample:
+                      a.sampleUnaligned.slice(0, 3).join(', ') +
+                      (a.sampleUnaligned.length > 3 ? '…' : ''),
+                  })}
                 </div>
               )}
             </div>
           )}
           {a && a.total === 0 && (
             <div className="rounded-md bg-muted/40 p-3 text-xs text-muted-foreground">
-              No completed tasks this week yet.
+              {t('weeklyReview.noCompletedTasks')}
             </div>
           )}
           <AiRitualSummary

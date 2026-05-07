@@ -37,6 +37,10 @@ export const createTaskSchema = z.object({
 export const updateTaskSchema = createTaskSchema.partial().extend({
   status: z.enum(['open', 'completed', 'archived']).optional(),
   archivedAt: z.string().nullable().optional(),
+  scheduledDate: z.string().nullable().optional(),
+  scheduledStart: z.string().nullable().optional(),
+  scheduledEnd: z.string().nullable().optional(),
+  dueDate: z.string().nullable().optional(),
 })
 
 export type CreateTaskInput = z.input<typeof createTaskSchema>

@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { localTimeToUtc } from '@repo/shared/utils'
+import { useUserTimezone } from '@/features/settings/hooks/use-user-timezone'
 import { tasksQueries, useUpdateTask, useDeleteTask } from '@/features/tasks/queries'
 import { TaskFullDialog, TaskQuickDialog } from '@/features/tasks/components/dialogs'
 import { QueryError } from '@/shared/components/QueryError'
@@ -13,11 +15,11 @@ import { TaskItem } from '@/shared/components/TaskItem'
 import { TimeGrid } from '@/features/calendar/components/calendar-grid/TimeGrid'
 import { useCalendarItems, type CalendarItem } from '@/features/calendar/hooks/use-calendar-items'
 import {
-  useWorkingHoursOverride,
   useUpsertWorkingHoursOverride,
   useAutoSchedule,
   useMoveSession,
 } from '@/features/scheduling/queries'
+import { useEffectiveDayBounds } from '@/features/scheduling/hooks/use-effective-day-bounds'
 import { useRitualsToday } from '@/features/rituals/queries'
 import { DailyPlanDialog } from '@/features/rituals/components/DailyPlanDialog'
 import { DailyShutdownDialog } from '@/features/rituals/components/DailyShutdownDialog'
@@ -62,8 +64,9 @@ export function TasksToday() {
   const showImpact = useCompletionImpact()
   const autoSchedule = useAutoSchedule()
   const moveSession = useMoveSession()
-  const overrideQuery = useWorkingHoursOverride(dayKey)
+  const dayBounds = useEffectiveDayBounds(dayKey)
   const upsertOverride = useUpsertWorkingHoursOverride()
+  const tz = useUserTimezone()
 
   const { items: calendarItems } = useCalendarItems({ from: dayKey, to: dayKey })
 
@@ -93,7 +96,6 @@ export function TasksToday() {
 
   const tasks = tasksQuery.data?.data ?? []
   const openTasks = tasks.filter((task: Task) => task.status === 'open')
-  const completedTasks = tasks.filter((task: Task) => task.status === 'completed')
 
   const { scheduled, unscheduled } = useMemo(() => {
     const sched: Task[] = []
@@ -108,20 +110,19 @@ export function TasksToday() {
     return { scheduled: sched, unscheduled: unsched }
   }, [openTasks])
 
-  const dayBounds = useMemo(() => {
-    const o = overrideQuery.data
-    if (o) {
-      const [sh, sm] = o.startTime.split(':').map(Number)
-      const [eh, em] = o.endTime.split(':').map(Number)
-      return { startHour: (sh ?? 9) + (sm ?? 0) / 60, endHour: (eh ?? 17) + (em ?? 0) / 60 }
-    }
-    return { startHour: 9, endHour: 17 }
-  }, [overrideQuery.data])
-
   function openCreate(start?: Date) {
     if (start) {
-      setQuickStart(start.toISOString())
-      setQuickEnd(new Date(start.getTime() + 30 * 60_000).toISOString())
+      const dayStart = localTimeToUtc(start, fmtHour(dayBounds.startHour), tz)
+      const dayEnd = localTimeToUtc(start, fmtHour(dayBounds.endHour), tz)
+      const DURATION_MS = 30 * 60_000
+      let clamped = start
+      if (start.getTime() < dayStart.getTime()) {
+        clamped = dayStart
+      } else if (start.getTime() + DURATION_MS > dayEnd.getTime()) {
+        clamped = new Date(Math.max(dayStart.getTime(), dayEnd.getTime() - DURATION_MS))
+      }
+      setQuickStart(clamped.toISOString())
+      setQuickEnd(new Date(clamped.getTime() + DURATION_MS).toISOString())
     } else {
       setQuickStart(undefined)
       setQuickEnd(undefined)
@@ -227,7 +228,6 @@ export function TasksToday() {
     const { active, over } = event
     if (!over) return
     const taskId = String(active.id)
-    if (taskId === String(over.id)) return
     const task = openTasks.find((x) => x.id === taskId)
     if (!task) return
 
@@ -245,6 +245,7 @@ export function TasksToday() {
     // Case 2: dropped on another task in the list — reschedule dragged right after
     // the target. If target is unscheduled, just put dragged at start of working day.
     if (overData.type === 'task' && overData.taskId) {
+      if (overData.taskId === taskId) return
       const target = openTasks.find((x) => x.id === overData.taskId)
       if (!target) return
       const duration = task.estimatedDuration ?? 30
@@ -279,7 +280,7 @@ export function TasksToday() {
       <SectionHeader
         sectionId="tasks"
         title={format(day, 'EEEE, MMMM d', { locale: dateFnsLocale })}
-        description={`${openTasks.length} ${t('open', { ns: 'common' })}, ${completedTasks.length} ${t('completed', { ns: 'common' })}`}
+        description={`${openTasks.length} ${t('open', { ns: 'common' })}`}
         actions={
           <div className="flex items-center gap-2">
             <WorkloadCounter day={dayKey} tasks={tasks} />

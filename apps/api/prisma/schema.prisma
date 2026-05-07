@@ -1346,6 +1346,11 @@ model BrainConcept {
   // Soft-merge: when user merges duplicates we keep the row but redirect.
   mergedIntoId String? @map("merged_into_id")
 
+  // Soft-delete: set when the concept's last occurrence is removed (or by
+  // explicit user action). Filtered out of all graph reads. Re-extracting the
+  // same concept name revives the row (preserves embedding + history).
+  deletedAt DateTime? @map("deleted_at")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -1356,6 +1361,7 @@ model BrainConcept {
   @@unique([userId, normalizedName])
   @@index([userId, lastMentionedAt])
   @@index([userId, clusterId])
+  @@index([userId, deletedAt])
   @@map("brain_concepts")
 }
 

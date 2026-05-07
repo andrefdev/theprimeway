@@ -390,6 +390,12 @@ function DayBoundHandle({
   onChange: (deltaPx: number) => void
 }) {
   const startY = useRef<number | null>(null)
+  const [dragDeltaPx, setDragDeltaPx] = useState<number | null>(null)
+
+  useEffect(() => {
+    setDragDeltaPx(null)
+  }, [top])
+
   return (
     <div
       data-day-handle
@@ -397,24 +403,27 @@ function DayBoundHandle({
         'absolute left-0 right-0 h-2 cursor-ns-resize z-20 group',
         position === 'top' ? '-translate-y-1' : '-translate-y-1',
       )}
-      style={{ top }}
+      style={{ top: top + (dragDeltaPx ?? 0) }}
       onPointerDown={(e) => {
         e.preventDefault()
         e.stopPropagation()
         ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
         startY.current = e.clientY
+        setDragDeltaPx(0)
       }}
       onPointerMove={(e) => {
         if (startY.current == null) return
-        const delta = e.clientY - startY.current
-        if (Math.abs(delta) >= HOUR_HEIGHT / 2) {
-          onChange(delta)
-          startY.current = e.clientY
-        }
+        setDragDeltaPx(e.clientY - startY.current)
       }}
       onPointerUp={(e) => {
+        const delta = startY.current == null ? 0 : e.clientY - startY.current
         startY.current = null
         ;(e.target as HTMLElement).releasePointerCapture(e.pointerId)
+        if (Math.abs(delta) >= HOUR_HEIGHT / 4) {
+          onChange(delta)
+        } else {
+          setDragDeltaPx(null)
+        }
       }}
     >
       <div className="h-0.5 bg-primary/40 group-hover:bg-primary transition-colors" />

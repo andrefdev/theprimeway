@@ -65,6 +65,12 @@ const updateTaskSchema = createTaskSchema.partial().extend({
   actualEnd: z.string().nullable().optional(),
   actualDurationMinutes: z.number().optional(),
   actualDurationSeconds: z.number().optional(),
+  // Allow null so callers can clear scheduling (e.g. daily shutdown rollover,
+  // moving a task to a bucket without a fixed date).
+  scheduledDate: z.string().nullable().optional(),
+  scheduledStart: z.string().nullable().optional(),
+  scheduledEnd: z.string().nullable().optional(),
+  dueDate: z.string().nullable().optional(),
 })
 
 // ---------------------------------------------------------------------------

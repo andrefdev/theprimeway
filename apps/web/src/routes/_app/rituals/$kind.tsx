@@ -1,5 +1,6 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Play, Sparkles } from 'lucide-react'
 import { Card, CardContent } from '@/shared/components/ui/card'
 import { Button } from '@/shared/components/ui/button'
@@ -30,26 +31,6 @@ const SLUG_TO_KIND: Record<string, RitualKind> = {
   'annual-review': 'ANNUAL_REVIEW',
 }
 
-const TITLES: Record<RitualKind, string> = {
-  DAILY_PLAN: 'Daily Plan',
-  DAILY_SHUTDOWN: 'Daily Shutdown',
-  WEEKLY_PLAN: 'Weekly Plan',
-  WEEKLY_REVIEW: 'Weekly Review',
-  QUARTERLY_REVIEW: 'Quarterly Review',
-  ANNUAL_REVIEW: 'Annual Review',
-  CUSTOM: 'Custom Rituals',
-}
-
-const DESCRIPTIONS: Record<RitualKind, string> = {
-  DAILY_PLAN: 'Lock in the day before you start. Pick the highlight, confirm tasks, schedule blocks.',
-  DAILY_SHUTDOWN: 'Close out the day. Capture wins, blockers, and prep tomorrow.',
-  WEEKLY_PLAN: 'Set a few objectives that move goals forward this week.',
-  WEEKLY_REVIEW: 'Reflect on the week. What worked, what blocked you, what to change.',
-  QUARTERLY_REVIEW: 'Long-horizon check on goals and direction.',
-  ANNUAL_REVIEW: 'Year in review and intentions for the next.',
-  CUSTOM: '',
-}
-
 export const Route = createFileRoute('/_app/rituals/$kind')({
   beforeLoad: ({ params }) => {
     if (!(params.kind in SLUG_TO_KIND)) throw notFound()
@@ -66,15 +47,21 @@ function RitualKindPage() {
 }
 
 function Header({ kind }: { kind: RitualKind }) {
+  const { t } = useTranslation('rituals')
   return (
     <>
       <RitualsNav />
-      <SectionHeader sectionId="rituals" title={TITLES[kind]} description={DESCRIPTIONS[kind]} />
+      <SectionHeader
+        sectionId="rituals"
+        title={t(`kinds.${kind}.title`)}
+        description={t(`kinds.${kind}.description`)}
+      />
     </>
   )
 }
 
 function BuiltInShell({ kind }: { kind: RitualKind }) {
+  const { t } = useTranslation('rituals')
   const today = useRitualsToday()
   const week = useRitualsWeek()
   const quarter = useRitualsQuarter()
@@ -128,28 +115,28 @@ function BuiltInShell({ kind }: { kind: RitualKind }) {
         <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-wider text-muted-foreground">Current</span>
+              <span className="text-xs uppercase tracking-wider text-muted-foreground">{t('kindPage.currentLabel')}</span>
               {periodLabel && <Badge variant="outline">{periodLabel}</Badge>}
               {instance && (
                 <Badge variant={isCompleted ? 'secondary' : 'default'}>
                   {instance.status}
                 </Badge>
               )}
-              {!isLoading && !instance && <Badge variant="outline">Not scheduled</Badge>}
+              {!isLoading && !instance && <Badge variant="outline">{t('status.notScheduled')}</Badge>}
             </div>
             {ritualMeta?.scheduledTime && (
-              <p className="text-xs text-muted-foreground">Scheduled at {ritualMeta.scheduledTime}</p>
+              <p className="text-xs text-muted-foreground">{t('kindPage.scheduledTime', { time: ritualMeta.scheduledTime })}</p>
             )}
             {instance?.completedAt && (
               <p className="text-xs text-muted-foreground">
-                Completed {new Date(instance.completedAt).toLocaleString()}
+                {t('kindPage.completedAt', { time: new Date(instance.completedAt).toLocaleString() })}
               </p>
             )}
           </div>
           <div className="flex gap-2">
             <Button onClick={handleStart} disabled={!instance || updateInstance.isPending}>
               <Play className="h-4 w-4 mr-2" />
-              {isCompleted ? 'Open' : 'Start'}
+              {isCompleted ? t('buttons.open') : t('buttons.start')}
             </Button>
           </div>
         </CardContent>
@@ -161,7 +148,7 @@ function BuiltInShell({ kind }: { kind: RitualKind }) {
           <CardContent className="p-5 space-y-3">
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
-              <h2 className="text-sm font-semibold">AI summary</h2>
+              <h2 className="text-sm font-semibold">{t('sections.aiSummary')}</h2>
             </div>
             <AiRitualSummary instanceId={instance.id} />
           </CardContent>
@@ -172,7 +159,7 @@ function BuiltInShell({ kind }: { kind: RitualKind }) {
       {pending.length > 0 && (
         <Card>
           <CardContent className="p-5 space-y-3">
-            <h2 className="text-sm font-semibold">Pending</h2>
+            <h2 className="text-sm font-semibold">{t('sections.pending')}</h2>
             <ul className="space-y-2 text-sm">
               {pending.map((p) => (
                 <li key={p.id} className="flex items-center justify-between rounded-md border border-border/50 px-3 py-2">
@@ -189,7 +176,7 @@ function BuiltInShell({ kind }: { kind: RitualKind }) {
       {instance && instance.reflections.length > 0 && (
         <Card>
           <CardContent className="p-5 space-y-3">
-            <h2 className="text-sm font-semibold">Reflections</h2>
+            <h2 className="text-sm font-semibold">{t('sections.reflections')}</h2>
             <ul className="space-y-3 text-sm">
               {instance.reflections.map((r) => (
                 <li key={r.id} className="rounded-md border border-border/50 p-3">
@@ -220,7 +207,7 @@ function BuiltInShell({ kind }: { kind: RitualKind }) {
           instance={instance}
           open={open}
           onClose={() => setOpen(false)}
-          title="Quarterly Review"
+          title={t('kinds.QUARTERLY_REVIEW.title')}
           periodLabel={periodLabel ?? ''}
         />
       )}
@@ -229,7 +216,7 @@ function BuiltInShell({ kind }: { kind: RitualKind }) {
           instance={instance}
           open={open}
           onClose={() => setOpen(false)}
-          title="Annual Review"
+          title={t('kinds.ANNUAL_REVIEW.title')}
           periodLabel={periodLabel ?? ''}
         />
       )}

@@ -38,6 +38,36 @@
       "description": "Año en revisión e intenciones para el siguiente."
     }
   },
+  "kinds": {
+    "DAILY_PLAN": {
+      "title": "Plan diario",
+      "description": "Asegura el día antes de empezar. Elige la prioridad, confirma tareas y agenda bloques."
+    },
+    "DAILY_SHUTDOWN": {
+      "title": "Cierre diario",
+      "description": "Cierra el día. Captura logros, bloqueos y prepara el mañana."
+    },
+    "WEEKLY_PLAN": {
+      "title": "Plan semanal",
+      "description": "Define unos pocos objetivos que hagan avanzar tus metas esta semana."
+    },
+    "WEEKLY_REVIEW": {
+      "title": "Revisión semanal",
+      "description": "Reflexiona sobre la semana. Qué funcionó, qué te bloqueó, qué cambiar."
+    },
+    "QUARTERLY_REVIEW": {
+      "title": "Revisión trimestral",
+      "description": "Revisión de largo plazo sobre metas y rumbo."
+    },
+    "ANNUAL_REVIEW": {
+      "title": "Revisión anual",
+      "description": "Año en revisión e intenciones para el siguiente."
+    },
+    "CUSTOM": {
+      "title": "Rituales personalizados",
+      "description": ""
+    }
+  },
   "status": {
     "doneToday": "Hecho hoy",
     "pendingToday": "Pendiente hoy",
@@ -47,10 +77,13 @@
     "periodPending": "{{period}} pendiente",
     "current": "ACTUAL",
     "pending": "PENDIENTE",
-    "scheduledAt": "Programado a las {{time}}"
+    "scheduledAt": "Programado a las {{time}}",
+    "notScheduled": "No programado",
+    "completedAt": "Completado {{time}}"
   },
   "buttons": {
     "start": "Empezar",
+    "open": "Abrir",
     "back": "Atrás",
     "next": "Siguiente",
     "skip": "Saltar ritual",
@@ -60,6 +93,11 @@
   "stepOf": "Paso {{current}} de {{total}}",
   "optional": "Opcional…",
   "scheduledLabel": "programada",
+  "sections": {
+    "aiSummary": "Resumen de IA",
+    "pending": "Pendientes",
+    "reflections": "Reflexiones"
+  },
   "dailyPlan": {
     "title": "Plan diario",
     "step1": "Paso 1 de 3 — Define tu prioridad",
@@ -89,5 +127,84 @@
     "rolling": "Pasando…",
     "rollAndFinish_one": "Pasar {{count}} y terminar",
     "rollAndFinish_other": "Pasar {{count}} y terminar"
+  },
+  "weeklyPlan": {
+    "title": "Plan semanal",
+    "stepCheckin": "Paso 1 de 2 — Check-in de visión",
+    "stepObjectives": "Paso 2 de 2 — Elige tus objetivos",
+    "checkinHint": "Mira tus metas activas a 1 año. ¿Algo para retirar? ¿Algo nuevo urgente?",
+    "checkinPlaceholder": "Opcional — una o dos líneas.",
+    "objectivesHint": "3–5 resultados concretos. Estos se convierten en Metas Semanales a las que puedes asociar tareas.",
+    "objectivePlaceholder": "Ej. Lanzar el flujo de auth v2",
+    "addObjective": "+ Añadir objetivo",
+    "suggestWithAi": "Sugerir con IA",
+    "thinking": "Pensando…",
+    "aiRationale": "Justificación de la IA:",
+    "aiSuggestionFailed": "Falló la sugerencia de la IA",
+    "saving": "Guardando…",
+    "savePlan": "Guardar plan",
+    "skip": "Saltar",
+    "createdObjectives_one": "Se creó {{count}} objetivo semanal",
+    "createdObjectives_other": "Se crearon {{count}} objetivos semanales",
+    "failedToSave": "{{count}} no se pudieron guardar",
+    "completeToast": "Plan semanal completado",
+    "failedToSaveRitual": "No se pudo guardar",
+    "failedToComplete": "No se pudo completar"
+  },
+  "weeklyReview": {
+    "title": "Revisión semanal",
+    "hint": "La retrospección honesta gana al trabajo más duro. Salta las preguntas que no puedas responder.",
+    "alignment": "Alineación:",
+    "alignmentDetail": "({{aligned}} de {{total}} tareas completadas vinculadas a una meta)",
+    "unalignedSample": "Muestra no alineada: {{sample}}",
+    "noCompletedTasks": "Aún no hay tareas completadas esta semana."
+  },
+  "periodReview": {
+    "reviewing": "Revisando",
+    "longView": ". Respira — esta es la mirada larga.",
+    "summarizeThisPeriod": "Resumir este periodo",
+    "availableFrom": "Disponible desde {{date}}",
+    "completeReview": "Completar revisión"
+  },
+  "periodLauncher": {
+    "title": "Revisiones periódicas",
+    "description": "Los rituales de largo plazo cierran el ciclo de visión. Se desbloquean cerca del fin del periodo para completarlos cuando toca.",
+    "quarterly": "Trimestral",
+    "annual": "Anual",
+    "done": "hecho",
+    "unlocks": "se desbloquea {{date}}"
+  },
+  "kindPage": {
+    "currentLabel": "Actual",
+    "scheduledTime": "Programado a las {{time}}",
+    "completedAt": "Completado {{time}}"
+  },
+  "ai": {
+    "generateSummary": "Generar resumen de IA",
+    "analyzing": "Analizando…",
+    "refreshing": "Actualizando…",
+    "rerun": "Repetir",
+    "summary": "Resumen de IA",
+    "highlights": "Destacados",
+    "blockers": "Bloqueos",
+    "nextFocus": "Próximo enfoque",
+    "cached": "guardado {{time}}"
+  },
+  "toast": {
+    "rolledTasks_one": "Se pasó {{count}} tarea a mañana",
+    "rolledTasks_other": "Se pasaron {{count}} tareas a mañana",
+    "rolloverFailed": "{{count}} no se pudieron pasar",
+    "dayPlanned": "Día planificado",
+    "dayPlannedScheduled_one": "Día planificado · {{count}} tarea programada",
+    "dayPlannedScheduled_other": "Día planificado · {{count}} tareas programadas",
+    "dayPlannedPartial": "Programadas {{scheduled}} · {{failed}} no encajaron",
+    "couldNotSchedule_one": "No se pudo programar {{count}} tarea",
+    "couldNotSchedule_other": "No se pudieron programar {{count}} tareas",
+    "failedToSkip": "No se pudo saltar",
+    "failedToSave": "No se pudo guardar",
+    "failedToSaveHighlight": "No se pudo guardar la prioridad",
+    "failedToSaveRitual": "No se pudo guardar el ritual",
+    "failedToComplete": "No se pudo completar",
+    "complete": "{{title}} completado"
   }
 }

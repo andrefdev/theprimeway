@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useRitualsQuarter, useRitualsYear } from '../queries'
 import { PeriodReviewDialog } from './PeriodReviewDialog'
 import { periodReviewUnlocked } from '../lib/period-review-unlock'
@@ -9,6 +10,7 @@ import { periodReviewUnlocked } from '../lib/period-review-unlock'
  * 14 days of a year, but only when the corresponding instance is still PENDING.
  */
 export function PeriodReviewAutoOpen() {
+  const { t } = useTranslation('rituals')
   const { data: quarter } = useRitualsQuarter()
   const { data: year } = useRitualsYear()
 
@@ -42,7 +44,7 @@ export function PeriodReviewAutoOpen() {
             setQuarterOpen(false)
             setDismissedKey((s) => new Set([...s, `q:${quarter.periodKey}`]))
           }}
-          title="Quarterly Review"
+          title={t('cards.quarterly.title')}
           periodLabel={quarter.periodKey}
           unlocked
         />
@@ -55,7 +57,7 @@ export function PeriodReviewAutoOpen() {
             setYearOpen(false)
             setDismissedKey((s) => new Set([...s, `y:${year.periodKey}`]))
           }}
-          title="Annual Review"
+          title={t('cards.annual.title')}
           periodLabel={year.periodKey}
           unlocked
         />

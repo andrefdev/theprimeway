@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/shared/components/ui/button'
 import { Card, CardContent } from '@/shared/components/ui/card'
 import { Calendar, Lock } from 'lucide-react'
@@ -10,19 +11,8 @@ function formatUnlock(date: Date) {
   return date.toISOString().slice(0, 10)
 }
 
-function buildSubLabel(
-  periodKey: string | undefined,
-  status: string | undefined,
-  unlocked: boolean,
-  unlockDate: Date | null,
-) {
-  const period = periodKey ?? '—'
-  if (status === 'COMPLETED') return `${period} · done`
-  if (!unlocked && unlockDate) return `${period} · unlocks ${formatUnlock(unlockDate)}`
-  return period
-}
-
 export function PeriodReviewLauncher() {
+  const { t } = useTranslation('rituals')
   const { data: quarter } = useRitualsQuarter()
   const { data: year } = useRitualsYear()
   const [quarterOpen, setQuarterOpen] = useState(false)
@@ -42,13 +32,25 @@ export function PeriodReviewLauncher() {
   const qDisabled = !qReview || (!qUnlocked && !qCompleted)
   const yDisabled = !yReview || (!yUnlocked && !yCompleted)
 
+  function buildSubLabel(
+    periodKey: string | undefined,
+    status: string | undefined,
+    unlocked: boolean,
+    unlockDate: Date | null,
+  ) {
+    const period = periodKey ?? '—'
+    if (status === 'COMPLETED') return `${period} · ${t('periodLauncher.done')}`
+    if (!unlocked && unlockDate) return `${period} · ${t('periodLauncher.unlocks', { date: formatUnlock(unlockDate) })}`
+    return period
+  }
+
   return (
     <Card>
       <CardContent className="p-4 space-y-3">
       <div>
-        <h3 className="text-base font-semibold">Periodic reviews</h3>
+        <h3 className="text-base font-semibold">{t('periodLauncher.title')}</h3>
         <p className="text-xs text-muted-foreground">
-          Long-horizon rituals close the vision loop. Unlock near the period end so you can only complete them when it's actually time.
+          {t('periodLauncher.description')}
         </p>
       </div>
       <div className="grid grid-cols-2 gap-2">
@@ -64,7 +66,7 @@ export function PeriodReviewLauncher() {
             <Calendar className="h-4 w-4 mr-2" />
           )}
           <div className="text-left">
-            <div className="text-sm font-medium">Quarterly</div>
+            <div className="text-sm font-medium">{t('periodLauncher.quarterly')}</div>
             <div className="text-[11px] text-muted-foreground">
               {buildSubLabel(quarter?.periodKey, qReview?.status, qUnlocked, qUnlockDate)}
             </div>
@@ -82,7 +84,7 @@ export function PeriodReviewLauncher() {
             <Calendar className="h-4 w-4 mr-2" />
           )}
           <div className="text-left">
-            <div className="text-sm font-medium">Annual</div>
+            <div className="text-sm font-medium">{t('periodLauncher.annual')}</div>
             <div className="text-[11px] text-muted-foreground">
               {buildSubLabel(year?.periodKey, yReview?.status, yUnlocked, yUnlockDate)}
             </div>
@@ -95,7 +97,7 @@ export function PeriodReviewLauncher() {
           instance={qReview}
           open={quarterOpen}
           onClose={() => setQuarterOpen(false)}
-          title="Quarterly Review"
+          title={t('cards.quarterly.title')}
           periodLabel={quarter!.periodKey}
           unlocked={qUnlocked}
           unlockDate={qUnlockDate}
@@ -106,7 +108,7 @@ export function PeriodReviewLauncher() {
           instance={yReview}
           open={yearOpen}
           onClose={() => setYearOpen(false)}
-          title="Annual Review"
+          title={t('cards.annual.title')}
           periodLabel={year!.periodKey}
           unlocked={yUnlocked}
           unlockDate={yUnlockDate}

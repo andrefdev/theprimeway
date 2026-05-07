@@ -38,6 +38,36 @@
       "description": "Year in review and intentions for next."
     }
   },
+  "kinds": {
+    "DAILY_PLAN": {
+      "title": "Daily Plan",
+      "description": "Lock in the day before you start. Pick the highlight, confirm tasks, schedule blocks."
+    },
+    "DAILY_SHUTDOWN": {
+      "title": "Daily Shutdown",
+      "description": "Close out the day. Capture wins, blockers, and prep tomorrow."
+    },
+    "WEEKLY_PLAN": {
+      "title": "Weekly Plan",
+      "description": "Set a few objectives that move goals forward this week."
+    },
+    "WEEKLY_REVIEW": {
+      "title": "Weekly Review",
+      "description": "Reflect on the week. What worked, what blocked you, what to change."
+    },
+    "QUARTERLY_REVIEW": {
+      "title": "Quarterly Review",
+      "description": "Long-horizon check on goals and direction."
+    },
+    "ANNUAL_REVIEW": {
+      "title": "Annual Review",
+      "description": "Year in review and intentions for the next."
+    },
+    "CUSTOM": {
+      "title": "Custom Rituals",
+      "description": ""
+    }
+  },
   "status": {
     "doneToday": "Done today",
     "pendingToday": "Pending today",
@@ -47,10 +77,13 @@
     "periodPending": "{{period}} pending",
     "current": "CURRENT",
     "pending": "PENDING",
-    "scheduledAt": "Scheduled at {{time}}"
+    "scheduledAt": "Scheduled at {{time}}",
+    "notScheduled": "Not scheduled",
+    "completedAt": "Completed {{time}}"
   },
   "buttons": {
     "start": "Start",
+    "open": "Open",
     "back": "Back",
     "next": "Next",
     "skip": "Skip ritual",
@@ -60,6 +93,11 @@
   "stepOf": "Step {{current}} of {{total}}",
   "optional": "Optional…",
   "scheduledLabel": "scheduled",
+  "sections": {
+    "aiSummary": "AI summary",
+    "pending": "Pending",
+    "reflections": "Reflections"
+  },
   "dailyPlan": {
     "title": "Daily Plan",
     "step1": "Step 1 of 3 — Set your highlight",
@@ -89,5 +127,84 @@
     "rolling": "Rolling…",
     "rollAndFinish_one": "Roll over {{count}} & finish",
     "rollAndFinish_other": "Roll over {{count}} & finish"
+  },
+  "weeklyPlan": {
+    "title": "Weekly Plan",
+    "stepCheckin": "Step 1 of 2 — Vision check-in",
+    "stepObjectives": "Step 2 of 2 — Pick your objectives",
+    "checkinHint": "Look at your active 1-year goals. Anything to retire? Anything newly urgent?",
+    "checkinPlaceholder": "Optional — one or two lines.",
+    "objectivesHint": "3–5 concrete outcomes. These become Weekly Goals you can attach tasks to.",
+    "objectivePlaceholder": "e.g. Ship v2 auth flow",
+    "addObjective": "+ Add objective",
+    "suggestWithAi": "Suggest with AI",
+    "thinking": "Thinking…",
+    "aiRationale": "AI rationale:",
+    "aiSuggestionFailed": "AI suggestion failed",
+    "saving": "Saving…",
+    "savePlan": "Save plan",
+    "skip": "Skip",
+    "createdObjectives_one": "Created {{count}} weekly objective",
+    "createdObjectives_other": "Created {{count}} weekly objectives",
+    "failedToSave": "{{count}} failed to save",
+    "completeToast": "Weekly Plan complete",
+    "failedToSaveRitual": "Failed to save",
+    "failedToComplete": "Failed to complete"
+  },
+  "weeklyReview": {
+    "title": "Weekly Review",
+    "hint": "Honest retrospection beats harder work. Skip prompts you can't answer.",
+    "alignment": "Alignment:",
+    "alignmentDetail": "({{aligned}} of {{total}} completed tasks linked to a goal)",
+    "unalignedSample": "Unaligned sample: {{sample}}",
+    "noCompletedTasks": "No completed tasks this week yet."
+  },
+  "periodReview": {
+    "reviewing": "Reviewing",
+    "longView": ". Take a breath — this is the long view.",
+    "summarizeThisPeriod": "Summarize this period",
+    "availableFrom": "Available from {{date}}",
+    "completeReview": "Complete review"
+  },
+  "periodLauncher": {
+    "title": "Periodic reviews",
+    "description": "Long-horizon rituals close the vision loop. Unlock near the period end so you can only complete them when it's actually time.",
+    "quarterly": "Quarterly",
+    "annual": "Annual",
+    "done": "done",
+    "unlocks": "unlocks {{date}}"
+  },
+  "kindPage": {
+    "currentLabel": "Current",
+    "scheduledTime": "Scheduled at {{time}}",
+    "completedAt": "Completed {{time}}"
+  },
+  "ai": {
+    "generateSummary": "Generate AI summary",
+    "analyzing": "Analyzing…",
+    "refreshing": "Refreshing…",
+    "rerun": "Re-run",
+    "summary": "AI summary",
+    "highlights": "Highlights",
+    "blockers": "Blockers",
+    "nextFocus": "Next focus",
+    "cached": "cached {{time}}"
+  },
+  "toast": {
+    "rolledTasks_one": "Rolled {{count}} task to tomorrow",
+    "rolledTasks_other": "Rolled {{count}} tasks to tomorrow",
+    "rolloverFailed": "{{count}} failed to roll over",
+    "dayPlanned": "Day planned",
+    "dayPlannedScheduled_one": "Day planned · {{count}} task scheduled",
+    "dayPlannedScheduled_other": "Day planned · {{count}} tasks scheduled",
+    "dayPlannedPartial": "Scheduled {{scheduled}} · {{failed}} couldn't fit",
+    "couldNotSchedule_one": "Couldn't schedule {{count}} task",
+    "couldNotSchedule_other": "Couldn't schedule {{count}} tasks",
+    "failedToSkip": "Failed to skip",
+    "failedToSave": "Failed to save",
+    "failedToSaveHighlight": "Failed to save highlight",
+    "failedToSaveRitual": "Failed to save ritual",
+    "failedToComplete": "Failed to complete",
+    "complete": "{{title}} complete"
   }
 }

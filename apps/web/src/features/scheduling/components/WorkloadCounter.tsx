@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { settingsApi } from '@/features/settings/api'
 import { useWorkingSessionsForDay } from '../queries'
+import { useEffectiveDayBounds } from '../hooks/use-effective-day-bounds'
 import type { Task } from '@repo/shared/types'
 
 interface Props {
@@ -20,8 +21,15 @@ export function WorkloadCounter({ day, tasks }: Props) {
     staleTime: 60_000,
   })
   const sessionsQuery = useWorkingSessionsForDay(day)
+  const bounds = useEffectiveDayBounds(day)
 
-  const threshold = settingsQuery.data?.workloadThresholdMinutes ?? DEFAULT_THRESHOLD
+  const dayMinutes =
+    bounds.source === 'fallback'
+      ? null
+      : Math.round((bounds.endHour - bounds.startHour) * 60)
+
+  const threshold =
+    dayMinutes ?? settingsQuery.data?.workloadThresholdMinutes ?? DEFAULT_THRESHOLD
   const defaultDuration = settingsQuery.data?.defaultTaskDurationMinutes ?? DEFAULT_DURATION
 
   const sessions = sessionsQuery.data ?? []

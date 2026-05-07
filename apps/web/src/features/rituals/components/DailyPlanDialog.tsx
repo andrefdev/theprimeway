@@ -91,17 +91,29 @@ async function saveHighlightAndAdvance() {
     const toSchedule = openTasks.filter((t) => selectedTaskIds.has(t.id) && !t.scheduledStart)
     let scheduled = 0
     let failed = 0
+    let lastError: unknown = null
     for (const task of toSchedule) {
       try {
         const r = await schedulingApi.autoSchedule({ taskId: task.id, day: today })
         if (r.type === 'Success') scheduled++
-        else failed++
-      } catch {
+        else {
+          failed++
+          lastError = new Error((r as any)?.reason || 'Auto-schedule rejected')
+        }
+      } catch (err) {
         failed++
+        lastError = err
       }
     }
     qc.invalidateQueries({ queryKey: ['tasks'] })
     qc.invalidateQueries({ queryKey: schedulingKeys.sessions })
+
+    if (failed > 0 && lastError) {
+      const detail = lastError instanceof Error ? lastError.message : ''
+      if (detail) {
+        toast.error(`${t('dailyPlan.scheduleFailedDetail', { count: failed, detail, defaultValue: "Couldn't schedule {{count}} ({{detail}})" })}`)
+      }
+    }
 
     try {
       await updateInstance.mutateAsync({

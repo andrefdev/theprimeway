@@ -11,6 +11,8 @@ import { workingSessionsApi, type WorkingSession } from './working-sessions-api'
 import { calendarEventsApi } from './calendar-events-api'
 import { listOps, patchQueries, rollbackQueries, snapshotQueries } from '@/shared/lib/optimistic'
 import { api } from '@/shared/lib/api-client'
+import { endOfLocalDayUtc, ymdToLocalDayUtc } from '@repo/shared/utils'
+import { useUserTimezone } from '@/features/settings/hooks/use-user-timezone'
 
 export interface WorkingHoursOverride {
   id: string
@@ -49,7 +51,22 @@ export function useUpsertWorkingHoursOverride() {
           endTime: input.endTime,
         })
         .then((r) => r.data.data),
-    onSuccess: (_data, vars) => {
+    onMutate: async (input) => {
+      const key = schedulingKeys.whOverride(input.date)
+      await qc.cancelQueries({ queryKey: key })
+      const previous = qc.getQueryData<WorkingHoursOverride | null>(key)
+      qc.setQueryData<WorkingHoursOverride | null>(key, {
+        id: previous?.id ?? 'optimistic',
+        date: input.date,
+        startTime: input.startTime,
+        endTime: input.endTime,
+      })
+      return { previous }
+    },
+    onError: (_err, vars, ctx) => {
+      qc.setQueryData(schedulingKeys.whOverride(vars.date), ctx?.previous ?? null)
+    },
+    onSettled: (_data, _err, vars) => {
       qc.invalidateQueries({ queryKey: schedulingKeys.whOverride(vars.date) })
       qc.invalidateQueries({ queryKey: ['tasks'] })
       qc.invalidateQueries({ queryKey: schedulingKeys.sessions })
@@ -86,13 +103,16 @@ export function useCalendarEventsRange(from: string, to: string) {
 }
 
 export function useWorkingSessionsForDay(day: string) {
+  const tz = useUserTimezone()
   return useQuery({
-    queryKey: schedulingKeys.sessionsDay(day),
-    queryFn: () =>
-      workingSessionsApi.list({
-        from: `${day}T00:00:00.000Z`,
-        to: `${day}T23:59:59.999Z`,
-      }),
+    queryKey: [...schedulingKeys.sessionsDay(day), tz],
+    queryFn: () => {
+      const anchor = ymdToLocalDayUtc(day, tz)
+      return workingSessionsApi.list({
+        from: anchor.toISOString(),
+        to: endOfLocalDayUtc(anchor, tz).toISOString(),
+      })
+    },
     staleTime: 10_000,
   })
 }
@@ -147,7 +167,36 @@ export function useMoveSession() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (input: MoveSessionInput) => schedulingApi.moveSession(input, newIdempotencyKey()),
-    onSuccess: () => {
+    onMutate: async (input) => {
+      const snaps = await snapshotQueries<WorkingSession[]>(qc, schedulingKeys.sessions)
+      if (input.sessionId) {
+        patchQueries<WorkingSession[]>(qc, schedulingKeys.sessions, (cur) =>
+          listOps.patch(cur, input.sessionId!, { start: input.start, end: input.end }),
+        )
+      } else if (input.taskId) {
+        const placeholder: WorkingSession = {
+          id: `optimistic-${input.taskId}-${Date.now()}`,
+          userId: 'optimistic',
+          taskId: input.taskId,
+          kind: 'WORK',
+          start: input.start,
+          end: input.end,
+          externalCalendarId: null,
+          externalEventId: null,
+          createdBy: 'USER',
+          createdAt: new Date().toISOString(),
+          task: null,
+        }
+        patchQueries<WorkingSession[]>(qc, schedulingKeys.sessions, (cur) =>
+          listOps.upsert(cur, placeholder),
+        )
+      }
+      return { snaps }
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.snaps) rollbackQueries(qc, ctx.snaps)
+    },
+    onSettled: () => {
       qc.invalidateQueries({ queryKey: ['tasks'] })
       qc.invalidateQueries({ queryKey: schedulingKeys.sessions })
       qc.invalidateQueries({ queryKey: schedulingKeys.commands })

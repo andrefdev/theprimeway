@@ -478,7 +478,7 @@ class CronService {
     const { brainGraphService } = await import('./brain-graph.service')
 
     const users = await prisma.brainConcept.findMany({
-      where: { mergedIntoId: null },
+      where: { mergedIntoId: null, deletedAt: null },
       distinct: ['userId'],
       select: { userId: true },
     })

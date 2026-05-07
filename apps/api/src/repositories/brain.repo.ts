@@ -100,11 +100,48 @@ class BrainRepository {
   }
 
   async softDelete(id: string, userId: string): Promise<boolean> {
-    const r = await prisma.brainEntry.updateMany({
-      where: { id, userId, deletedAt: null },
-      data: { deletedAt: new Date() },
+    return prisma.$transaction(async (tx) => {
+      const r = await tx.brainEntry.updateMany({
+        where: { id, userId, deletedAt: null },
+        data: { deletedAt: new Date() },
+      })
+      if (r.count === 0) return false
+
+      // Cascade-cleanup the concept graph: drop occurrences from this entry,
+      // soft-delete concepts whose last occurrence we just removed, and
+      // decrement mentionCount for the survivors. Edges to soft-deleted
+      // concepts stay physically — graph reads filter both endpoints.
+      const occurrences = await tx.brainConceptOccurrence.findMany({
+        where: { entryId: id },
+        select: { conceptId: true },
+      })
+      if (occurrences.length === 0) return true
+
+      const affectedConceptIds = Array.from(new Set(occurrences.map((o) => o.conceptId)))
+      await tx.brainConceptOccurrence.deleteMany({ where: { entryId: id } })
+
+      const survivors = await tx.brainConceptOccurrence.groupBy({
+        by: ['conceptId'],
+        where: { conceptId: { in: affectedConceptIds } },
+      })
+      const survivingIds = new Set(survivors.map((s) => s.conceptId))
+      const orphanedIds = affectedConceptIds.filter((cid) => !survivingIds.has(cid))
+
+      if (orphanedIds.length > 0) {
+        await tx.brainConcept.updateMany({
+          where: { id: { in: orphanedIds }, userId },
+          data: { deletedAt: new Date() },
+        })
+      }
+      if (survivingIds.size > 0) {
+        await tx.brainConcept.updateMany({
+          where: { id: { in: Array.from(survivingIds) }, userId },
+          data: { mentionCount: { decrement: 1 } },
+        })
+      }
+
+      return true
     })
-    return r.count > 0
   }
 
   async resetToPending(id: string, userId: string) {

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { Sparkles } from 'lucide-react'
 import { ritualsApi } from '../api'
 import { Button } from '@/shared/components/ui/button'
@@ -22,7 +23,8 @@ interface Props {
  * structured insights for the ritual instance and displays them.
  * Spec §8 Phase 4: AI is always "scoped to a ritual moment".
  */
-export function AiRitualSummary({ instanceId, label = 'Generate AI summary', cached = null, cachedAt = null }: Props) {
+export function AiRitualSummary({ instanceId, label, cached = null, cachedAt = null }: Props) {
+  const { t } = useTranslation('rituals')
   const [insight, setInsight] = useState<Insight | null>(cached)
 
   const summaryMut = useMutation({
@@ -32,6 +34,7 @@ export function AiRitualSummary({ instanceId, label = 'Generate AI summary', cac
 
   const loading = summaryMut.isPending
   const run = () => summaryMut.mutate()
+  const triggerLabel = label ?? t('ai.generateSummary')
 
   if (!insight) {
     return (
@@ -43,14 +46,16 @@ export function AiRitualSummary({ instanceId, label = 'Generate AI summary', cac
         disabled={loading}
       >
         <Sparkles className="h-3 w-3" />
-        {loading ? 'Analyzing…' : label}
+        {loading ? t('ai.analyzing') : triggerLabel}
       </Button>
     )
   }
 
   const staleHint =
     cachedAt && insight === cached
-      ? ` · cached ${new Date(cachedAt).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })}`
+      ? ` · ${t('ai.cached', {
+          time: new Date(cachedAt).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' }),
+        })}`
       : ''
 
   return (
@@ -58,7 +63,7 @@ export function AiRitualSummary({ instanceId, label = 'Generate AI summary', cac
       <CardContent className="p-3 text-xs space-y-2">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 font-medium">
-            <Sparkles className="h-3 w-3 text-primary" /> AI summary<span className="text-muted-foreground font-normal">{staleHint}</span>
+            <Sparkles className="h-3 w-3 text-primary" /> {t('ai.summary')}<span className="text-muted-foreground font-normal">{staleHint}</span>
           </div>
           <Button
             type="button"
@@ -68,18 +73,18 @@ export function AiRitualSummary({ instanceId, label = 'Generate AI summary', cac
             disabled={loading}
             className="text-[10px] uppercase tracking-wide text-muted-foreground hover:text-foreground"
           >
-            {loading ? 'Refreshing…' : 'Re-run'}
+            {loading ? t('ai.refreshing') : t('ai.rerun')}
           </Button>
         </div>
         <p className="text-sm text-foreground">{insight.summary}</p>
         {insight.highlights.length > 0 && (
-          <Section label="Highlights" items={insight.highlights} />
+          <Section label={t('ai.highlights')} items={insight.highlights} />
         )}
         {insight.blockers.length > 0 && (
-          <Section label="Blockers" items={insight.blockers} />
+          <Section label={t('ai.blockers')} items={insight.blockers} />
         )}
         <div className="border-t border-border/40 pt-2">
-          <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">Next focus</div>
+          <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">{t('ai.nextFocus')}</div>
           <p className="text-sm font-medium">{insight.suggestedNextFocus}</p>
         </div>
       </CardContent>

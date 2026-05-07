@@ -47,7 +47,7 @@ class BrainGraphRepository {
    */
   async getCatalog(userId: string, limit = 80): Promise<CatalogConcept[]> {
     const rows = await prisma.brainConcept.findMany({
-      where: { userId, mergedIntoId: null },
+      where: { userId, mergedIntoId: null, deletedAt: null },
       select: {
         id: true,
         name: true,
@@ -85,18 +85,31 @@ class BrainGraphRepository {
     for (const candidate of candidates) {
       const vec = toPgVector(candidate.embedding)
 
-      // Try the unique-name fast path first (pre-computed normalization).
+      // Try the unique-name fast path first (pre-computed normalization). If
+      // the row exists but was soft-deleted (entry that birthed it was deleted),
+      // revive it: clear deletedAt, reset mentionCount=1, refresh timestamp.
+      // Re-uses the original embedding + history.
       const exact = await prisma.brainConcept.findUnique({
         where: { userId_normalizedName: { userId, normalizedName: candidate.normalizedName } },
-        select: { id: true },
+        select: { id: true, deletedAt: true },
       })
       if (exact) {
-        await this.bumpMention(exact.id)
+        if (exact.deletedAt) {
+          await prisma.brainConcept.update({
+            where: { id: exact.id },
+            data: { deletedAt: null, mentionCount: 1, lastMentionedAt: new Date() },
+          })
+        } else {
+          await this.bumpMention(exact.id)
+        }
         results.push({ id: exact.id, inserted: false, similarity: 1 })
         continue
       }
 
-      // Vector similarity search via the HNSW index (cosine ops).
+      // Vector similarity search via the HNSW index (cosine ops). Filter out
+      // soft-deleted concepts so a fuzzy match doesn't silently revive a
+      // semantically-similar-but-different concept the user no longer wants.
+      // Only the exact normalized-name path above can revive.
       const nearest = await prisma.$queryRaw<Array<{ id: string; sim: number }>>`
         SELECT
           id,
@@ -104,6 +117,7 @@ class BrainGraphRepository {
         FROM brain_concepts
         WHERE user_id = ${userId}
           AND merged_into_id IS NULL
+          AND deleted_at IS NULL
           AND embedding IS NOT NULL
         ORDER BY embedding <=> ${vec}::vector
         LIMIT 1
@@ -277,6 +291,7 @@ class BrainGraphRepository {
       where: {
         userId,
         mergedIntoId: null,
+        deletedAt: null,
         ...(since ? { updatedAt: { gt: since } } : {}),
       },
       select: {
@@ -308,21 +323,36 @@ class BrainGraphRepository {
       firstQuote: quoteByConcept.get(c.id) ?? null,
     }))
 
-    const edges = await prisma.brainConceptEdge.findMany({
-      where: {
-        userId,
-        ...(since ? { lastReinforcedAt: { gt: since } } : {}),
-      },
-      select: {
-        id: true,
-        sourceConceptId: true,
-        targetConceptId: true,
-        relationType: true,
-        weight: true,
-        mentionCount: true,
-        llmConfidence: true,
-      },
-    })
+    // Edges are kept around when one endpoint is soft-deleted, so we must
+    // filter to alive↔alive pairs at read time. Fetch the full alive-id set
+    // (not just delta) so an edge reinforced between two untouched concepts
+    // still surfaces during delta sync.
+    const aliveIdRows = since
+      ? await prisma.brainConcept.findMany({
+          where: { userId, mergedIntoId: null, deletedAt: null },
+          select: { id: true },
+        })
+      : conceptsWithQuote.map((c) => ({ id: c.id }))
+    const aliveIds = aliveIdRows.map((c) => c.id)
+    const edges = aliveIds.length
+      ? await prisma.brainConceptEdge.findMany({
+          where: {
+            userId,
+            sourceConceptId: { in: aliveIds },
+            targetConceptId: { in: aliveIds },
+            ...(since ? { lastReinforcedAt: { gt: since } } : {}),
+          },
+          select: {
+            id: true,
+            sourceConceptId: true,
+            targetConceptId: true,
+            relationType: true,
+            weight: true,
+            mentionCount: true,
+            llmConfidence: true,
+          },
+        })
+      : []
 
     const clusters = await prisma.brainCluster.findMany({
       where: {
@@ -399,7 +429,7 @@ class BrainGraphRepository {
 
     const ids = Array.from(visited)
     const concepts = await prisma.brainConcept.findMany({
-      where: { id: { in: ids }, mergedIntoId: null },
+      where: { id: { in: ids }, mergedIntoId: null, deletedAt: null },
       select: {
         id: true,
         name: true,
@@ -411,23 +441,28 @@ class BrainGraphRepository {
       },
     })
 
-    const edges = await prisma.brainConceptEdge.findMany({
-      where: {
-        userId,
-        weight: { gte: weightCutoff },
-        sourceConceptId: { in: ids },
-        targetConceptId: { in: ids },
-      },
-      select: {
-        id: true,
-        sourceConceptId: true,
-        targetConceptId: true,
-        relationType: true,
-        weight: true,
-        mentionCount: true,
-        llmConfidence: true,
-      },
-    })
+    // Restrict edges to surviving (alive) endpoints — soft-deleted concepts
+    // were already pruned from `concepts` above.
+    const aliveIds = concepts.map((c) => c.id)
+    const edges = aliveIds.length
+      ? await prisma.brainConceptEdge.findMany({
+          where: {
+            userId,
+            weight: { gte: weightCutoff },
+            sourceConceptId: { in: aliveIds },
+            targetConceptId: { in: aliveIds },
+          },
+          select: {
+            id: true,
+            sourceConceptId: true,
+            targetConceptId: true,
+            relationType: true,
+            weight: true,
+            mentionCount: true,
+            llmConfidence: true,
+          },
+        })
+      : []
 
     return { concepts, edges }
   }
@@ -447,6 +482,7 @@ class BrainGraphRepository {
       FROM brain_concepts
       WHERE user_id = ${userId}
         AND merged_into_id IS NULL
+        AND deleted_at IS NULL
         AND embedding IS NOT NULL
     `
     return rows.map((r) => ({
@@ -563,13 +599,16 @@ class BrainGraphRepository {
       // 1. Validate ownership and merge state.
       const concepts = await tx.brainConcept.findMany({
         where: { id: { in: [sourceId, targetId] }, userId },
-        select: { id: true, mergedIntoId: true },
+        select: { id: true, mergedIntoId: true, deletedAt: true },
       })
       if (concepts.length !== 2) {
         throw new ConceptMergeError('NOT_FOUND', 'one or both concepts not found for this user')
       }
       if (concepts.some((c) => c.mergedIntoId !== null)) {
         throw new ConceptMergeError('ALREADY_MERGED', 'one or both concepts are already merged')
+      }
+      if (concepts.some((c) => c.deletedAt !== null)) {
+        throw new ConceptMergeError('DELETED', 'one or both concepts are deleted')
       }
 
       // 2. Move occurrences. Conflicts on (concept_id, entry_id) keep the
@@ -650,7 +689,7 @@ class BrainGraphRepository {
 
   async newConceptsSince(userId: string, since: Date): Promise<number> {
     const count = await prisma.brainConcept.count({
-      where: { userId, createdAt: { gt: since } },
+      where: { userId, createdAt: { gt: since }, deletedAt: null },
     })
     return count
   }
@@ -667,7 +706,7 @@ class BrainGraphRepository {
 
 export const brainGraphRepo = new BrainGraphRepository()
 
-export type ConceptMergeErrorCode = 'SAME_ID' | 'NOT_FOUND' | 'ALREADY_MERGED'
+export type ConceptMergeErrorCode = 'SAME_ID' | 'NOT_FOUND' | 'ALREADY_MERGED' | 'DELETED'
 
 export class ConceptMergeError extends Error {
   constructor(public readonly code: ConceptMergeErrorCode, message: string) {

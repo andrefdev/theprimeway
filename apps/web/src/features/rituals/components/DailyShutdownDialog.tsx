@@ -42,20 +42,31 @@ export function DailyShutdownDialog({ instance, open, onClose }: Props) {
     setRolling(true)
     let moved = 0
     let failed = 0
+    let lastError: unknown = null
     for (const t of taskList) {
       try {
-        await tasksApi.update(t.id, { scheduledDate: tomorrow, scheduledStart: null, scheduledEnd: null } as any)
+        await tasksApi.update(t.id, {
+          scheduledDate: tomorrow,
+          scheduledStart: null,
+          scheduledEnd: null,
+          scheduledBucket: 'TOMORROW',
+        })
         moved++
         setRolledIds((s) => new Set(s).add(t.id))
-      } catch {
+      } catch (err) {
         failed++
+        lastError = err
       }
     }
     qc.invalidateQueries({ queryKey: ['tasks'] })
     qc.invalidateQueries({ queryKey: ['working-sessions'] })
     setRolling(false)
     if (moved > 0) toast.success(`Rolled ${moved} task${moved === 1 ? '' : 's'} to tomorrow`)
-    if (failed > 0) toast.warning(`${failed} failed to roll over`)
+    if (failed > 0) {
+      const detail = lastError instanceof Error ? lastError.message : ''
+      toast.error(detail ? `${failed} failed to roll over: ${detail}` : `${failed} failed to roll over`)
+      return
+    }
     await complete({ rolledOver: moved, skippedRollover: failed })
   }
 

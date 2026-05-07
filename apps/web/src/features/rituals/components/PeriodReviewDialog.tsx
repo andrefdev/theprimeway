@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { PromptRitualDialog } from './PromptRitualDialog'
 import { AiRitualSummary } from './AiRitualSummary'
 import type { RitualInstance } from '../api'
@@ -28,6 +29,7 @@ export function PeriodReviewDialog({
   unlocked = true,
   unlockDate = null,
 }: Props) {
+  const { t } = useTranslation('rituals')
   const snapshot = (instance.snapshot ?? {}) as {
     aiSummary?: any
     aiSummaryAt?: string
@@ -41,21 +43,21 @@ export function PeriodReviewDialog({
       title={title}
       hint={
         <div>
-          Reviewing <span className="font-medium text-foreground">{periodLabel}</span>. Take a breath — this is the long view.
+          {t('periodReview.reviewing')} <span className="font-medium text-foreground">{periodLabel}</span>{t('periodReview.longView')}
         </div>
       }
       finalStep={({ complete }) => (
         <div className="space-y-4">
           <AiRitualSummary
             instanceId={instance.id}
-            label="Summarize this period"
+            label={t('periodReview.summarizeThisPeriod')}
             cached={snapshot.aiSummary ?? null}
             cachedAt={snapshot.aiSummaryAt ?? null}
           />
           <div className="flex items-center justify-end gap-3">
             {!unlocked && unlockDate && (
               <span className="text-xs text-muted-foreground">
-                Available from {unlockDate.toISOString().slice(0, 10)}
+                {t('periodReview.availableFrom', { date: unlockDate.toISOString().slice(0, 10) })}
               </span>
             )}
             <button
@@ -64,7 +66,7 @@ export function PeriodReviewDialog({
               disabled={!unlocked}
               className="inline-flex items-center rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Complete review
+              {t('periodReview.completeReview')}
             </button>
           </div>
         </div>

@@ -10,6 +10,7 @@ import { useTheme } from '@/shared/providers/theme-provider'
 import { useUpdateSettings } from '../queries'
 import type { UserSettings } from '../api'
 import { getDeviceTimeZone, listAvailableTimeZones } from '@repo/shared/utils'
+import { SUPPORTED_LOCALES } from '@/i18n/config'
 
 interface PreferencesFormProps {
   settings: UserSettings | null
@@ -18,12 +19,14 @@ interface PreferencesFormProps {
   isPremium?: boolean  // Enables custom theme creation features
 }
 
-const LOCALE_OPTIONS = [
-  { value: 'en', label: 'English' },
-  { value: 'es', label: 'Español' },
-  { value: 'pt', label: 'Português' },
-  { value: 'fr', label: 'Français' },
-]
+const LOCALE_LABELS: Record<string, string> = {
+  en: 'English',
+  es: 'Español',
+}
+const LOCALE_OPTIONS = SUPPORTED_LOCALES.map((value) => ({
+  value,
+  label: LOCALE_LABELS[value] ?? value,
+}))
 
 const THEME_OPTIONS = [
   { value: 'dark', label: 'Dark' },
