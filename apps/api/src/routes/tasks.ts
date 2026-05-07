@@ -19,6 +19,7 @@ import {
   getCompletionImpact,
   getStatistics,
 } from '../services/tasks/tasks-stats.service'
+import { processRecurringTasks } from '../services/tasks/tasks-recurring.service'
 import { parsePaginationLimit, parsePaginationOffset } from '../lib/utils'
 import { LimitExceededError } from '../lib/limits'
 
@@ -284,7 +285,7 @@ const recurringGenerateRoute = createRoute({
 taskRoutes.openapi(recurringGenerateRoute, (async (c: any) => {
   const { userId } = c.get('user')
   try {
-    const result = await tasksService.processRecurringTasks(userId)
+    const result = await processRecurringTasks(userId)
     return c.json({ data: result }, 200)
   } catch (err: any) {
     return c.json({ error: err.message || 'Failed to generate recurring tasks' }, 500)

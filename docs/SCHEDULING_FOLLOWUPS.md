@@ -6,7 +6,7 @@ right now, but each is a real bug or a sharp edge worth fixing in its own PR.
 
 ---
 
-## 1. `processRecurringTasks` uses UTC weekday for non-UTC users
+## 1. `processRecurringTasks` uses UTC weekday for non-UTC users  ✅ FIXED 2026-05-07
 
 **File:** `apps/api/src/services/tasks.service.ts` lines ~580–622
 
@@ -48,6 +48,15 @@ Unit test: parent recurring task with `recurrenceRule='weekly'` and the
 parent's `scheduledDate` being a Thursday in Lima → call `processRecurringTasks`
 for a Tokyo user mocked to "now = Thursday morning Tokyo (= Wednesday
 evening UTC)". Should generate. Today it doesn't.
+
+**Resolution**
+
+Fixed during the tasks-recurring extraction. The new
+`apps/api/src/services/tasks/tasks-recurring.service.ts` derives weekday
+via `localDayOfWeek(now, tz)` and day-of-month by parsing
+`localYmd(now, tz)`, both anchored on the user's timezone. Same fix
+applied to the `parent.scheduledDate` reads in the weekly/monthly
+branches.
 
 ---
 
