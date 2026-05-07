@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import type { ChatMessageData } from '../components/ChatMessage';
+import type { ChatAttachment, ChatMessageData } from '../components/ChatMessage';
 import { ChatRequestError, chatService } from '../services/chatService';
 import { useTranslation } from '@shared/hooks/useTranslation';
 
@@ -24,9 +24,10 @@ export function useChatStream() {
   const abortRef = useRef<AbortController | null>(null);
 
   const sendMessage = useCallback(
-    async (text: string) => {
+    async (text: string, attachments: ChatAttachment[] = []) => {
       const trimmed = text.trim();
-      if (!trimmed || isLoading) return;
+      const hasAttachments = attachments.length > 0;
+      if ((!trimmed && !hasAttachments) || isLoading) return;
 
       abortRef.current?.abort();
       const controller = new AbortController();
@@ -36,6 +37,7 @@ export function useChatStream() {
         id: createId(),
         role: 'user',
         content: trimmed,
+        attachments: hasAttachments ? attachments : undefined,
       };
       const assistantId = createId();
       const placeholder: ChatMessageData = {

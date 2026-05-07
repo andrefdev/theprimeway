@@ -16,9 +16,9 @@ import { Text } from '@/shared/components/ui/text';
 import { Icon } from '@/shared/components/ui/icon';
 import { cn } from '@/shared/utils/cn';
 import { Check, Clock, Play } from 'lucide-react-native';
-import { XpFloater } from '@/features/gamification/components/XpFloater';
-import { XP_VALUES } from '@/features/gamification/model/constants';
-import { useGamificationStore } from '@/features/gamification/stores/gamificationStore';
+import { XpFloater } from '@features/gamification';
+import { XP_VALUES } from '@features/gamification';
+import { useGamificationStore } from '@features/gamification';
 import * as Haptics from 'expo-haptics';
 import type { Task, TaskPriority } from '@shared/types/models';
 

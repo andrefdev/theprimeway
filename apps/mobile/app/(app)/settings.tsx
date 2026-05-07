@@ -23,13 +23,13 @@ import {
 } from 'lucide-react-native';
 import { useBiometricStore } from '@/shared/stores/biometricStore';
 import { useUiStore } from '@/shared/stores/uiStore';
-import { isBiometricSupported, authenticateBiometric } from '@/features/auth/services/biometric';
+import { isBiometricSupported, authenticateBiometric } from '@features/auth';
 import {
   getMorningBriefingSettings,
   scheduleMorningBriefing,
   cancelMorningBriefing,
-} from '@/features/notifications/morningBriefing';
-import { getMaxPerDay, setMaxPerDay } from '@/features/notifications/antifatigue';
+} from '@features/notifications';
+import { getMaxPerDay, setMaxPerDay } from '@features/notifications';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { cn } from '@/shared/utils/cn';
@@ -37,7 +37,7 @@ import { useColorScheme } from 'nativewind';
 import type { LucideIcon } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { FlashList } from '@shopify/flash-list';
-import { useUpdateUserSettings } from '@/features/settings/hooks/useSettings';
+import { useUpdateUserSettings } from '@features/settings';
 
 // ─── Timezone list ────────────────────────────────────────────────────────────
 

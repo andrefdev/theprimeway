@@ -10,7 +10,7 @@ import { Calendar, Clock, Sparkles } from 'lucide-react-native';
 import { useCreateTask } from '../hooks/useTasks';
 import { cn } from '@/shared/utils/cn';
 import { format } from 'date-fns';
-import { VoiceInputButton } from '@features/ai/components/VoiceInputButton';
+import { VoiceInputButton } from '@features/ai';
 
 const DURATIONS = [15, 30, 45, 60, 90, 120];
 const PRIORITIES = [

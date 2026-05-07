@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { Text } from '@/shared/components/ui/text';
 import { Button } from '@/shared/components/ui/button';
 import { useState } from 'react';
-import { authService } from '@features/auth/services/authService';
+import { authService } from '@features/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from '@/shared/hooks/useTranslation';
 

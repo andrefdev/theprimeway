@@ -1339,6 +1339,12 @@
         "comingSoon": "Chat IA disponible pronto! Conecta tu backend para habilitar esta funcion.",
         "primeAI": "Fenrir AI",
         "askAnything": "Pregunta lo que sea...",
+        "attachments": {
+          "limitTitle": "Demasiadas imágenes",
+          "limitMessage": "Puedes adjuntar hasta {{count}} imágenes por mensaje.",
+          "permissionTitle": "Permiso necesario",
+          "permissionMessage": "Permite el acceso a tu galería para adjuntar imágenes."
+        },
         "errors": {
           "aiDisabled": "La IA no esta habilitada para esta cuenta o plan.",
           "rateLimited": "Llegaste al limite de mensajes por ahora. Intenta de nuevo en un minuto.",

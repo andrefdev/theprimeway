@@ -60,11 +60,33 @@ function apiUrl(path: string) {
 }
 
 function toUiMessages(messages: ChatMessageData[]) {
-  return messages.map((message) => ({
-    id: message.id,
-    role: message.role,
-    parts: [{ type: 'text' as const, text: message.content }],
-  }));
+  return messages.map((message) => {
+    const parts: Array<
+      | { type: 'text'; text: string }
+      | { type: 'file'; mediaType: string; data: string }
+    > = [];
+    if (message.attachments && message.attachments.length > 0) {
+      for (const att of message.attachments) {
+        if (!att.base64) continue;
+        parts.push({
+          type: 'file',
+          mediaType: att.mediaType,
+          data: `data:${att.mediaType};base64,${att.base64}`,
+        });
+      }
+    }
+    if (message.content) {
+      parts.push({ type: 'text', text: message.content });
+    }
+    if (parts.length === 0) {
+      parts.push({ type: 'text', text: '' });
+    }
+    return {
+      id: message.id,
+      role: message.role,
+      parts,
+    };
+  });
 }
 
 function toPayloadMessages(messages: ChatPayloadMessage[]) {

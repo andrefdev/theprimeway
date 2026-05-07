@@ -20,11 +20,11 @@ import { Card, CardContent } from '@/shared/components/ui/card';
 import { OfflineBanner } from '@/shared/components/OfflineBanner';
 import { useAuthStore } from '@/shared/stores/authStore';
 import { useTranslation } from '@/shared/hooks/useTranslation';
-import { useTasks } from '@features/tasks/hooks/useTasks';
-import { useHabits, useHabitStats } from '@features/habits/hooks/useHabits';
-import { useAggregatedNotifications } from '@features/notifications/hooks/useNotifications';
-import { useGamificationStore } from '@features/gamification/stores/gamificationStore';
-import { useWidgetSync } from '@features/widgets/useWidgetSync';
+import { useTasks } from '@features/tasks';
+import { useHabits, useHabitStats } from '@features/habits';
+import { useAggregatedNotifications } from '@features/notifications';
+import { useGamificationStore } from '@features/gamification';
+import { useWidgetSync } from '@features/widgets';
 
 export default function ProgressScreen() {
   const user = useAuthStore((s) => s.user);

@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { Text } from '@/shared/components/ui/text';
 import { Icon } from '@/shared/components/ui/icon';
 import {
@@ -19,6 +20,7 @@ import { useTranslation } from '@/shared/hooks/useTranslation';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import { useChatStream } from '../hooks/useChatStream';
+import { useSpeechLang } from '../hooks/useSpeechLang';
 
 const SUGGESTIONS = [
   { icon: CheckSquare, key: 'firstAction' },
@@ -32,12 +34,15 @@ export function ChatPanel() {
   const { messages, isLoading, sendMessage, reset } = useChatStream();
   const [input, setInput] = useState('');
   const scrollRef = useRef<ScrollView>(null);
+  const tabBarHeight = useBottomTabBarHeight();
+  const speechLang = useSpeechLang(messages);
 
-  const handleSend = (text?: string) => {
+  const handleSend = (text?: string, attachments?: import('./ChatMessage').ChatAttachment[]) => {
     const value = text ?? input;
-    if (!value.trim()) return;
+    const hasAttachments = !!attachments && attachments.length > 0;
+    if (!value.trim() && !hasAttachments) return;
     setInput('');
-    sendMessage(value);
+    sendMessage(value, attachments ?? []);
     setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 50);
   };
 
@@ -49,7 +54,7 @@ export function ChatPanel() {
     <KeyboardAvoidingView
       className="flex-1"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={90}
+      keyboardVerticalOffset={tabBarHeight}
     >
       <View className="flex-row items-center justify-between px-5 pb-2 pt-2">
         <View>
@@ -155,6 +160,7 @@ export function ChatPanel() {
         onChange={setInput}
         onSend={handleSend}
         disabled={isLoading}
+        voiceLang={speechLang}
       />
     </KeyboardAvoidingView>
   );

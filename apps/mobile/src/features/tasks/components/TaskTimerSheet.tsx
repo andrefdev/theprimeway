@@ -11,7 +11,7 @@ import * as Haptics from 'expo-haptics';
 import {
   showTaskTimerNotification,
   dismissTaskTimerNotification,
-} from '@/features/notifications/timerNotifications';
+} from '@features/notifications';
 
 function formatTime(seconds: number): string {
   const h = Math.floor(seconds / 3600);

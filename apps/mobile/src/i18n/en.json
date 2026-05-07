@@ -1359,6 +1359,12 @@
         "comingSoon": "AI chat coming soon! Connect your backend to enable this feature.",
         "primeAI": "Fenrir AI",
         "askAnything": "Ask anything...",
+        "attachments": {
+          "limitTitle": "Too many images",
+          "limitMessage": "You can attach up to {{count}} images per message.",
+          "permissionTitle": "Permission needed",
+          "permissionMessage": "Allow photo library access to attach images."
+        },
         "errors": {
           "aiDisabled": "AI is not enabled for this account or plan.",
           "rateLimited": "You reached the message limit for now. Try again in a minute.",

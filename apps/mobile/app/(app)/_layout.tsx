@@ -1,8 +1,8 @@
 import { View } from 'react-native';
 import { useAuthStore } from '@/shared/stores/authStore';
 import { Redirect, Stack } from 'expo-router';
-import { CelebrationOverlay } from '@/features/gamification/components/CelebrationOverlay';
-import { BiometricGate } from '@/features/auth/components/BiometricGate';
+import { CelebrationOverlay } from '@features/gamification';
+import { BiometricGate } from '@features/auth';
 
 export default function AppLayout() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);

@@ -1,8 +1,8 @@
 import { queryClient } from '@/shared/providers/QueryProvider';
-import { tasksService } from '@/features/tasks/services/tasksService';
-import { habitsService } from '@/features/habits/services/habitsService';
-import type { TaskFormData } from '@/features/tasks/types';
-import type { HabitLogPayload } from '@/features/habits/types';
+import { tasksService } from '@features/tasks';
+import { habitsService } from '@features/habits';
+import type { TaskFormData } from '@features/tasks';
+import type { HabitLogPayload } from '@features/habits';
 
 /**
  * Registers mutationFn defaults so TanStack Query can resume mutations

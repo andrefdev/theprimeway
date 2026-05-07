@@ -1,5 +1,5 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ChatPanel } from '@features/ai/components/ChatPanel';
+import { ChatPanel } from '@features/ai';
 
 export default function AiChatScreen() {
   return (

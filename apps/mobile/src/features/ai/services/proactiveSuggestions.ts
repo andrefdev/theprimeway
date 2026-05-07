@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { format } from 'date-fns';
 import type { Task } from '@shared/types/models';
-import type { HabitWithLogs } from '@features/habits/types';
+import type { HabitWithLogs } from '@features/habits';
 
 export type SuggestionAction =
   | { kind: 'navigate'; href: string }

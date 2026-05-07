@@ -5,7 +5,7 @@ import { goalsRepository } from '../repositories/goals.repo'
 import { prisma } from '../lib/prisma'
 import { generateObject, generateText, streamText, stepCountIs, convertToModelMessages } from 'ai'
 import type { UIMessage } from 'ai'
-import { chatModel, taskModel } from '../lib/ai-models'
+import { chatModel, taskModel, visionModel } from '../lib/ai-models'
 import { getAIContext } from '../lib/ai-context'
 import { buildBasePreamble } from '../lib/ai-prompts'
 import { z } from 'zod'
@@ -24,6 +24,19 @@ function extractUiMessageText(msg: UIMessage | { role: string; content?: string;
     .filter((p) => p.type === 'text' && typeof p.text === 'string')
     .map((p) => p.text!)
     .join('\n')
+}
+
+function hasImageAttachments(messages: UIMessage[] | { parts?: any[] }[]): boolean {
+  for (const msg of messages) {
+    const parts: Array<{ type: string; mediaType?: string }> = (msg as any).parts ?? []
+    for (const part of parts) {
+      if (part.type === 'image') return true
+      if (part.type === 'file' && typeof part.mediaType === 'string' && part.mediaType.startsWith('image/')) {
+        return true
+      }
+    }
+  }
+  return false
 }
 
 // ---------------------------------------------------------------------------
@@ -141,8 +154,10 @@ Workflow:
       }
     }
 
+    const modelForRequest = hasImageAttachments(body.messages) ? visionModel : chatModel
+
     const stream = streamText({
-      model: chatModel,
+      model: modelForRequest,
       system,
       messages: convertToModelMessages(body.messages),
       tools: buildStreamTools(userId),

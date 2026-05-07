@@ -1,11 +1,11 @@
 import { View, ScrollView, Alert } from 'react-native';
 import { Link, router } from 'expo-router';
 import { Text } from '@/shared/components/ui/text';
-import { RegisterForm } from '@features/auth/components/RegisterForm';
-import { SocialButton } from '@features/auth/components/SocialButton';
-import { useAuth } from '@features/auth/hooks/useAuth';
+import { RegisterForm } from '@features/auth';
+import { SocialButton } from '@features/auth';
+import { useAuth } from '@features/auth';
 import { useState } from 'react';
-import type { RegisterFormData } from '@features/auth/types';
+import type { RegisterFormData } from '@features/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from '@/shared/hooks/useTranslation';
 

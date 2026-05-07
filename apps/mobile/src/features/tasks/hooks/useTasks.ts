@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/api/queryKeys';
 import { tasksService } from '../services/tasksService';
-import { scheduleTaskReminder, cancelTaskReminder } from '@/features/notifications/reminderNotifications';
-import { taskToContext } from '@/features/notifications/taskReminderContext';
+import { scheduleTaskReminder, cancelTaskReminder } from '@features/notifications';
+import { taskToContext } from '@features/notifications';
 import type { Task } from '@shared/types/models';
 import type { GetTasksParams, TaskFormData } from '../types';
 

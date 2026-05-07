@@ -8,17 +8,17 @@ import { Icon } from '@/shared/components/ui/icon';
 import { Card, CardContent } from '@/shared/components/ui/card';
 import { PillTabs } from '@/shared/components/ui/pill-tabs';
 import { useTranslation } from '@/shared/hooks/useTranslation';
-import { TaskComposer } from '@features/tasks/components/TaskComposer';
-import { TaskCard } from '@features/tasks/components/TaskCard';
-import { TaskEditSheet } from '@features/tasks/components/TaskEditSheet';
-import { TaskTimerSheet } from '@features/tasks/components/TaskTimerSheet';
-import { HabitCard } from '@features/habits/components/HabitCard';
-import { HabitFormSheet } from '@features/habits/components/HabitFormSheet';
-import { HabitEditSheet } from '@features/habits/components/HabitEditSheet';
-import { useTasks, useUpdateTask } from '@features/tasks/hooks/useTasks';
-import { useHabits, useHabitStats, useLogHabit } from '@features/habits/hooks/useHabits';
+import { TaskComposer } from '@features/tasks';
+import { TaskCard } from '@features/tasks';
+import { TaskEditSheet } from '@features/tasks';
+import { TaskTimerSheet } from '@features/tasks';
+import { HabitCard } from '@features/habits';
+import { HabitFormSheet } from '@features/habits';
+import { HabitEditSheet } from '@features/habits';
+import { useTasks, useUpdateTask } from '@features/tasks';
+import { useHabits, useHabitStats, useLogHabit } from '@features/habits';
 import type { Task } from '@shared/types/models';
-import type { HabitWithLogs } from '@features/habits/types';
+import type { HabitWithLogs } from '@features/habits';
 
 type ManualMode = 'tasks' | 'habits';
 

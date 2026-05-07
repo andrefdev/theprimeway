@@ -18,14 +18,14 @@ import { Toaster } from '@/shared/components/ui/toaster';
 import {
   registerForPushNotifications,
   addNotificationResponseListener,
-} from '@/features/notifications/pushNotifications';
-import { setupTimerChannel } from '@/features/notifications/timerNotifications';
-import { setupReminderChannel } from '@/features/notifications/reminderNotifications';
-import { restoreMorningBriefing } from '@/features/notifications/morningBriefing';
-import { pruneOldQuotas } from '@/features/notifications/antifatigue';
-import { pruneOldDismissed } from '@/features/ai/services/proactiveSuggestions';
+} from '@features/notifications';
+import { setupTimerChannel } from '@features/notifications';
+import { setupReminderChannel } from '@features/notifications';
+import { restoreMorningBriefing } from '@features/notifications';
+import { pruneOldQuotas } from '@features/notifications';
+import { pruneOldDismissed } from '@features/ai';
 import { registerMutationDefaults } from '@/shared/offline/mutationDefaults';
-import { routeFromNotification } from '@/features/notifications/notificationRouter';
+import { routeFromNotification } from '@features/notifications';
 import * as Notifications from 'expo-notifications';
 
 export { ErrorBoundary } from 'expo-router';

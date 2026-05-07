@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { format } from 'date-fns';
-import { useTasks } from '@/features/tasks/hooks/useTasks';
-import { useHabits, useHabitStats, useLogHabit } from '@/features/habits/hooks/useHabits';
+import { useTasks } from '@features/tasks';
+import { useHabits, useHabitStats, useLogHabit } from '@features/habits';
 import {
   writeWidgetSnapshot,
   readPendingActions,

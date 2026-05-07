@@ -29,7 +29,7 @@ import { toast } from '@/shared/lib/toast';
 import {
   useConfirmAccountDeletion,
   useRequestAccountDeletion,
-} from '@/features/settings/hooks/useAccountDeletion';
+} from '@features/settings';
 
 type Step = 'warning' | 'reason' | 'identity' | 'otp';
 

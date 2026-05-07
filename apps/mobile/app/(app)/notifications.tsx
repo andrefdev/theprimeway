@@ -15,8 +15,8 @@ import {
 import {
   useAggregatedNotifications,
   notificationsQueryKey,
-} from '@features/notifications/hooks/useNotifications';
-import type { AppNotification } from '@features/notifications/services/notificationsService';
+} from '@features/notifications';
+import type { AppNotification } from '@features/notifications';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState, useCallback } from 'react';
 import { formatDistanceToNow } from 'date-fns';

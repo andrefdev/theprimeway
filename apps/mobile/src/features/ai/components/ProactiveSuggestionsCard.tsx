@@ -8,8 +8,8 @@ import { Card, CardContent } from '@/shared/components/ui/card';
 import { Icon } from '@/shared/components/ui/icon';
 import { IconCircle } from '@/shared/components/ui/icon-circle';
 import { cn } from '@/shared/utils/cn';
-import { useTasks, useUpdateTask } from '@/features/tasks/hooks/useTasks';
-import { useHabits, useHabitStats, useLogHabit } from '@/features/habits/hooks/useHabits';
+import { useTasks, useUpdateTask } from '@features/tasks';
+import { useHabits, useHabitStats, useLogHabit } from '@features/habits';
 import {
   buildSuggestions,
   dismissSuggestion,

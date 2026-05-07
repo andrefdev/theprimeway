@@ -5,7 +5,7 @@ import {
   scheduleHabitReminder,
   cancelHabitReminder,
   getHabitReminderSettings,
-} from '@/features/notifications/reminderNotifications';
+} from '@features/notifications';
 import { removeHabitFromStacks } from '../services/habitStacks';
 import type {
   CreateHabitPayload,

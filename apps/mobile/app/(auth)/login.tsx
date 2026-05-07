@@ -2,12 +2,12 @@ import { View, ScrollView, Alert, Platform } from 'react-native';
 import { Link, router } from 'expo-router';
 import { Image } from 'expo-image';
 import { Text } from '@/shared/components/ui/text';
-import { LoginForm } from '@features/auth/components/LoginForm';
-import { SocialButton } from '@features/auth/components/SocialButton';
-import { useAuth } from '@features/auth/hooks/useAuth';
-import { useGoogleAuth, useAppleAuth } from '@features/auth/hooks/useOAuth';
+import { LoginForm } from '@features/auth';
+import { SocialButton } from '@features/auth';
+import { useAuth } from '@features/auth';
+import { useGoogleAuth, useAppleAuth } from '@features/auth';
 import { useState } from 'react';
-import type { LoginFormData } from '@features/auth/types';
+import type { LoginFormData } from '@features/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from '@/shared/hooks/useTranslation';
 

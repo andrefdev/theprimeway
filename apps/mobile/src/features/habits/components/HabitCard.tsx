@@ -5,9 +5,9 @@ import { Icon } from '@/shared/components/ui/icon';
 import { PressableCard } from '@/shared/components/ui/pressable-card';
 import { cn } from '@/shared/utils/cn';
 import { Flame, Check } from 'lucide-react-native';
-import { XpFloater } from '@/features/gamification/components/XpFloater';
-import { XP_VALUES } from '@/features/gamification/model/constants';
-import { useGamificationStore } from '@/features/gamification/stores/gamificationStore';
+import { XpFloater } from '@features/gamification';
+import { XP_VALUES } from '@features/gamification';
+import { useGamificationStore } from '@features/gamification';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,

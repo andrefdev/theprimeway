@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { Text } from '@/shared/components/ui/text';
 import { cn } from '@/shared/utils/cn';
@@ -6,10 +6,18 @@ import { FenrirGlyph } from '@/shared/components/icons/FenrirGlyph';
 import { ToolCallCard, type ToolCall } from './ToolCallCard';
 import { MarkdownRenderer } from './MarkdownRenderer';
 
+export interface ChatAttachment {
+  id: string;
+  uri: string;
+  mediaType: string;
+  base64?: string;
+}
+
 export interface ChatMessageData {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  attachments?: ChatAttachment[];
   toolCalls?: ToolCall[];
   isStreaming?: boolean;
 }
@@ -39,9 +47,26 @@ export function ChatMessage({ message }: { message: ChatMessageData }) {
         )}
 
         {isUser ? (
-          <Text className="text-sm leading-5 text-primary-foreground">
-            {message.content}
-          </Text>
+          <View className="gap-2">
+            {message.attachments && message.attachments.length > 0 && (
+              <View className="flex-row flex-wrap gap-2">
+                {message.attachments.map((att) => (
+                  <Image
+                    key={att.id}
+                    source={{ uri: att.uri }}
+                    className="rounded-2xl"
+                    style={{ width: 160, height: 160 }}
+                    resizeMode="cover"
+                  />
+                ))}
+              </View>
+            )}
+            {message.content ? (
+              <Text className="text-sm leading-5 text-primary-foreground">
+                {message.content}
+              </Text>
+            ) : null}
+          </View>
         ) : (
           <View>
             {message.content ? (

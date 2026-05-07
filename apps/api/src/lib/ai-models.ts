@@ -4,6 +4,9 @@ import type { EmbeddingModel, LanguageModel } from 'ai'
 
 export const chatModel: LanguageModel = deepseek('deepseek-chat')
 
+// Multimodal model used when the user attaches images. DeepSeek-chat is text-only.
+export const visionModel: LanguageModel = openai('gpt-4o-mini')
+
 export const taskModel: LanguageModel = deepseek('deepseek-chat')
 
 export const fastModel: LanguageModel = deepseek('deepseek-chat')

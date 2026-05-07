@@ -23,6 +23,7 @@ import {
 import { Button } from '@/shared/components/ui/button'
 import { Input } from '@/shared/components/ui/input'
 import { ScrollArea } from '@/shared/components/ui/scroll-area'
+import { Skeleton } from '@/shared/components/ui/skeleton'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -86,9 +87,7 @@ export function ChatHistoryList({
     <div className="flex min-h-0 flex-1 flex-col">
       <ScrollArea className="flex-1">
         <div className="px-2 py-2">
-          {isLoading && (
-            <div className="px-3 py-6 text-center text-sm text-muted-foreground">…</div>
-          )}
+          {isLoading && <ChatHistorySkeleton />}
           {!isLoading && (!threads || threads.length === 0) && (
             <div className="px-3 py-12 text-center text-sm text-muted-foreground">
               {t('historyEmpty')}
@@ -179,6 +178,37 @@ export function ChatHistoryList({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    </div>
+  )
+}
+
+function ChatHistorySkeleton({
+  buckets = 2,
+  rowsPerBucket = 3,
+}: {
+  buckets?: number
+  rowsPerBucket?: number
+}) {
+  return (
+    <div aria-busy="true" aria-live="polite">
+      {Array.from({ length: buckets }).map((_, b) => (
+        <div key={b} className="mb-3">
+          <Skeleton className="mx-3 mb-1 mt-2 h-3 w-16" />
+          <ul className="space-y-0.5">
+            {Array.from({ length: rowsPerBucket }).map((_, r) => (
+              <li
+                key={r}
+                className="flex items-center gap-1 rounded-lg px-2 py-1.5"
+              >
+                <Skeleton
+                  className="h-4 flex-1"
+                  style={{ maxWidth: `${55 + ((b * 7 + r * 13) % 35)}%` }}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
   )
 }
