@@ -26,6 +26,51 @@ import { calendarService } from '../calendar.service'
 import { syncService } from '../sync.service'
 import { withUserLock } from './user-lock'
 import { syncTaskMirror } from './task-mirror'
+import { localYmd } from '@repo/shared/utils'
+
+async function getUserTz(userId: string): Promise<string> {
+  const settings = await prisma.userSettings.findUnique({
+    where: { userId },
+    select: { timezone: true },
+  })
+  return settings?.timezone ?? 'UTC'
+}
+
+/**
+ * Delete every WorkingSession for `taskId` whose local Y-M-D differs from
+ * `keepYmd`. Called from user-driven "place this task at day X" flows so a
+ * task moved across days doesn't leave ghost sessions on the previous day —
+ * those would mislead syncTaskMirror's "first session" logic into pinning
+ * `scheduledDate` to the abandoned day, causing the today-list to drop the
+ * task while the calendar still renders it on the new day.
+ */
+async function removeOtherDaySessions(
+  userId: string,
+  taskId: string,
+  keepYmd: string,
+  tz: string,
+): Promise<number> {
+  const sessions = await prisma.workingSession.findMany({
+    where: { taskId, userId },
+    select: { id: true, start: true },
+  })
+  let deleted = 0
+  for (const s of sessions) {
+    if (localYmd(s.start, tz) === keepYmd) continue
+    // Best-effort google cleanup before local delete (so undo doesn't chase a
+    // dangling externalEventId).
+    await calendarService
+      .removeSessionFromCalendar(s.id)
+      .catch((err) =>
+        console.error('[CLEANUP_OTHER_DAY] google remove failed', err),
+      )
+    await prisma.workingSession.delete({ where: { id: s.id } }).catch((err) => {
+      console.error('[CLEANUP_OTHER_DAY] db delete failed', err)
+    })
+    deleted++
+  }
+  return deleted
+}
 
 export interface CreateSessionInput {
   userId: string
@@ -78,7 +123,20 @@ class SchedulingFacade {
     })
     if (!task?.userId) throw new Error('Task not found')
 
-    const result = await withUserLock(task.userId, () => autoSchedule(taskId, day, opts))
+    const triggeredBy = opts.triggeredBy ?? 'USER_ACTION'
+
+    const result = await withUserLock(task.userId, async () => {
+      // For user-driven moves ("schedule this task on day X"), evict any
+      // sessions on other days first. Internal callers (deconflict, rollover)
+      // skip cleanup — they already manage the session lifecycle themselves.
+      if (triggeredBy === 'USER_ACTION') {
+        const tz = await getUserTz(task.userId!)
+        const keepYmd =
+          typeof day === 'string' ? day.slice(0, 10) : localYmd(day, tz)
+        await removeOtherDaySessions(task.userId!, taskId, keepYmd, tz)
+      }
+      return autoSchedule(taskId, day, opts)
+    })
     if (result.type === 'Success') {
       // autoSchedule already mirrors Task and triggers pushSessionToCalendar;
       // we just publish for real-time clients.
@@ -112,6 +170,17 @@ class SchedulingFacade {
     input: CreateSessionInput,
     opts: CreateOrMoveOptions,
   ): Promise<{ session: { id: string; start: Date; end: Date; taskId: string | null }; commandId: string }> {
+    // User-driven session creation tied to a task = "place this task here".
+    // Drop any prior sessions for the task on other days so it doesn't end up
+    // with cross-day session accumulation. Same-day sessions (intentional
+    // splits) are preserved. Internal creators (AUTO_SCHEDULE / SPLIT /
+    // AUTO_RESCHEDULE / IMPORT) manage their own session lifecycle.
+    if (input.taskId && (input.createdBy === 'USER' || !input.createdBy)) {
+      const tz = await getUserTz(input.userId)
+      const keepYmd = localYmd(input.start, tz)
+      await removeOtherDaySessions(input.userId, input.taskId, keepYmd, tz)
+    }
+
     const session = await prisma.workingSession.create({
       data: {
         userId: input.userId,
