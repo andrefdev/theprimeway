@@ -96,7 +96,7 @@ The task should appear in `candidateTasks`. Today it doesn't.
 
 ---
 
-## 3. GHA deploy reports success when `compose pull` silently fails
+## 3. GHA deploy reports success when `compose pull` silently fails  ✅ FIXED 2026-05-07
 
 **File:** `.github/workflows/deploy.yml` (step "Pull latest images and start containers")
 
@@ -137,6 +137,13 @@ b. Capture the pre/post image digest of the API container and fail the
 
 Manually expire the PAT on the server, push a code change, and confirm the
 workflow now fails the deploy step instead of falsely succeeding.
+
+**Resolution**
+
+`.github/workflows/deploy.yml` "Pull latest images and start containers" step
+now does `docker login ghcr.io` with the workflow's own `GITHUB_TOKEN` before
+pull, and the `|| true` after pull was removed. A pull failure now fails the
+deploy loudly instead of silently retaining the old container.
 
 ---
 

@@ -380,11 +380,15 @@ jobs:
 
       - name: Pull latest images and start containers
         uses: appleboy/ssh-action@v1
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
+          envs: GHCR_TOKEN,GHCR_USER
           script: |
             set -e
 
@@ -393,8 +397,18 @@ jobs:
             # DOCKER_REGISTRY is in .env for docker-compose variable substitution
             # (persists across manual restarts / server reboots)
 
-            # Pull latest images from GHCR (--ignore-buildable avoids failures for missing images)
-            docker compose -f docker-compose.prod.yml pull --ignore-buildable || true
+            # Re-authenticate to GHCR every deploy with a fresh workflow token.
+            # The cached PAT in ~/.docker/config.json silently rots when the
+            # user rotates it; without this, `docker compose pull` would fail
+            # auth, the previous `|| true` swallowed it, and `up -d` left the
+            # old container running while the workflow reported success.
+            docker logout ghcr.io >/dev/null 2>&1 || true
+            printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+
+            # Pull latest images. No `|| true` — if pull fails, the deploy
+            # MUST fail. A silent pull failure means the container keeps
+            # running old code, which is worse than a noisy abort.
+            docker compose -f docker-compose.prod.yml pull --ignore-buildable
 
             # Start containers (runs migrations automatically, creates volumes, etc.)
             # If migrate fails, dump its logs before exiting
