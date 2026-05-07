@@ -400,40 +400,25 @@ class CalendarService {
           continue
         }
 
-        let pageToken: string | undefined
-        let pages = 0
-        try {
-          do {
-            const params = new URLSearchParams({
-              singleEvents: 'true',
-              showDeleted: 'true',
-              maxResults: '250',
-              timeMin,
-              timeMax,
-              orderBy: 'startTime',
-            })
-            if (pageToken) params.set('pageToken', pageToken)
+        // Look up an active watch channel; if it has a syncToken, prefer
+        // incremental sync to avoid pulling the full 67-day window.
+        const channel = await (prisma as any).calendarWatchChannel.findFirst({
+          where: { calendarId: cal.id },
+          orderBy: { createdAt: 'desc' },
+        })
 
-            const res = await fetch(
-              `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(providerCalId)}/events?${params.toString()}`,
-              { headers: { Authorization: `Bearer ${accessToken}` } },
-            )
-            if (!res.ok) {
-              const txt = await res.text().catch(() => '')
-              errors.push({ calendarId: cal.id, reason: `list_${res.status}:${txt.slice(0, 80)}` })
-              break
-            }
-            const body = (await res.json()) as { items?: any[]; nextPageToken?: string }
-            for (const evt of body.items ?? []) {
-              await this.upsertCalendarEventCache(cal.id, evt).catch((e) =>
-                console.error('[CAL_SYNC] upsert error', { calendarId: cal.id, eventId: evt?.id, error: e }),
-              )
-              eventsSynced++
-            }
-            pageToken = body.nextPageToken
-            pages++
-          } while (pageToken && pages < 20) // hard safety cap
+        try {
+          const result = await this.pullCalendarEvents({
+            calendarRowId: cal.id,
+            providerCalId,
+            accessToken,
+            channel,
+            timeMin,
+            timeMax,
+          })
+          eventsSynced += result.eventsSynced
           calendarsSynced++
+          if (result.error) errors.push({ calendarId: cal.id, reason: result.error })
         } catch (err) {
           errors.push({ calendarId: cal.id, reason: `exception:${(err as Error).message?.slice(0, 80)}` })
         }
@@ -452,6 +437,103 @@ class CalendarService {
       eventsSynced,
       errors: errors.length > 0 ? errors : undefined,
     }
+  }
+
+  /**
+   * Pull events for a single calendar — incremental if the channel has a
+   * `syncToken`, otherwise a full window pull. On 410 GONE (token invalidated
+   * by Google) clears the token and retries as a full pull, then bootstraps a
+   * fresh `nextSyncToken` at the end so subsequent calls can incremental again.
+   */
+  private async pullCalendarEvents(args: {
+    calendarRowId: string
+    providerCalId: string
+    accessToken: string
+    channel: { id: string; syncToken: string | null } | null
+    timeMin: string
+    timeMax: string
+  }): Promise<{ eventsSynced: number; error?: string }> {
+    const { calendarRowId, providerCalId, accessToken, channel, timeMin, timeMax } = args
+
+    let pageToken: string | undefined
+    let pages = 0
+    let nextSyncToken: string | undefined
+    let eventsSynced = 0
+    let usingSyncToken = !!channel?.syncToken
+
+    do {
+      const params = new URLSearchParams({
+        showDeleted: 'true',
+        maxResults: '250',
+      })
+      if (usingSyncToken && channel?.syncToken && !pageToken) {
+        params.set('syncToken', channel.syncToken)
+      } else {
+        params.set('singleEvents', 'true')
+        params.set('orderBy', 'startTime')
+        params.set('timeMin', timeMin)
+        params.set('timeMax', timeMax)
+      }
+      if (pageToken) params.set('pageToken', pageToken)
+
+      const res = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(providerCalId)}/events?${params.toString()}`,
+        { headers: { Authorization: `Bearer ${accessToken}` } },
+      )
+
+      // 410 GONE → syncToken invalidated. Clear it and retry from scratch as
+      // a full window pull within this same call.
+      if (res.status === 410 && usingSyncToken) {
+        if (channel) {
+          await (prisma as any).calendarWatchChannel.update({
+            where: { id: channel.id },
+            data: { syncToken: null },
+          }).catch(() => undefined)
+        }
+        usingSyncToken = false
+        pageToken = undefined
+        pages = 0
+        continue
+      }
+
+      if (!res.ok) {
+        const txt = await res.text().catch(() => '')
+        return {
+          eventsSynced,
+          error: `list_${res.status}:${txt.slice(0, 80)}`,
+        }
+      }
+
+      const body = (await res.json()) as {
+        items?: any[]
+        nextPageToken?: string
+        nextSyncToken?: string
+      }
+      for (const evt of body.items ?? []) {
+        await this.upsertCalendarEventCache(calendarRowId, evt).catch((e) =>
+          console.error('[CAL_SYNC] upsert error', { calendarId: calendarRowId, eventId: evt?.id, error: e }),
+        )
+        eventsSynced++
+      }
+      pageToken = body.nextPageToken
+      if (body.nextSyncToken) nextSyncToken = body.nextSyncToken
+      pages++
+    } while (pageToken && pages < 20)
+
+    // Persist syncToken on the channel for the next incremental sync. If the
+    // full-window pull didn't return one (Google withholds it on paginated
+    // responses without a final non-paged page), bootstrap a fresh one.
+    if (channel) {
+      const tokenToStore =
+        nextSyncToken ?? (await this.fetchInitialSyncToken(accessToken, providerCalId))
+      if (tokenToStore) {
+        await (prisma as any).calendarWatchChannel
+          .update({ where: { id: channel.id }, data: { syncToken: tokenToStore } })
+          .catch(() => undefined)
+      }
+    }
+
+    return { eventsSynced }
   }
 
   /**
@@ -1467,8 +1549,52 @@ RULES:
 
   // --- Watch channels (Google push notifications) --------------------------
 
-  /** Subscribe to push notifications for a given calendar. */
-  async subscribeWatchChannel(calendarId: string): Promise<{ ok: boolean; reason?: string }> {
+  /**
+   * Fetch a fresh `nextSyncToken` for a calendar via `events.list` with
+   * `maxResults=1`. Google only returns `nextSyncToken` on the LAST page of a
+   * paginated response, so a 1-result single-page request is the cheapest way
+   * to bootstrap one. Returns null on any failure — caller can proceed without
+   * a token (next webhook falls back to a 24h time window).
+   */
+  private async fetchInitialSyncToken(
+    accessToken: string,
+    providerCalId: string,
+  ): Promise<string | null> {
+    try {
+      const params = new URLSearchParams({
+        maxResults: '1',
+        singleEvents: 'true',
+        showDeleted: 'true',
+        orderBy: 'startTime',
+        timeMin: new Date().toISOString(),
+      })
+      const res = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(providerCalId)}/events?${params.toString()}`,
+        { headers: { Authorization: `Bearer ${accessToken}` } },
+      )
+      if (!res.ok) return null
+      const body = (await res.json()) as { nextSyncToken?: string; nextPageToken?: string }
+      // If pagination is needed (rare for maxResults=1), Google withholds the
+      // sync token until the final page; we don't loop because the payoff is
+      // tiny — falling back to time-window pull on first webhook is fine.
+      return body.nextSyncToken ?? null
+    } catch {
+      return null
+    }
+  }
+
+  /**
+   * Subscribe to push notifications for a given calendar.
+   *
+   * If `opts.initialSyncToken` is provided (e.g. preserved across a renewal),
+   * it's stored on the new channel verbatim. Otherwise the function calls
+   * `fetchInitialSyncToken` to bootstrap a fresh one so the very first webhook
+   * can use incremental sync rather than the 24h time-window fallback.
+   */
+  async subscribeWatchChannel(
+    calendarId: string,
+    opts: { initialSyncToken?: string | null } = {},
+  ): Promise<{ ok: boolean; reason?: string }> {
     const calendar = await calendarRepo.findCalendarById(calendarId)
     if (!calendar) return { ok: false, reason: 'calendar_not_found' }
     const account = await calendarRepo.findAccountByCalendarAccountId(calendar.calendarAccountId)
@@ -1503,12 +1629,17 @@ RULES:
         return { ok: false, reason: `watch_failed:${res.status}:${txt.slice(0, 120)}` }
       }
       const body = (await res.json()) as { resourceId: string; expiration: string }
+
+      const syncToken =
+        opts.initialSyncToken ?? (await this.fetchInitialSyncToken(accessToken, providerCalId))
+
       await (prisma as any).calendarWatchChannel.create({
         data: {
           calendarId: calendar.id,
           channelId,
           resourceId: body.resourceId,
           token,
+          syncToken: syncToken ?? null,
           expiresAt: new Date(Number(body.expiration)),
         },
       })
@@ -1611,6 +1742,11 @@ RULES:
     const selfAttendee = (evt.attendees ?? []).find((a: any) => a?.self === true)
     const isDeclined = selfAttendee?.responseStatus === 'declined'
 
+    const recurrence: string[] = Array.isArray(evt.recurrence) ? evt.recurrence : []
+    const attendees =
+      Array.isArray(evt.attendees) && evt.attendees.length > 0 ? evt.attendees : null
+    const organizer = evt.organizer ?? null
+
     await prisma.calendarEvent.upsert({
       where: { calendarId_externalId: { calendarId, externalId: evt.id } },
       update: {
@@ -1621,6 +1757,15 @@ RULES:
         isDeclined,
         isAllDay,
         colorId: evt.colorId ?? null,
+        description: evt.description ?? null,
+        location: evt.location ?? null,
+        htmlLink: evt.htmlLink ?? null,
+        hangoutLink: evt.hangoutLink ?? null,
+        visibility: evt.visibility ?? null,
+        recurringEventId: evt.recurringEventId ?? null,
+        recurrence,
+        attendees,
+        organizer,
         syncedAt: new Date(),
       },
       create: {
@@ -1633,11 +1778,26 @@ RULES:
         isDeclined,
         isAllDay,
         colorId: evt.colorId ?? null,
+        description: evt.description ?? null,
+        location: evt.location ?? null,
+        htmlLink: evt.htmlLink ?? null,
+        hangoutLink: evt.hangoutLink ?? null,
+        visibility: evt.visibility ?? null,
+        recurringEventId: evt.recurringEventId ?? null,
+        recurrence,
+        attendees,
+        organizer,
       },
     })
   }
 
-  /** Renew watch channels expiring within 24h. */
+  /**
+   * Renew watch channels expiring within 24h.
+   *
+   * Preserves the existing `syncToken` so incremental sync is uninterrupted
+   * across renewals. Without this, every renewal would reset to the 24h
+   * fallback and miss events older than that window.
+   */
   async renewExpiringWatchChannels(): Promise<{ renewed: number; failed: number }> {
     const soon = new Date(Date.now() + 24 * 3600 * 1000)
     const channels = await (prisma as any).calendarWatchChannel.findMany({
@@ -1646,7 +1806,9 @@ RULES:
     let renewed = 0
     let failed = 0
     for (const ch of channels) {
-      const res = await this.subscribeWatchChannel(ch.calendarId)
+      const res = await this.subscribeWatchChannel(ch.calendarId, {
+        initialSyncToken: ch.syncToken ?? null,
+      })
       if (res.ok) {
         await (prisma as any).calendarWatchChannel.delete({ where: { id: ch.id } })
         renewed++
@@ -1655,6 +1817,59 @@ RULES:
       }
     }
     return { renewed, failed }
+  }
+
+  /**
+   * One-shot reactivation of push notifications for a user. For each
+   * `isSelectedForSync` calendar, drops any existing watch channels that lack
+   * a `syncToken` (or are already expired) and creates a fresh one with a
+   * bootstrapped token. Channels that are healthy (have token, not expired)
+   * are left alone.
+   *
+   * Used after configuration changes such as setting `GOOGLE_CALENDAR_WEBHOOK_URL`
+   * or after the cache-mode→DB-mode migration left users without working
+   * channels.
+   */
+  async resubscribeWatchChannelsForUser(
+    userId: string,
+  ): Promise<{ recreated: number; kept: number; failed: number }> {
+    const accounts = await calendarRepo.findGoogleAccountsWithSyncCalendars(userId)
+    let recreated = 0
+    let kept = 0
+    let failed = 0
+    const now = new Date()
+
+    for (const account of accounts) {
+      for (const cal of account.calendars) {
+        const calId = (cal as any).id
+        const isSelected = (cal as any).isSelectedForSync === true
+        if (!isSelected) continue
+
+        const existing = await (prisma as any).calendarWatchChannel.findFirst({
+          where: { calendarId: calId },
+          orderBy: { createdAt: 'desc' },
+        })
+
+        const healthy =
+          existing && existing.syncToken && existing.expiresAt && existing.expiresAt > now
+        if (healthy) {
+          kept++
+          continue
+        }
+
+        // Drop any stale channels for this calendar before creating a new one
+        // so we don't accumulate dead rows.
+        await (prisma as any).calendarWatchChannel
+          .deleteMany({ where: { calendarId: calId } })
+          .catch(() => undefined)
+
+        const res = await this.subscribeWatchChannel(calId)
+        if (res.ok) recreated++
+        else failed++
+      }
+    }
+
+    return { recreated, kept, failed }
   }
 
   /**
@@ -1679,9 +1894,22 @@ RULES:
       orderBy: { start: 'asc' },
     })
 
-    if (events.length === 0) {
-      // Fire-and-forget pull so the next request sees data, even if Google
-      // never sent us a webhook for this calendar yet.
+    // Fire-and-forget pull when:
+    //   (a) cache is empty (fresh user), or
+    //   (b) most recent event was synced > 5 min ago (webhook may have failed
+    //       silently or env without a public URL has no webhook at all).
+    // The current request still returns whatever's cached without waiting; the
+    // *next* request sees fresh data once the sync completes.
+    const STALE_AFTER_MS = 5 * 60 * 1000
+    let isStale = events.length === 0
+    if (!isStale) {
+      const newest = events.reduce((max, e: any) => {
+        const t = e.syncedAt ? new Date(e.syncedAt).getTime() : 0
+        return t > max ? t : max
+      }, 0)
+      isStale = newest === 0 || Date.now() - newest > STALE_AFTER_MS
+    }
+    if (isStale) {
       this.syncCalendars(userId).catch((err) =>
         console.error('[CAL_LIST] background sync failed', err),
       )
@@ -1698,6 +1926,15 @@ RULES:
       isAllDay: e.isAllDay,
       isBusy: e.isBusy,
       colorId: e.colorId ?? null,
+      description: e.description ?? null,
+      location: e.location ?? null,
+      htmlLink: e.htmlLink ?? null,
+      hangoutLink: e.hangoutLink ?? null,
+      visibility: e.visibility ?? null,
+      recurringEventId: e.recurringEventId ?? null,
+      recurrence: e.recurrence ?? [],
+      attendees: e.attendees ?? null,
+      organizer: e.organizer ?? null,
       calendarId: e.calendar?.providerCalendarId ?? null,
       internalCalendarId: e.calendar?.id ?? e.calendarId,
       calendarName: e.calendar?.name ?? null,

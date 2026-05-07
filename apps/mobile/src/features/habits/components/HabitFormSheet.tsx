@@ -3,12 +3,8 @@ import { Alert, View, TextInput, Pressable, ActivityIndicator } from 'react-nati
 import { FormSheet } from '@/shared/components/ui/form-sheet';
 import { Text } from '@/shared/components/ui/text';
 import { Button } from '@/shared/components/ui/button';
-import { Icon } from '@/shared/components/ui/icon';
-import { Layers, X } from 'lucide-react-native';
 import { useCreateHabit } from '../hooks/useHabits';
 import { cn } from '@/shared/utils/cn';
-import type { ThreeYearGoal } from '@shared/types/models';
-import { ThreeYearGoalPickerSheet } from '@features/goals/components/ThreeYearGoalPickerSheet';
 import { useTranslation } from '@/shared/hooks/useTranslation';
 
 const CATEGORIES = [
@@ -38,8 +34,6 @@ export function HabitFormSheet({ isOpen, onClose }: HabitFormSheetProps) {
   const [color, setColor] = useState('#280FFB');
   const [freqType, setFreqType] = useState('daily');
   const [weekDays, setWeekDays] = useState<number[]>([]);
-  const [linkedGoal, setLinkedGoal] = useState<ThreeYearGoal | null>(null);
-  const [showGoalPicker, setShowGoalPicker] = useState(false);
 
   const toggleDay = (i: number) => {
     setWeekDays((prev) => prev.includes(i) ? prev.filter((d) => d !== i) : [...prev, i]);
@@ -55,14 +49,12 @@ export function HabitFormSheet({ isOpen, onClose }: HabitFormSheetProps) {
         frequency_type: freqType,
         target_frequency: 1,
         week_days: freqType === 'week_days' ? weekDays : undefined,
-        ...(linkedGoal ? { goalId: linkedGoal.id } : {}),
       } as any);
       setName('');
       setCategory('health');
       setColor('#280FFB');
       setFreqType('daily');
       setWeekDays([]);
-      setLinkedGoal(null);
       onClose();
     } catch {
       Alert.alert(t('errors.title'), t('errors.create'));
@@ -156,31 +148,6 @@ export function HabitFormSheet({ isOpen, onClose }: HabitFormSheetProps) {
         </View>
       )}
 
-      {/* Link to Goal */}
-      <View>
-        <Text className="mb-2 text-xs font-medium text-muted-foreground">{t('goalLink.title')}</Text>
-        <Pressable
-          onPress={() => setShowGoalPicker(true)}
-          className="flex-row items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 active:opacity-70"
-        >
-          <Icon as={Layers} size={16} className="text-muted-foreground" />
-          <Text className="flex-1 text-sm text-foreground" numberOfLines={1}>
-            {linkedGoal ? linkedGoal.title : t('goalLink.placeholder')}
-          </Text>
-          {linkedGoal ? (
-            <Pressable
-              onPress={(e) => {
-                e.stopPropagation();
-                setLinkedGoal(null);
-              }}
-              hitSlop={8}
-            >
-              <Icon as={X} size={14} className="text-muted-foreground" />
-            </Pressable>
-          ) : null}
-        </Pressable>
-      </View>
-
       <Button className="h-12 rounded-xl" onPress={handleSubmit} disabled={createHabit.isPending || !name.trim()}>
         {createHabit.isPending ? (
           <ActivityIndicator size="small" color="white" />
@@ -188,13 +155,6 @@ export function HabitFormSheet({ isOpen, onClose }: HabitFormSheetProps) {
           <Text className="text-sm font-bold text-primary-foreground">{t('actions.create')}</Text>
         )}
       </Button>
-
-      <ThreeYearGoalPickerSheet
-        isOpen={showGoalPicker}
-        onClose={() => setShowGoalPicker(false)}
-        selectedGoalId={linkedGoal?.id}
-        onSelect={(goal) => setLinkedGoal(goal)}
-      />
     </FormSheet>
   );
 }

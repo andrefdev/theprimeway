@@ -685,6 +685,45 @@ class BrainGraphRepository {
     })
   }
 
+  // ─── Manual concept delete (user prunes the graph) ─────────────────────
+
+  /**
+   * Hard-delete a single concept on explicit user action. We do NOT soft-delete
+   * here on purpose: the user's intent in clicking "delete" is "this should not
+   * come back". Soft-delete is reserved for the orphan-cleanup path (entry
+   * deletion), where the concept *should* revive if the user mentions it again
+   * in a new entry. By hard-deleting, the next mention starts a fresh row with
+   * a fresh embedding, exactly what the confirm dialog promises the user.
+   *
+   * Cascade behaviour comes from the schema:
+   *   - brain_concept_occurrences (FK onDelete: Cascade)
+   *   - brain_concept_edges       (FK onDelete: Cascade on both endpoints)
+   *
+   * Throws on: not-found / cross-user / already merged. Already-deleted is
+   * surfaced via NOT_FOUND because the row is physically gone.
+   */
+  async deleteConceptByUser(userId: string, conceptId: string): Promise<{ id: string }> {
+    return prisma.$transaction(async (tx) => {
+      const concept = await tx.brainConcept.findFirst({
+        where: { id: conceptId, userId },
+        select: { id: true, deletedAt: true, mergedIntoId: true },
+      })
+      if (!concept) {
+        throw new ConceptDeleteError('NOT_FOUND', 'concept not found for this user')
+      }
+      if (concept.mergedIntoId) {
+        throw new ConceptDeleteError('ALREADY_MERGED', 'concept is already merged')
+      }
+      if (concept.deletedAt) {
+        // Soft-deleted from a prior orphan cleanup; finish the job by removing
+        // the row so a future mention can't revive it.
+      }
+
+      await tx.brainConcept.delete({ where: { id: conceptId } })
+      return { id: conceptId }
+    })
+  }
+
   // ─── Stats for clustering trigger ──────────────────────────────────────
 
   async newConceptsSince(userId: string, since: Date): Promise<number> {
@@ -712,5 +751,14 @@ export class ConceptMergeError extends Error {
   constructor(public readonly code: ConceptMergeErrorCode, message: string) {
     super(message)
     this.name = 'ConceptMergeError'
+  }
+}
+
+export type ConceptDeleteErrorCode = 'NOT_FOUND' | 'ALREADY_MERGED'
+
+export class ConceptDeleteError extends Error {
+  constructor(public readonly code: ConceptDeleteErrorCode, message: string) {
+    super(message)
+    this.name = 'ConceptDeleteError'
   }
 }

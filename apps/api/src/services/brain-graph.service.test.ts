@@ -12,6 +12,19 @@ const mockGetGraph = vi.fn()
 const mockGetEgo = vi.fn()
 const mockAllConceptsWithEmbeddings = vi.fn()
 const mockPersistClusters = vi.fn()
+const mockDeleteConceptByUser = vi.fn()
+
+const { FakeConceptDeleteError } = vi.hoisted(() => {
+  class FakeConceptDeleteError extends Error {
+    readonly code: string
+    constructor(code: string, message: string) {
+      super(message)
+      this.name = 'ConceptDeleteError'
+      this.code = code
+    }
+  }
+  return { FakeConceptDeleteError }
+})
 
 vi.mock('../repositories/brain-graph.repo', () => ({
   brainGraphRepo: {
@@ -19,7 +32,10 @@ vi.mock('../repositories/brain-graph.repo', () => ({
     getEgoNetwork: (...args: unknown[]) => mockGetEgo(...args),
     allConceptsWithEmbeddings: (...args: unknown[]) => mockAllConceptsWithEmbeddings(...args),
     persistClusters: (...args: unknown[]) => mockPersistClusters(...args),
+    deleteConceptByUser: (...args: unknown[]) => mockDeleteConceptByUser(...args),
   },
+  ConceptMergeError: class extends Error {},
+  ConceptDeleteError: FakeConceptDeleteError,
 }))
 
 const mockResolveFeatures = vi.fn()
@@ -200,5 +216,37 @@ describe('brainGraphService.shouldRecluster', () => {
     const result = await brainGraphService.shouldRecluster(USER)
     expect(result).toBe(true)
     expect(mockShouldRecluster).toHaveBeenCalledWith(USER)
+  })
+})
+
+// ─── deleteConcept ─────────────────────────────────────────────────────────
+
+describe('brainGraphService.deleteConcept', () => {
+  it('throws BrainGraphFeatureError when the feature is off', async () => {
+    mockResolveFeatures.mockResolvedValue(featureOff)
+    await expect(brainGraphService.deleteConcept(USER, 'c1')).rejects.toBeInstanceOf(
+      BrainGraphFeatureError,
+    )
+    expect(mockDeleteConceptByUser).not.toHaveBeenCalled()
+  })
+
+  it('forwards to repo.softDeleteConcept and returns its result', async () => {
+    mockResolveFeatures.mockResolvedValue(featureOn)
+    mockDeleteConceptByUser.mockResolvedValue({ id: 'c1' })
+
+    const result = await brainGraphService.deleteConcept(USER, 'c1')
+
+    expect(mockDeleteConceptByUser).toHaveBeenCalledWith(USER, 'c1')
+    expect(result).toEqual({ id: 'c1' })
+  })
+
+  it('lets ConceptDeleteError propagate so the route can map status codes', async () => {
+    mockResolveFeatures.mockResolvedValue(featureOn)
+    mockDeleteConceptByUser.mockRejectedValue(new FakeConceptDeleteError('NOT_FOUND', 'nope'))
+
+    await expect(brainGraphService.deleteConcept(USER, 'c-missing')).rejects.toMatchObject({
+      name: 'ConceptDeleteError',
+      code: 'NOT_FOUND',
+    })
   })
 })

@@ -1,11 +1,23 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { formatDistanceToNowStrict } from 'date-fns'
 import { es, enUS } from 'date-fns/locale'
-import { GitMerge, X } from 'lucide-react'
+import { GitMerge, Trash2, X } from 'lucide-react'
 import { Badge } from '@/shared/components/ui/badge'
 import { Button } from '@/shared/components/ui/button'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/shared/components/ui/alert-dialog'
 import { ConceptMergeDialog } from './ConceptMergeDialog'
+import { useDeleteConcept } from '@/features/brain/queries'
 import type { BrainConceptNode } from '@repo/shared/types'
 
 interface FocusedConceptPanelProps {
@@ -24,11 +36,23 @@ export function FocusedConceptPanel({
 }: FocusedConceptPanelProps) {
   const { t, i18n } = useTranslation('brain')
   const [mergeOpen, setMergeOpen] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const deleteConcept = useDeleteConcept()
   const locale = i18n.language?.startsWith('es') ? es : enUS
   const lastSeen = formatDistanceToNowStrict(new Date(concept.lastMentionedAt), {
     addSuffix: true,
     locale,
   })
+
+  const handleDelete = () => {
+    deleteConcept.mutate(concept.id, {
+      onSuccess: () => {
+        setDeleteOpen(false)
+        onClose()
+      },
+      onError: () => toast.error(t('graph.focusPanel.deleteError')),
+    })
+  }
 
   return (
     <>
@@ -64,15 +88,27 @@ export function FocusedConceptPanel({
           </p>
         )}
 
-        <Button
-          variant="outline"
-          size="sm"
-          className="mt-3 w-full gap-1.5"
-          onClick={() => setMergeOpen(true)}
-        >
-          <GitMerge className="h-3.5 w-3.5" />
-          {t('graph.focusPanel.merge')}
-        </Button>
+        <div className="mt-3 flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 gap-1.5"
+            onClick={() => setMergeOpen(true)}
+          >
+            <GitMerge className="h-3.5 w-3.5" />
+            {t('graph.focusPanel.merge')}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
+            onClick={() => setDeleteOpen(true)}
+            title={t('graph.focusPanel.delete')}
+            disabled={deleteConcept.isPending}
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </Button>
+        </div>
       </div>
 
       <ConceptMergeDialog
@@ -82,6 +118,29 @@ export function FocusedConceptPanel({
         concepts={concepts}
         onMerged={onMerged}
       />
+
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('graph.focusPanel.delete')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('graph.focusPanel.deleteConfirm', { name: concept.name })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteConcept.isPending}>
+              {t('graph.merge.cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deleteConcept.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {t('graph.focusPanel.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

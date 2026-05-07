@@ -56,12 +56,11 @@ interface BuildContext {
   tasks: Task[];
   habits: HabitWithLogs[];
   habitStreaks: Record<string, number>;
-  pomodoroSessionsToday: number;
   hour: number;
 }
 
 export function buildSuggestions(ctx: BuildContext): Suggestion[] {
-  const { tasks, habits, habitStreaks, pomodoroSessionsToday, hour } = ctx;
+  const { tasks, habits, habitStreaks, hour } = ctx;
   const today = format(new Date(), 'yyyy-MM-dd');
   const out: Suggestion[] = [];
 
@@ -133,19 +132,6 @@ export function buildSuggestions(ctx: BuildContext): Suggestion[] {
       actionLabel: 'Plan now',
       action: { kind: 'navigate', href: '/(app)/(tabs)/manual' },
       urgency: 'medium',
-    });
-  }
-
-  // 5. No focus sessions today
-  if (hour >= 10 && hour < 20 && pomodoroSessionsToday === 0 && tasks.length > 0) {
-    out.push({
-      id: 'focus_kickstart',
-      type: 'focus',
-      title: 'No focus sessions today',
-      message: 'Kickstart with a 25-minute focus block.',
-      actionLabel: 'Start timer',
-      action: { kind: 'navigate', href: '/(app)/pomodoro' },
-      urgency: 'low',
     });
   }
 

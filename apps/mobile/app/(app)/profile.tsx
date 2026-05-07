@@ -8,7 +8,7 @@ import { LevelBadge } from '@/features/gamification/components/LevelBadge';
 import { ProgressRing } from '@/features/gamification/components/ProgressRing';
 import { useGamificationStore } from '@/features/gamification/stores/gamificationStore';
 import { useAuthStore } from '@/shared/stores/authStore';
-import { Camera, LogOut, Crown, ChevronRight, Zap, Flame, Trophy } from 'lucide-react-native';
+import { Camera, LogOut, Zap, Flame, Trophy } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
@@ -20,7 +20,6 @@ export default function ProfileScreen() {
   const { t } = useTranslation('auth.profile');
   const { t: tCommon } = useTranslation('common');
   const { t: tAuth } = useTranslation('auth.common');
-  const { t: tSub } = useTranslation('features.subscription');
   const { user, logout } = useAuthStore();
   const [name, setName] = useState(user?.name || '');
   const initials = getInitials(user?.name || 'U');
@@ -79,51 +78,21 @@ export default function ProfileScreen() {
 
         {/* Gamification Stats */}
         <Animated.View entering={FadeInDown.delay(30).duration(300)} className="mt-4 flex-row gap-3">
-          <Pressable
-            className="flex-1 items-center rounded-xl border border-border bg-card py-3 active:opacity-70"
-            onPress={() => router.push('/(app)/achievements' as never)}
-          >
+          <View className="flex-1 items-center rounded-xl border border-border bg-card py-3">
             <Icon as={Zap} size={18} className="text-xp" />
             <Text className="mt-1 text-lg font-bold text-foreground">{totalXp}</Text>
             <Text className="text-2xs text-muted-foreground">{t('totalXp')}</Text>
-          </Pressable>
-          <Pressable
-            className="flex-1 items-center rounded-xl border border-border bg-card py-3 active:opacity-70"
-            onPress={() => router.push('/(app)/achievements' as never)}
-          >
+          </View>
+          <View className="flex-1 items-center rounded-xl border border-border bg-card py-3">
             <Icon as={Trophy} size={18} className="text-level-gold" />
             <Text className="mt-1 text-lg font-bold text-foreground">Lv.{level.level}</Text>
             <Text className="text-2xs text-muted-foreground">{level.name}</Text>
-          </Pressable>
-          <Pressable
-            className="flex-1 items-center rounded-xl border border-border bg-card py-3 active:opacity-70"
-            onPress={() => router.push('/(app)/achievements' as never)}
-          >
+          </View>
+          <View className="flex-1 items-center rounded-xl border border-border bg-card py-3">
             <Icon as={Flame} size={18} className="text-streak-fire" />
             <Text className="mt-1 text-lg font-bold text-foreground">{currentStreak}d</Text>
             <Text className="text-2xs text-muted-foreground">{t('streak')}</Text>
-          </Pressable>
-        </Animated.View>
-
-        {/* Subscription Banner */}
-        <Animated.View entering={FadeInDown.delay(50).duration(300)}>
-          <Pressable
-            className="mt-6"
-            onPress={() => router.push('/(app)/subscription')}
-          >
-            <Card className="border-primary/20">
-              <CardContent className="flex-row items-center gap-3">
-                <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/15">
-                  <Icon as={Crown} size={18} className="text-primary" />
-                </View>
-                <View className="flex-1">
-                  <Text className="text-sm font-semibold text-foreground">{tSub('title')}</Text>
-                  <Text className="text-xs text-muted-foreground">{tSub('description')}</Text>
-                </View>
-                <Icon as={ChevronRight} size={16} className="text-muted-foreground" />
-              </CardContent>
-            </Card>
-          </Pressable>
+          </View>
         </Animated.View>
 
         {/* Edit Form */}

@@ -1082,18 +1082,27 @@ model RecurringSeries {
 
 // ----- CalendarEvent (cache from external provider) -----
 model CalendarEvent {
-  id         String   @id @default(uuid())
-  calendarId String   @map("calendar_id")
-  calendar   Calendar @relation(fields: [calendarId], references: [id], onDelete: Cascade)
-  externalId String   @map("external_id")
-  title      String
-  start      DateTime
-  end        DateTime
-  isBusy     Boolean  @default(true) @map("is_busy")
-  isDeclined Boolean  @default(false) @map("is_declined")
-  isAllDay   Boolean  @default(false) @map("is_all_day")
-  colorId    String?  @map("color_id")
-  syncedAt   DateTime @default(now()) @map("synced_at")
+  id               String   @id @default(uuid())
+  calendarId       String   @map("calendar_id")
+  calendar         Calendar @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+  externalId       String   @map("external_id")
+  title            String
+  start            DateTime
+  end              DateTime
+  isBusy           Boolean  @default(true) @map("is_busy")
+  isDeclined       Boolean  @default(false) @map("is_declined")
+  isAllDay         Boolean  @default(false) @map("is_all_day")
+  colorId          String?  @map("color_id")
+  description      String?
+  location         String?
+  htmlLink         String?  @map("html_link")
+  hangoutLink      String?  @map("hangout_link")
+  visibility       String?
+  recurringEventId String?  @map("recurring_event_id")
+  recurrence       String[] @default([])
+  attendees        Json?
+  organizer        Json?
+  syncedAt         DateTime @default(now()) @map("synced_at")
 
   @@unique([calendarId, externalId])
   @@index([calendarId, start])

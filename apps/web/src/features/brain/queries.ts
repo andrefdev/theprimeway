@@ -83,6 +83,14 @@ export function useMergeConcepts() {
   })
 }
 
+export function useDeleteConcept() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => brainApi.deleteConcept(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: brainKeys.graph() }),
+  })
+}
+
 export function useReprocessBrainEntry() {
   const qc = useQueryClient()
   return useMutation({
@@ -90,6 +98,9 @@ export function useReprocessBrainEntry() {
     onSuccess: (entry) => {
       qc.invalidateQueries({ queryKey: brainKeys.feeds() })
       qc.invalidateQueries({ queryKey: brainKeys.entry(entry.id) })
+      // Reprocess clears old occurrences and re-extracts concepts — graph
+      // shape can change, so refresh it.
+      qc.invalidateQueries({ queryKey: brainKeys.graph() })
     },
   })
 }
@@ -106,7 +117,12 @@ export function useDeleteBrainEntry() {
     onError: (_e, _v, ctx) => {
       if (ctx?.snaps) rollbackQueries(qc, ctx.snaps)
     },
-    onSettled: () => qc.invalidateQueries({ queryKey: brainKeys.feeds() }),
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: brainKeys.feeds() })
+      // Deleting an entry may orphan its concepts (server soft-deletes them),
+      // so the cached graph view is now stale.
+      qc.invalidateQueries({ queryKey: brainKeys.graph() })
+    },
   })
 }
 

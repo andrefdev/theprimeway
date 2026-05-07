@@ -6,12 +6,10 @@ import { Text } from '@/shared/components/ui/text';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Icon } from '@/shared/components/ui/icon';
-import { Calendar, Clock, Sparkles, Target, X } from 'lucide-react-native';
+import { Calendar, Clock, Sparkles } from 'lucide-react-native';
 import { useCreateTask } from '../hooks/useTasks';
 import { cn } from '@/shared/utils/cn';
 import { format } from 'date-fns';
-import { GoalPickerSheet } from '@features/goals/components/GoalPickerSheet';
-import type { WeeklyGoal } from '@shared/types/models';
 import { VoiceInputButton } from '@features/ai/components/VoiceInputButton';
 
 const DURATIONS = [15, 30, 45, 60, 90, 120];
@@ -36,8 +34,6 @@ export function TaskFormSheet({ isOpen, onClose }: TaskFormSheetProps) {
   const [scheduledDate, setScheduledDate] = useState(todayStr);
   const [duration, setDuration] = useState(30);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [linkedGoal, setLinkedGoal] = useState<WeeklyGoal | null>(null);
-  const [showGoalPicker, setShowGoalPicker] = useState(false);
 
   const parsedDate = new Date(scheduledDate + 'T12:00:00');
 
@@ -52,13 +48,11 @@ export function TaskFormSheet({ isOpen, onClose }: TaskFormSheetProps) {
         estimatedDurationMinutes: duration,
         tags: [],
         isAllDay: false,
-        ...(linkedGoal ? { goalId: linkedGoal.id } : {}),
       } as any);
       setTitle('');
       setDescription('');
       setPriority('medium');
       setDuration(30);
-      setLinkedGoal(null);
       onClose();
     } catch {
       Alert.alert('Error', 'Could not create task');
@@ -172,31 +166,6 @@ export function TaskFormSheet({ isOpen, onClose }: TaskFormSheetProps) {
         onChangeText={setDescription}
       />
 
-      {/* Link to Goal */}
-      <View>
-        <Text className="mb-2 text-xs font-medium text-muted-foreground">Link to Goal</Text>
-        <Pressable
-          onPress={() => setShowGoalPicker(true)}
-          className="flex-row items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 active:opacity-70"
-        >
-          <Icon as={Target} size={16} className="text-muted-foreground" />
-          <Text className="flex-1 text-sm text-foreground" numberOfLines={1}>
-            {linkedGoal ? linkedGoal.title : 'Link a weekly goal (optional)'}
-          </Text>
-          {linkedGoal ? (
-            <Pressable
-              onPress={(e) => {
-                e.stopPropagation();
-                setLinkedGoal(null);
-              }}
-              hitSlop={8}
-            >
-              <Icon as={X} size={14} className="text-muted-foreground" />
-            </Pressable>
-          ) : null}
-        </Pressable>
-      </View>
-
       {/* Submit */}
       <Button className="h-12 rounded-xl" onPress={handleSubmit} disabled={createTask.isPending || !title.trim()}>
         {createTask.isPending ? (
@@ -205,13 +174,6 @@ export function TaskFormSheet({ isOpen, onClose }: TaskFormSheetProps) {
           <Text className="text-sm font-bold text-primary-foreground">Create Task</Text>
         )}
       </Button>
-
-      <GoalPickerSheet
-        isOpen={showGoalPicker}
-        onClose={() => setShowGoalPicker(false)}
-        selectedGoalId={linkedGoal?.id}
-        onSelect={(goal) => setLinkedGoal(goal)}
-      />
     </FormSheet>
   );
 }

@@ -4,13 +4,11 @@ import { FormSheet } from '@/shared/components/ui/form-sheet';
 import { Text } from '@/shared/components/ui/text';
 import { Button } from '@/shared/components/ui/button';
 import { Icon } from '@/shared/components/ui/icon';
-import { Trash2, Layers, X, Link2 } from 'lucide-react-native';
+import { Trash2, X, Link2 } from 'lucide-react-native';
 import { useUpdateHabit, useDeleteHabit, useHabits } from '../hooks/useHabits';
 import { getStackedHabitId, setStackedHabit, removeHabitFromStacks } from '../services/habitStacks';
 import { cn } from '@/shared/utils/cn';
 import type { HabitWithLogs } from '../types';
-import type { ThreeYearGoal } from '@shared/types/models';
-import { ThreeYearGoalPickerSheet } from '@features/goals/components/ThreeYearGoalPickerSheet';
 import { HabitAiInsights } from './HabitAiInsights';
 import { HabitHeatmap } from './HabitHeatmap';
 import { useTranslation } from '@/shared/hooks/useTranslation';
@@ -43,8 +41,6 @@ export function HabitEditSheet({ habit, isOpen, onClose }: HabitEditSheetProps) 
   const [name, setName] = useState('');
   const [category, setCategory] = useState('health');
   const [color, setColor] = useState('#280FFB');
-  const [linkedGoal, setLinkedGoal] = useState<ThreeYearGoal | null>(null);
-  const [showGoalPicker, setShowGoalPicker] = useState(false);
   const [stackedId, setStackedId] = useState<string | null>(null);
   const [showStackPicker, setShowStackPicker] = useState(false);
   const { data: allHabits } = useHabits();
@@ -54,7 +50,6 @@ export function HabitEditSheet({ habit, isOpen, onClose }: HabitEditSheetProps) 
       setName(habit.name);
       setCategory(habit.category ?? 'health');
       setColor(habit.color ?? '#280FFB');
-      setLinkedGoal(null);
       getStackedHabitId(habit.id).then(setStackedId);
     }
   }, [habit]);
@@ -68,7 +63,6 @@ export function HabitEditSheet({ habit, isOpen, onClose }: HabitEditSheetProps) 
           name: name.trim(),
           category,
           color,
-          ...(linkedGoal ? { goalId: linkedGoal.id } : {}),
         },
       });
       onClose();
@@ -134,31 +128,6 @@ export function HabitEditSheet({ habit, isOpen, onClose }: HabitEditSheetProps) 
             />
           ))}
         </View>
-      </View>
-
-      {/* Link to Goal */}
-      <View>
-        <Text className="mb-2 text-xs font-medium text-muted-foreground">{t('goalLink.title')}</Text>
-        <Pressable
-          onPress={() => setShowGoalPicker(true)}
-          className="flex-row items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 active:opacity-70"
-        >
-          <Icon as={Layers} size={16} className="text-muted-foreground" />
-          <Text className="flex-1 text-sm text-foreground" numberOfLines={1}>
-            {linkedGoal ? linkedGoal.title : t('goalLink.placeholder')}
-          </Text>
-          {linkedGoal ? (
-            <Pressable
-              onPress={(e) => {
-                e.stopPropagation();
-                setLinkedGoal(null);
-              }}
-              hitSlop={8}
-            >
-              <Icon as={X} size={14} className="text-muted-foreground" />
-            </Pressable>
-          ) : null}
-        </Pressable>
       </View>
 
       {/* Habit Stack */}
@@ -256,13 +225,6 @@ export function HabitEditSheet({ habit, isOpen, onClose }: HabitEditSheetProps) 
         <Icon as={Trash2} size={16} className="text-destructive" />
         <Text className="text-sm font-medium text-destructive">{t('actions.delete')}</Text>
       </Button>
-
-      <ThreeYearGoalPickerSheet
-        isOpen={showGoalPicker}
-        onClose={() => setShowGoalPicker(false)}
-        selectedGoalId={linkedGoal?.id}
-        onSelect={(goal) => setLinkedGoal(goal)}
-      />
     </FormSheet>
   );
 }

@@ -23,10 +23,28 @@ calendarRoutes.post('/google/webhook', async (c) => {
     c.req.header('x-goog-resource-state') || c.req.header('X-Goog-Resource-State')
   const token = c.req.header('x-goog-channel-token') || c.req.header('X-Goog-Channel-Token')
 
-  await calendarService
-    .handleWatchNotification({ channelId, resourceId, resourceState, token })
-    .catch((err) => console.error('[CAL_WEBHOOK]', err))
+  try {
+    const result = await calendarService.handleWatchNotification({
+      channelId,
+      resourceId,
+      resourceState,
+      token,
+    })
+    if (!result.ok) {
+      console.warn('[CAL_WEBHOOK] handle returned not-ok', {
+        channelId,
+        resourceState,
+        reason: result.reason,
+      })
+    } else {
+      console.log('[CAL_WEBHOOK] processed', { channelId, resourceState })
+    }
+  } catch (err) {
+    console.error('[CAL_WEBHOOK] exception', { channelId, resourceState, err })
+  }
 
+  // Always 200: Google retries on 5xx and we don't want it pounding us when
+  // the failure is permanent on our side. Errors land in logs above.
   return c.body(null, 200)
 })
 
@@ -450,6 +468,28 @@ calendarRoutes.openapi(syncRoute, async (c) => {
   const calendarId = body.calendarId || body.calendar_id
   const result = await calendarService.syncCalendars(userId, calendarId)
   return c.json(result, 200)
+})
+
+// ---------------------------------------------------------------------------
+// POST /resubscribe — Recreate Google watch channels for the user's selected
+// calendars. Idempotent: keeps healthy channels (have syncToken + not expired)
+// and only rebuilds the broken ones.
+// ---------------------------------------------------------------------------
+const resubscribeRoute = createRoute({
+  method: 'post',
+  path: '/resubscribe',
+  tags: ['Calendar'],
+  summary: 'Re-subscribe Google push notification channels for this user',
+  security: [{ Bearer: [] }],
+  responses: {
+    200: { content: { 'application/json': { schema: z.any() } }, description: 'Resubscribe result' },
+  },
+})
+
+calendarRoutes.openapi(resubscribeRoute, async (c) => {
+  const userId = c.get('user').userId
+  const result = await calendarService.resubscribeWatchChannelsForUser(userId)
+  return c.json({ data: result }, 200)
 })
 
 // ---------------------------------------------------------------------------

@@ -5,12 +5,11 @@ import { FormSheet } from '@/shared/components/ui/form-sheet';
 import { Text } from '@/shared/components/ui/text';
 import { Button } from '@/shared/components/ui/button';
 import { Icon } from '@/shared/components/ui/icon';
-import { Calendar, Clock, Trash2, Target, X } from 'lucide-react-native';
+import { Calendar, Clock, Trash2 } from 'lucide-react-native';
 import { useUpdateTask, useDeleteTask } from '../hooks/useTasks';
 import { cn } from '@/shared/utils/cn';
 import { format } from 'date-fns';
-import type { Task, WeeklyGoal } from '@shared/types/models';
-import { GoalPickerSheet } from '@features/goals/components/GoalPickerSheet';
+import type { Task } from '@shared/types/models';
 import { SubtaskList } from './SubtaskList';
 import { deleteAllSubtasks } from '../services/localSubtasks';
 
@@ -37,8 +36,6 @@ export function TaskEditSheet({ task, isOpen, onClose }: TaskEditSheetProps) {
   const [scheduledDate, setScheduledDate] = useState('');
   const [duration, setDuration] = useState(30);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [linkedGoal, setLinkedGoal] = useState<WeeklyGoal | null>(null);
-  const [showGoalPicker, setShowGoalPicker] = useState(false);
 
   useEffect(() => {
     if (task) {
@@ -47,8 +44,6 @@ export function TaskEditSheet({ task, isOpen, onClose }: TaskEditSheetProps) {
       setPriority(task.priority);
       setScheduledDate(task.scheduledDate?.split('T')[0] ?? format(new Date(), 'yyyy-MM-dd'));
       setDuration(task.estimatedDurationMinutes ?? 30);
-      // Reset linked goal when task changes (no goalId on Task type yet)
-      setLinkedGoal(null);
     }
   }, [task]);
 
@@ -65,7 +60,6 @@ export function TaskEditSheet({ task, isOpen, onClose }: TaskEditSheetProps) {
           priority,
           scheduledDate,
           estimatedDurationMinutes: duration,
-          ...(linkedGoal ? { goalId: linkedGoal.id } : {}),
         } as any,
       });
       onClose();
@@ -168,31 +162,6 @@ export function TaskEditSheet({ task, isOpen, onClose }: TaskEditSheetProps) {
         onChangeText={setDescription}
       />
 
-      {/* Link to Goal */}
-      <View>
-        <Text className="mb-2 text-xs font-medium text-muted-foreground">Link to Goal</Text>
-        <Pressable
-          onPress={() => setShowGoalPicker(true)}
-          className="flex-row items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 active:opacity-70"
-        >
-          <Icon as={Target} size={16} className="text-muted-foreground" />
-          <Text className="flex-1 text-sm text-foreground" numberOfLines={1}>
-            {linkedGoal ? linkedGoal.title : 'Link a weekly goal (optional)'}
-          </Text>
-          {linkedGoal ? (
-            <Pressable
-              onPress={(e) => {
-                e.stopPropagation();
-                setLinkedGoal(null);
-              }}
-              hitSlop={8}
-            >
-              <Icon as={X} size={14} className="text-muted-foreground" />
-            </Pressable>
-          ) : null}
-        </Pressable>
-      </View>
-
       {/* Subtasks */}
       {task && <SubtaskList taskId={task.id} />}
 
@@ -208,13 +177,6 @@ export function TaskEditSheet({ task, isOpen, onClose }: TaskEditSheetProps) {
         <Icon as={Trash2} size={16} className="text-destructive" />
         <Text className="text-sm font-medium text-destructive">Delete Task</Text>
       </Button>
-
-      <GoalPickerSheet
-        isOpen={showGoalPicker}
-        onClose={() => setShowGoalPicker(false)}
-        selectedGoalId={linkedGoal?.id}
-        onSelect={(goal) => setLinkedGoal(goal)}
-      />
     </FormSheet>
   );
 }

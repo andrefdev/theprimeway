@@ -68,6 +68,16 @@ export function useSyncCalendar() {
   })
 }
 
+export function useResubscribeCalendar() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: () => calendarApi.resubscribe(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: calendarQueries.all() })
+    },
+  })
+}
+
 export function useUpdateCalendar() {
   const queryClient = useQueryClient()
   return useMutation({

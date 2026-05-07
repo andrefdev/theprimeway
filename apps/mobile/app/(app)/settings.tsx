@@ -13,7 +13,6 @@ import {
   Clock,
   DollarSign,
   Bell,
-  Shield,
   Trash2,
   ChevronRight,
   Search,
@@ -243,7 +242,6 @@ function TimezonePickerModal({
 
 export default function SettingsScreen() {
   const { t } = useTranslation('features.settings');
-  const { t: tSub } = useTranslation('features.subscription');
   const settings = useSettingsStore();
   const { toggleColorScheme, colorScheme } = useColorScheme();
   const [timezonePickerOpen, setTimezonePickerOpen] = useState(false);
@@ -337,21 +335,6 @@ export default function SettingsScreen() {
           <Card>
             <CardContent className="gap-0 p-0">
               <BiometricToggleRow />
-            </CardContent>
-          </Card>
-        </Animated.View>
-
-        {/* Subscription */}
-        <Animated.View entering={FadeInDown.delay(100).duration(300)}>
-          <SectionTitle title={tSub('title')} />
-          <Card>
-            <CardContent className="gap-0 p-0">
-              <SettingRow
-                icon={Shield}
-                label={tSub('title')}
-                showChevron
-                onPress={() => router.push('/(app)/subscription')}
-              />
             </CardContent>
           </Card>
         </Animated.View>

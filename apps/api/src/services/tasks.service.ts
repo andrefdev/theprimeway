@@ -15,7 +15,13 @@ import { syncService } from './sync.service'
 import { webhooksService } from './webhooks.service'
 import { schedulingFacade } from './scheduling/scheduling-facade'
 import { collectBusyBlocks, computeGaps, getDayWindow, dt } from './scheduling/gap-finder'
-import { ymdToLocalDayUtc } from '@repo/shared/utils'
+import {
+  ymdToLocalDayUtc,
+  startOfLocalDayUtc,
+  localYmd,
+  localTimeToUtc,
+  formatInTz,
+} from '@repo/shared/utils'
 import { enforceLimit } from '../lib/limits'
 import { FEATURES } from '@repo/shared/constants'
 import { prisma } from '../lib/prisma'
@@ -23,7 +29,92 @@ import type { Task } from '@prisma/client'
 import { generateObject } from 'ai'
 import { taskModel, fastModel } from '../lib/ai-models'
 import { z } from 'zod'
-import { startOfLocalDayUtc } from '@repo/shared/utils'
+
+async function getUserTz(userId: string): Promise<string> {
+  const settings = await prisma.userSettings.findUnique({
+    where: { userId },
+    select: { timezone: true },
+  })
+  return settings?.timezone ?? 'UTC'
+}
+
+/**
+ * Reconcile scheduledDate / scheduledStart / scheduledEnd in an update payload
+ * so they never diverge after persistence. The invariant: when scheduledStart
+ * is set, scheduledDate equals its local YYYY-MM-DD in the user's tz.
+ *
+ * Rules:
+ *  - If scheduledStart actually changed (vs current task), it wins; scheduledDate
+ *    is recomputed from it and any submitted scheduledDate is ignored.
+ *  - Else if scheduledDate actually changed, the existing scheduledStart/End are
+ *    re-anchored onto the new day preserving the time-of-day.
+ *  - Else (neither changed) leave the data alone — the form may resubmit
+ *    unchanged values.
+ *
+ * Re-anchoring Task fields is a mirror update; it does NOT move existing
+ * WorkingSessions. Drag/drop scheduling should still go through
+ * SchedulingFacade.moveSession.
+ */
+async function reconcileScheduledFields(
+  data: Record<string, any>,
+  currentTask: { scheduledStart: Date | null; scheduledEnd: Date | null; scheduledDate: Date | null },
+  userId: string,
+) {
+  const hasStart = 'scheduledStart' in data
+  const hasDate = 'scheduledDate' in data
+
+  if (!hasStart && !hasDate) return
+
+  const tz = await getUserTz(userId)
+
+  const newStartIso = hasStart ? data.scheduledStart : undefined
+  const newDateIso = hasDate ? data.scheduledDate : undefined
+
+  const startInputDate = newStartIso ? new Date(newStartIso) : null
+  const dateInputDate = newDateIso ? new Date(newDateIso) : null
+
+  const startUnchanged =
+    !hasStart ||
+    (startInputDate?.getTime() ?? null) === (currentTask.scheduledStart?.getTime() ?? null)
+  const dateUnchanged =
+    !hasDate ||
+    (dateInputDate?.getTime() ?? null) === (currentTask.scheduledDate?.getTime() ?? null)
+
+  if (!startUnchanged) {
+    // scheduledStart wins.
+    if (startInputDate) {
+      data.scheduledDate = startOfLocalDayUtc(startInputDate, tz)
+    } else {
+      // start cleared
+      if (!dateUnchanged && dateInputDate) {
+        // User cleared start and set a new bucket date — keep the bucket date.
+        data.scheduledDate = dateInputDate
+      } else if (dateUnchanged) {
+        data.scheduledDate = null
+      }
+    }
+    return
+  }
+
+  if (!dateUnchanged) {
+    // Only scheduledDate changed; re-anchor start/end to the new day.
+    if (dateInputDate && currentTask.scheduledStart) {
+      const anchor = ymdToLocalDayUtc(localYmd(dateInputDate, tz), tz)
+      const startHm = formatInTz(currentTask.scheduledStart, tz, 'HH:mm')
+      data.scheduledStart = localTimeToUtc(anchor, startHm, tz)
+      if (currentTask.scheduledEnd) {
+        const endHm = formatInTz(currentTask.scheduledEnd, tz, 'HH:mm')
+        data.scheduledEnd = localTimeToUtc(anchor, endHm, tz)
+      }
+      data.scheduledDate = startOfLocalDayUtc(anchor, tz)
+    } else if (!dateInputDate) {
+      // Date cleared — drop start/end too.
+      data.scheduledStart = null
+      data.scheduledEnd = null
+    }
+    // If task had no scheduledStart, dateInputDate stands as bucket date.
+  }
+}
 
 type TaskModel = Task & { weeklyGoal?: unknown }
 
@@ -235,6 +326,13 @@ class TasksService {
       data.scheduledEnd = null
     }
 
+    // On create, if scheduledStart is set, derive scheduledDate from it so the
+    // two never disagree (today filter is keyed on scheduledDate).
+    if (data.scheduledStart) {
+      const tz = await getUserTz(userId)
+      data.scheduledDate = startOfLocalDayUtc(new Date(data.scheduledStart), tz)
+    }
+
     console.log('📥 TasksService.createTask - data to be saved:', data)
     let task = await tasksRepository.create(userId, data)
 
@@ -312,6 +410,16 @@ class TasksService {
       data.scheduledStart = null
       data.scheduledEnd = null
     }
+
+    await reconcileScheduledFields(
+      data,
+      {
+        scheduledStart: currentTask.scheduledStart ?? null,
+        scheduledEnd: currentTask.scheduledEnd ?? null,
+        scheduledDate: currentTask.scheduledDate ?? null,
+      },
+      userId,
+    )
 
     const updatedTask = await tasksRepository.update(userId, taskId, data)
 

@@ -82,7 +82,10 @@
     "resetFocus": "Reset focus",
     "focusPanel": {
       "merge": "Merge into…",
-      "close": "Close"
+      "close": "Close",
+      "delete": "Delete concept",
+      "deleteConfirm": "Delete \"{{name}}\"? It will be permanently removed from the graph along with all its connections. If you mention it again in a new entry, a fresh concept will be created.",
+      "deleteError": "Could not delete this concept"
     },
     "merge": {
       "title": "Merge concepts",

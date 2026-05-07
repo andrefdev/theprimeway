@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { localTimeToUtc } from '@repo/shared/utils'
+import { localTimeToUtc, formatInTz } from '@repo/shared/utils'
 import { useUserTimezone } from '@/features/settings/hooks/use-user-timezone'
 import { tasksQueries, useUpdateTask, useDeleteTask } from '@/features/tasks/queries'
 import { TaskFullDialog, TaskQuickDialog } from '@/features/tasks/components/dialogs'
@@ -249,19 +249,34 @@ export function TasksToday() {
       const target = openTasks.find((x) => x.id === overData.taskId)
       if (!target) return
       const duration = task.estimatedDuration ?? 30
+      // Anchor the target's time-of-day (in user TZ) onto the visible day so
+      // reorder never crosses days, even if the target's session is split or
+      // its mirror is stale.
+      const anchorTimeOnDay = (utcInstant: Date): Date =>
+        localTimeToUtc(day, formatInTz(utcInstant, tz, 'HH:mm'), tz)
+      const DURATION_MS = duration * 60_000
+      const dayStartUtc = localTimeToUtc(day, fmtHour(dayBounds.startHour), tz)
+      const dayEndUtc = localTimeToUtc(day, fmtHour(dayBounds.endHour), tz)
       let start: Date
       if (target.scheduledEnd) {
-        start = new Date(target.scheduledEnd)
+        start = anchorTimeOnDay(new Date(target.scheduledEnd))
       } else if (target.scheduledStart) {
         const targetDur = target.estimatedDuration ?? 30
-        start = new Date(new Date(target.scheduledStart).getTime() + targetDur * 60_000)
+        const computed = new Date(
+          new Date(target.scheduledStart).getTime() + targetDur * 60_000,
+        )
+        start = anchorTimeOnDay(computed)
       } else {
-        const [h, m] = fmtHour(dayBounds.startHour).split(':').map(Number)
-        const base = new Date(day)
-        base.setHours(h ?? 9, m ?? 0, 0, 0)
-        start = base
+        start = dayStartUtc
       }
-      const end = new Date(start.getTime() + duration * 60_000)
+      if (start.getTime() < dayStartUtc.getTime()) {
+        start = dayStartUtc
+      } else if (start.getTime() + DURATION_MS > dayEndUtc.getTime()) {
+        start = new Date(
+          Math.max(dayStartUtc.getTime(), dayEndUtc.getTime() - DURATION_MS),
+        )
+      }
+      const end = new Date(start.getTime() + DURATION_MS)
       await placeTaskAt(taskId, start, end)
     }
   }

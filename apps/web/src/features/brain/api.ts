@@ -36,4 +36,7 @@ export const brainApi = {
         { sourceId, targetId },
       )
       .then((r) => r.data.data),
+
+  deleteConcept: (id: string) =>
+    api.delete<{ data: { id: string } }>(`/brain/concepts/${id}`).then((r) => r.data.data),
 }

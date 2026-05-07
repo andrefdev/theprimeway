@@ -10,6 +10,7 @@ import {
   calendarQueries,
   useUpdateCalendar,
   useDeleteCalendarAccount,
+  useResubscribeCalendar,
 } from '../queries'
 
 export function GoogleCalendarSettings() {
@@ -17,6 +18,23 @@ export function GoogleCalendarSettings() {
   const { data: accounts, isLoading } = useQuery(calendarQueries.accounts())
   const updateCalendar = useUpdateCalendar()
   const deleteAccount = useDeleteCalendarAccount()
+  const resubscribe = useResubscribeCalendar()
+
+  async function handleResubscribe() {
+    try {
+      const r = await resubscribe.mutateAsync()
+      const msg = t('googleCal.resubscribed', {
+        defaultValue: 'Notifications reactivated: {{recreated}} new, {{kept}} kept, {{failed}} failed',
+        recreated: r.recreated,
+        kept: r.kept,
+        failed: r.failed,
+      })
+      if (r.failed > 0) toast.warning(msg)
+      else toast.success(msg)
+    } catch {
+      toast.error(t('googleCal.resubscribeFailed', { defaultValue: 'Could not reactivate notifications' }))
+    }
+  }
 
   async function handleConnect() {
     try {
@@ -47,11 +65,25 @@ export function GoogleCalendarSettings() {
               })}
             </p>
           </div>
-          <Button onClick={handleConnect} size="sm">
-            {googleAccounts.length > 0
-              ? t('googleCal.addAnother', { defaultValue: 'Add account' })
-              : t('googleCal.connect', { defaultValue: 'Connect' })}
-          </Button>
+          <div className="flex items-center gap-2">
+            {googleAccounts.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleResubscribe}
+                disabled={resubscribe.isPending}
+              >
+                {resubscribe.isPending
+                  ? t('googleCal.resubscribing', { defaultValue: 'Reactivating…' })
+                  : t('googleCal.resubscribe', { defaultValue: 'Reactivate sync' })}
+              </Button>
+            )}
+            <Button onClick={handleConnect} size="sm">
+              {googleAccounts.length > 0
+                ? t('googleCal.addAnother', { defaultValue: 'Add account' })
+                : t('googleCal.connect', { defaultValue: 'Connect' })}
+            </Button>
+          </div>
         </div>
 
         {isLoading ? (

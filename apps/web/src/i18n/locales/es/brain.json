@@ -82,7 +82,10 @@
     "resetFocus": "Quitar foco",
     "focusPanel": {
       "merge": "Fusionar con…",
-      "close": "Cerrar"
+      "close": "Cerrar",
+      "delete": "Borrar concepto",
+      "deleteConfirm": "¿Borrar «{{name}}»? Se eliminará permanentemente del grafo junto con todas sus conexiones. Si lo mencionas en una nueva entrada, se creará un concepto nuevo.",
+      "deleteError": "No se pudo borrar este concepto"
     },
     "merge": {
       "title": "Fusionar conceptos",

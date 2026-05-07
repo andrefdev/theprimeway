@@ -168,6 +168,11 @@ export const calendarApi = {
 
   sync: () => api.post<{ success?: boolean }>('/calendar/sync').then((r) => r.data),
 
+  resubscribe: () =>
+    api
+      .post<{ data: { recreated: number; kept: number; failed: number } }>('/calendar/resubscribe')
+      .then((r) => r.data.data),
+
   createTimeBlock: (input: CreateTimeBlockInput) =>
     api
       .post<{ data: CreateTimeBlockResult }>('/calendar/time-block', input)

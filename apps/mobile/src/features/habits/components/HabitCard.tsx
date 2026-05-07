@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Text } from '@/shared/components/ui/text';
 import { Icon } from '@/shared/components/ui/icon';
@@ -15,6 +15,7 @@ import Animated, {
   withSequence,
   withTiming,
   withRepeat,
+  cancelAnimation,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import type { HabitWithLogs } from '../types';
@@ -38,16 +39,25 @@ function getStreakColor(streak: number): string {
 function AnimatedStreak({ streak }: { streak: number }) {
   const pulseScale = useSharedValue(1);
 
-  if (streak >= 7) {
-    pulseScale.value = withRepeat(
-      withSequence(
-        withTiming(1.1, { duration: 1000 }),
-        withTiming(1, { duration: 1000 })
-      ),
-      -1,
-      true
-    );
-  }
+  useEffect(() => {
+    if (streak >= 7) {
+      pulseScale.value = withRepeat(
+        withSequence(
+          withTiming(1.1, { duration: 1000 }),
+          withTiming(1, { duration: 1000 })
+        ),
+        -1,
+        true
+      );
+    } else {
+      pulseScale.value = withTiming(1, { duration: 150 });
+    }
+
+    return () => {
+      cancelAnimation(pulseScale);
+      pulseScale.value = 1;
+    };
+  }, [pulseScale, streak]);
 
   const iconStyle = useAnimatedStyle(() => ({
     transform: [{ scale: pulseScale.value }],

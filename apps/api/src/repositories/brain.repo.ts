@@ -106,55 +106,71 @@ class BrainRepository {
         data: { deletedAt: new Date() },
       })
       if (r.count === 0) return false
-
-      // Cascade-cleanup the concept graph: drop occurrences from this entry,
-      // soft-delete concepts whose last occurrence we just removed, and
-      // decrement mentionCount for the survivors. Edges to soft-deleted
-      // concepts stay physically — graph reads filter both endpoints.
-      const occurrences = await tx.brainConceptOccurrence.findMany({
-        where: { entryId: id },
-        select: { conceptId: true },
-      })
-      if (occurrences.length === 0) return true
-
-      const affectedConceptIds = Array.from(new Set(occurrences.map((o) => o.conceptId)))
-      await tx.brainConceptOccurrence.deleteMany({ where: { entryId: id } })
-
-      const survivors = await tx.brainConceptOccurrence.groupBy({
-        by: ['conceptId'],
-        where: { conceptId: { in: affectedConceptIds } },
-      })
-      const survivingIds = new Set(survivors.map((s) => s.conceptId))
-      const orphanedIds = affectedConceptIds.filter((cid) => !survivingIds.has(cid))
-
-      if (orphanedIds.length > 0) {
-        await tx.brainConcept.updateMany({
-          where: { id: { in: orphanedIds }, userId },
-          data: { deletedAt: new Date() },
-        })
-      }
-      if (survivingIds.size > 0) {
-        await tx.brainConcept.updateMany({
-          where: { id: { in: Array.from(survivingIds) }, userId },
-          data: { mentionCount: { decrement: 1 } },
-        })
-      }
-
+      await this.cleanupEntryConcepts(tx, id, userId)
       return true
     })
   }
 
   async resetToPending(id: string, userId: string) {
-    const r = await prisma.brainEntry.updateMany({
-      where: { id, userId, deletedAt: null },
-      data: {
-        status: 'pending',
-        errorMessage: null,
-        processedAt: null,
-      },
+    return prisma.$transaction(async (tx) => {
+      const r = await tx.brainEntry.updateMany({
+        where: { id, userId, deletedAt: null },
+        data: {
+          status: 'pending',
+          errorMessage: null,
+          processedAt: null,
+        },
+      })
+      if (r.count === 0) return null
+      // Drop occurrences from the previous extraction so the upcoming pipeline
+      // run starts clean. Concepts whose only mention was in this entry get
+      // soft-deleted now and will revive automatically if the new extraction
+      // picks them up again (resolveConcepts handles revival by exact name).
+      await this.cleanupEntryConcepts(tx, id, userId)
+      return tx.brainEntry.findUnique({ where: { id } })
     })
-    if (r.count === 0) return null
-    return prisma.brainEntry.findUnique({ where: { id } })
+  }
+
+  /**
+   * Drop all BrainConceptOccurrence rows for `entryId` and reconcile the
+   * affected concepts: orphans (no remaining occurrences) get soft-deleted,
+   * survivors get `mentionCount` decremented. Edges are not touched; reads
+   * filter to alive↔alive endpoints. Pure helper, expects to run inside an
+   * existing transaction.
+   */
+  private async cleanupEntryConcepts(
+    tx: Prisma.TransactionClient,
+    entryId: string,
+    userId: string,
+  ): Promise<void> {
+    const occurrences = await tx.brainConceptOccurrence.findMany({
+      where: { entryId },
+      select: { conceptId: true },
+    })
+    if (occurrences.length === 0) return
+
+    const affectedConceptIds = Array.from(new Set(occurrences.map((o) => o.conceptId)))
+    await tx.brainConceptOccurrence.deleteMany({ where: { entryId } })
+
+    const survivors = await tx.brainConceptOccurrence.groupBy({
+      by: ['conceptId'],
+      where: { conceptId: { in: affectedConceptIds } },
+    })
+    const survivingIds = new Set(survivors.map((s) => s.conceptId))
+    const orphanedIds = affectedConceptIds.filter((cid) => !survivingIds.has(cid))
+
+    if (orphanedIds.length > 0) {
+      await tx.brainConcept.updateMany({
+        where: { id: { in: orphanedIds }, userId },
+        data: { deletedAt: new Date() },
+      })
+    }
+    if (survivingIds.size > 0) {
+      await tx.brainConcept.updateMany({
+        where: { id: { in: Array.from(survivingIds) }, userId },
+        data: { mentionCount: { decrement: 1 } },
+      })
+    }
   }
 
   createCrossLinks(entryId: string, userId: string, links: CrossLinkInput[]) {

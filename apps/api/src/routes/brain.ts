@@ -3,7 +3,12 @@ import { authMiddleware } from '../middleware/auth'
 import { requireFeature } from '../middleware/feature-gate'
 import { FEATURES } from '@repo/shared/constants'
 import { brainService } from '../services/brain.service'
-import { brainGraphService, BrainGraphFeatureError, ConceptMergeError } from '../services/brain-graph.service'
+import {
+  brainGraphService,
+  BrainGraphFeatureError,
+  ConceptMergeError,
+  ConceptDeleteError,
+} from '../services/brain-graph.service'
 
 export const brainRoutes = new OpenAPIHono()
 
@@ -119,6 +124,25 @@ graphRoutes.post('/concepts/merge', async (c) => {
     }
     if (err instanceof ConceptMergeError) {
       const status = err.code === 'NOT_FOUND' ? 404 : 400
+      return c.json({ error: err.code }, status)
+    }
+    throw err
+  }
+})
+
+// DELETE /api/brain/concepts/:id — user-initiated concept removal from the graph.
+graphRoutes.delete('/concepts/:id', async (c) => {
+  const userId = (c as any).get('user').userId
+  const conceptId = c.req.param('id')
+  try {
+    const data = await brainGraphService.deleteConcept(userId, conceptId)
+    return c.json({ data })
+  } catch (err) {
+    if (err instanceof BrainGraphFeatureError) {
+      return c.json({ error: err.code }, 403)
+    }
+    if (err instanceof ConceptDeleteError) {
+      const status = err.code === 'NOT_FOUND' ? 404 : 409
       return c.json({ error: err.code }, status)
     }
     throw err

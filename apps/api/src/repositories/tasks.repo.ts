@@ -11,7 +11,7 @@
  * Writes that set `weeklyGoalId` are translated to TaskGoal upsert/delete.
  */
 import { prisma } from '../lib/prisma'
-import { endOfLocalDayUtc, startOfLocalDayUtc } from '@repo/shared/utils'
+import { endOfLocalDayUtc, startOfLocalDayUtc, ymdToLocalDayUtc } from '@repo/shared/utils'
 
 async function getUserTz(userId: string): Promise<string> {
   const settings = await prisma.userSettings.findUnique({
@@ -121,8 +121,10 @@ class TasksRepository {
   }
 
   async findTodaysTasks(userId: string, todayISO: string) {
-    const dayStart = new Date(`${todayISO}T00:00:00.000Z`)
-    const dayEnd = new Date(`${todayISO}T23:59:59.999Z`)
+    const tz = await getUserTz(userId)
+    const anchor = ymdToLocalDayUtc(todayISO, tz)
+    const dayStart = startOfLocalDayUtc(anchor, tz)
+    const dayEnd = endOfLocalDayUtc(anchor, tz)
     const tasks = await prisma.task.findMany({
       where: {
         userId,

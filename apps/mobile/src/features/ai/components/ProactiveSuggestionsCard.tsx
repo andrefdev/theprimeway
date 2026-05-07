@@ -10,7 +10,6 @@ import { IconCircle } from '@/shared/components/ui/icon-circle';
 import { cn } from '@/shared/utils/cn';
 import { useTasks, useUpdateTask } from '@/features/tasks/hooks/useTasks';
 import { useHabits, useHabitStats, useLogHabit } from '@/features/habits/hooks/useHabits';
-import { usePomodoroSessions } from '@/features/pomodoro/hooks/usePomodoro';
 import {
   buildSuggestions,
   dismissSuggestion,
@@ -39,7 +38,6 @@ export function ProactiveSuggestionsCard() {
   const { data: tasks } = useTasks({ date: todayStr });
   const { data: habits } = useHabits();
   const { data: habitStats } = useHabitStats();
-  const { data: pomodoroSessions } = usePomodoroSessions();
   const updateTask = useUpdateTask();
   const logHabit = useLogHabit();
 
@@ -48,15 +46,6 @@ export function ProactiveSuggestionsCard() {
   useEffect(() => {
     loadDismissed().then(setDismissed);
   }, []);
-
-  const pomodoroSessionsToday = useMemo(() => {
-    if (!Array.isArray(pomodoroSessions)) return 0;
-    return pomodoroSessions.filter((s: any) => {
-      const d = s.startedAt || s.started_at || s.createdAt || s.created_at;
-      if (!d) return false;
-      return String(d).split('T')[0] === todayStr;
-    }).length;
-  }, [pomodoroSessions, todayStr]);
 
   const habitStreaks = useMemo(() => {
     const s: any = habitStats;
@@ -76,10 +65,9 @@ export function ProactiveSuggestionsCard() {
       tasks: Array.isArray(tasks) ? tasks : [],
       habits: Array.isArray(habits) ? habits : [],
       habitStreaks,
-      pomodoroSessionsToday,
       hour,
     }).filter((s) => !dismissed.has(s.id)).slice(0, 2);
-  }, [tasks, habits, habitStreaks, pomodoroSessionsToday, dismissed]);
+  }, [tasks, habits, habitStreaks, dismissed]);
 
   const handleAction = useCallback((s: Suggestion) => {
     if (s.action.kind === 'navigate') {
