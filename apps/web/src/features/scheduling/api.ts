@@ -34,6 +34,16 @@ export interface MoveSessionResult {
   commandId: string
 }
 
+export interface PlaceSessionInput {
+  taskId: string
+  /** ISO datetime — anchor for the placement. */
+  preferredStart: string
+  /** Override the task's default duration in minutes. */
+  duration?: number
+  /** If true, return Overcommitted instead of splitting across busy blocks. */
+  preventSplit?: boolean
+}
+
 export interface DeconflictInput {
   sessionId: string
 }
@@ -74,6 +84,13 @@ export const schedulingApi = {
   moveSession: (input: MoveSessionInput, idempotencyKey?: string) =>
     api
       .post<{ data: MoveSessionResult }>('/scheduling/sessions/move', input, {
+        headers: idemHeaders(idempotencyKey),
+      })
+      .then((r) => r.data.data),
+
+  placeSession: (input: PlaceSessionInput, idempotencyKey?: string) =>
+    api
+      .post<{ data: SchedulingResult }>('/scheduling/sessions/place', input, {
         headers: idemHeaders(idempotencyKey),
       })
       .then((r) => r.data.data),

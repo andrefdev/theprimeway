@@ -5,6 +5,7 @@ import type { AppEnv } from '../types/env'
 import { authMiddleware } from '../middleware/auth'
 import { schedulingFacade } from '../services/scheduling/scheduling-facade'
 import { commandManager } from '../services/scheduling/CommandManager'
+import { prisma } from '../lib/prisma'
 
 export const schedulingRoutes = new OpenAPIHono<AppEnv>()
 schedulingRoutes.use('*', authMiddleware)
@@ -50,6 +51,13 @@ const moveSessionBody = z.object({
   start: z.string(),
   end: z.string(),
   deconflict: z.boolean().optional(),
+})
+
+const placeSessionBody = z.object({
+  taskId: z.string(),
+  preferredStart: z.string(),
+  duration: z.number().int().positive().optional(),
+  preventSplit: z.boolean().optional(),
 })
 
 schedulingRoutes.post('/auto-schedule', async (c) => {
@@ -126,6 +134,51 @@ schedulingRoutes.post('/sessions/move', async (c) => {
       { deconflict: doDeconflict, idempotencyKey: idem.key },
     )
     return c.json({ data: { session: r.session, commandId: r.commandId } })
+  } catch (err) {
+    if (idem.key && /idempotency_key|Unique constraint/i.test((err as Error).message)) {
+      const existing = await commandManager.findByIdempotencyKey(userId, idem.key)
+      const cached = (existing?.payload as any)?.result
+      if (cached !== undefined) return c.json({ data: cached, replayed: true })
+    }
+    return c.json({ error: (err as Error).message }, 400)
+  }
+})
+
+/**
+ * Place a task at a preferred slot, splitting around obstacles when the slot
+ * collides with calendar events or other sessions. Returns 1+ sessions.
+ *
+ * `duration` is optional — defaults to the task's estimatedDurationMinutes
+ * (or plannedTimeMinutes, or 30) if absent.
+ */
+schedulingRoutes.post('/sessions/place', async (c) => {
+  const userId = (c.get('user') as any).userId as string
+  const parse = placeSessionBody.safeParse(await c.req.json())
+  if (!parse.success) return c.json({ error: parse.error.message }, 400)
+  const { taskId, preferredStart, duration, preventSplit } = parse.data
+  const startDate = new Date(preferredStart)
+  if (Number.isNaN(startDate.getTime())) return c.json({ error: 'invalid date' }, 400)
+
+  const idem = await resolveIdempotency(c, userId)
+  if (idem.replay) return idem.replay
+
+  // Resolve the duration up-front so the facade has a concrete number.
+  let durMin = duration
+  if (!durMin) {
+    const t = await prisma.task.findFirst({
+      where: { id: taskId, userId },
+      select: { estimatedDurationMinutes: true, plannedTimeMinutes: true },
+    })
+    if (!t) return c.json({ error: 'task not found' }, 404)
+    durMin = t.estimatedDurationMinutes ?? t.plannedTimeMinutes ?? 30
+  }
+
+  try {
+    const result = await schedulingFacade.placeTask(taskId, startDate, durMin, {
+      preventSplit,
+      idempotencyKey: idem.key,
+    })
+    return c.json({ data: result })
   } catch (err) {
     if (idem.key && /idempotency_key|Unique constraint/i.test((err as Error).message)) {
       const existing = await commandManager.findByIdempotencyKey(userId, idem.key)

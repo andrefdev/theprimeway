@@ -24,6 +24,7 @@ import {
   useUpsertWorkingHoursOverride,
   useAutoSchedule,
   useMoveSession,
+  usePlaceTask,
 } from '@/features/scheduling/queries'
 import { useEffectiveDayBounds } from '@/features/scheduling/hooks/use-effective-day-bounds'
 import { useRitualsToday } from '@/features/rituals/queries'
@@ -71,6 +72,7 @@ export function TasksToday() {
   const showImpact = useCompletionImpact()
   const autoSchedule = useAutoSchedule()
   const moveSession = useMoveSession()
+  const placeTask = usePlaceTask()
   const dayBounds = useEffectiveDayBounds(dayKey)
   const upsertOverride = useUpsertWorkingHoursOverride()
   const tz = useUserTimezone()
@@ -211,10 +213,19 @@ export function TasksToday() {
     const existing = calendarItems.find(
       (i) => i.type === 'session' && i.task?.id === taskId,
     )
+    // Skip optimistic placeholder ids (`temp-…`) — they only live in the
+    // client cache while the prior createSession is in flight. Sending them
+    // back as `sessionId` produces a 404 server-side. Treat them like
+    // "no existing session" so we hit the create-from-task path, which
+    // will replace the placeholder atomically on success.
+    const realSessionId =
+      existing?.sessionId && !existing.sessionId.startsWith('temp-')
+        ? existing.sessionId
+        : undefined
     try {
       await moveSession.mutateAsync({
-        sessionId: existing?.sessionId,
-        taskId: existing?.sessionId ? undefined : taskId,
+        sessionId: realSessionId,
+        taskId: realSessionId ? undefined : taskId,
         start: start.toISOString(),
         end: end.toISOString(),
       })
@@ -238,12 +249,24 @@ export function TasksToday() {
 
     const overData = (over.data.current ?? {}) as { start?: string; type?: string; taskId?: string }
 
-    // Case 1: dropped on a calendar slot
+    // Case 1: dropped on a calendar slot. Use placeTask (not moveSession) so
+    // the server can split the task around any busy block that collides with
+    // the requested slot — e.g. dropping a 60-min task at 3:00pm with an
+    // event at 3:30–4:00 yields [3:00–3:30] + [4:00–4:30] instead of one
+    // overlapping or pushed-aside block.
     if (overData.start) {
       const start = new Date(overData.start)
       const duration = task.estimatedDuration ?? 30
-      const end = new Date(start.getTime() + duration * 60_000)
-      await placeTaskAt(taskId, start, end)
+      try {
+        const result = await placeTask.mutateAsync({
+          taskId,
+          preferredStart: start.toISOString(),
+          duration,
+        })
+        toastSchedulingResult(result, t('taskMoved'))
+      } catch {
+        toast.error(t('failedToUpdate'))
+      }
       return
     }
 

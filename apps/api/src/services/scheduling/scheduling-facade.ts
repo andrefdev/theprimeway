@@ -26,6 +26,11 @@ import { calendarService } from '../calendar.service'
 import { syncService } from '../sync.service'
 import { withUserLock } from './user-lock'
 import { syncTaskMirror } from './task-mirror'
+import {
+  placeTaskAtPreferred,
+  PlaceTaskOptions,
+  PlaceTaskResult,
+} from './place-task.service'
 import { localYmd } from '@repo/shared/utils'
 
 async function getUserTz(userId: string): Promise<string> {
@@ -392,6 +397,41 @@ class SchedulingFacade {
   // -------------------------------------------------------------------------
   // Pass-throughs (existing engines stay where they are)
   // -------------------------------------------------------------------------
+
+  /**
+   * Place a task at an explicit preferred slot, splitting around obstacles
+   * if the slot collides with calendar events or other sessions. Use this
+   * for drag-onto-time-slot interactions; `createSession`/`moveSession`
+   * remain the right tools when the caller has already picked a clean slot
+   * and wants exactly one session.
+   */
+  async placeTask(
+    taskId: string,
+    preferredStart: Date,
+    durationMinutes: number,
+    opts: PlaceTaskOptions = {},
+  ): Promise<PlaceTaskResult> {
+    const task = await prisma.task.findUnique({
+      where: { id: taskId },
+      select: { userId: true },
+    })
+    if (!task?.userId) throw new Error('Task not found')
+    const userId = task.userId
+
+    const result = await withUserLock(userId, () =>
+      placeTaskAtPreferred(taskId, preferredStart, durationMinutes, opts),
+    )
+
+    if (result.type === 'Success') {
+      for (const s of result.sessions) {
+        syncService.publish(userId, {
+          type: 'session.created',
+          payload: { id: s.id, taskId, start: s.start, end: s.end },
+        })
+      }
+    }
+    return result
+  }
 
   reflowEarlyCompletion = onTaskCompletedEarly
   onTimerStart = onTimerStart

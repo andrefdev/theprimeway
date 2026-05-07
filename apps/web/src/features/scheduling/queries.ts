@@ -5,6 +5,7 @@ import {
   type DeconflictInput,
   type EarlyCompleteInput,
   type MoveSessionInput,
+  type PlaceSessionInput,
   type TimerStartInput,
 } from './api'
 import { workingSessionsApi, type WorkingSession } from './working-sessions-api'
@@ -251,6 +252,29 @@ export function useMoveSession() {
       // commands feeds the undo strip. Calendar (Google events) is unaffected
       // by a session move so we leave it alone.
       qc.invalidateQueries({ queryKey: ['tasks'] })
+      qc.invalidateQueries({ queryKey: schedulingKeys.commands })
+    },
+  })
+}
+
+/**
+ * Place a task at an explicit preferred slot, splitting around obstacles
+ * when the slot collides. Returns 1+ sessions. Use this from drag-onto-
+ * calendar-slot interactions; `useMoveSession` is for the simpler
+ * "move this exact session here" path.
+ */
+export function usePlaceTask() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (input: PlaceSessionInput) =>
+      schedulingApi.placeSession(input, newIdempotencyKey()),
+    onSuccess: () => {
+      // Result can be 1 or N sessions, plus the existing sessions of this
+      // task on any day get wiped server-side. The cleanest way to converge
+      // is a refetch — optimistic guess would be wrong half the time
+      // (gap-finder picks the chunks the client doesn't see).
+      qc.invalidateQueries({ queryKey: ['tasks'] })
+      qc.invalidateQueries({ queryKey: schedulingKeys.sessions })
       qc.invalidateQueries({ queryKey: schedulingKeys.commands })
     },
   })
