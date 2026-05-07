@@ -3,7 +3,9 @@ import { useQuery } from '@tanstack/react-query'
 import { tasksQueries } from '@/features/tasks/queries'
 import { calendarQueries } from '../queries'
 import { useWorkingSessionsRange } from '@/features/scheduling/queries'
-import { format, addMinutes, parseISO } from 'date-fns'
+import { useUserTimezone } from '@/features/settings/hooks/use-user-timezone'
+import { endOfLocalDayUtc, ymdToLocalDayUtc } from '@repo/shared/utils'
+import { format, parseISO } from 'date-fns'
 import type { Task } from '@repo/shared/types'
 import type { CalendarEvent } from '@repo/shared/types'
 import { googleColorIdToHex, colorTokenToHex } from '../lib/colors'
@@ -46,10 +48,21 @@ export interface CalendarItem {
 }
 
 /**
- * Merges tasks (that have scheduled dates) with Google Calendar events
- * into a unified list of CalendarItems for display.
+ * Merges WorkingSessions (the source of truth for "when a task runs") with
+ * Google Calendar events into a unified list of CalendarItems. Tasks without
+ * sessions live in the day list/backlog, not on the grid.
  */
 export function useCalendarItems(dateRange: { from: string; to: string }) {
+  const tz = useUserTimezone()
+  const fromIso = useMemo(
+    () => ymdToLocalDayUtc(dateRange.from, tz).toISOString(),
+    [dateRange.from, tz],
+  )
+  const toIso = useMemo(
+    () => endOfLocalDayUtc(ymdToLocalDayUtc(dateRange.to, tz), tz).toISOString(),
+    [dateRange.to, tz],
+  )
+
   const tasksQuery = useQuery(
     tasksQueries.list({
       filter: 'week',
@@ -59,22 +72,12 @@ export function useCalendarItems(dateRange: { from: string; to: string }) {
     }),
   )
   const eventsQuery = useQuery(
-    calendarQueries.googleEvents({
-      timeMin: `${dateRange.from}T00:00:00.000Z`,
-      timeMax: `${dateRange.to}T23:59:59.999Z`,
-    }),
+    calendarQueries.googleEvents({ timeMin: fromIso, timeMax: toIso }),
   )
-  // WorkingSession is the source of truth for "when a task runs". Render those
-  // first; any Task.scheduledStart that doesn't have a session falls through
-  // to the legacy mirror branch below.
-  const sessionsQuery = useWorkingSessionsRange(
-    `${dateRange.from}T00:00:00.000Z`,
-    `${dateRange.to}T23:59:59.999Z`,
-  )
+  const sessionsQuery = useWorkingSessionsRange(fromIso, toIso)
 
   const items = useMemo<CalendarItem[]>(() => {
     const result: CalendarItem[] = []
-    const taskIdsCoveredBySession = new Set<string>()
 
     // 1) Working sessions → primary blocks on the calendar.
     const sessions = sessionsQuery.data ?? []
@@ -86,7 +89,6 @@ export function useCalendarItems(dateRange: { from: string; to: string }) {
       const end = parseISO(s.end)
       if (isNaN(start.getTime()) || isNaN(end.getTime())) continue
       const fullTask = s.taskId ? taskById.get(s.taskId) : undefined
-      if (s.taskId) taskIdsCoveredBySession.add(s.taskId)
       const title = s.task?.title ?? fullTask?.title ?? 'Working session'
       const priority = s.task?.priority ?? fullTask?.priority
       result.push({
@@ -101,32 +103,6 @@ export function useCalendarItems(dateRange: { from: string; to: string }) {
         priority: priority ?? undefined,
         task: fullTask,
         sessionId: s.id,
-      })
-    }
-
-    // 2) Legacy fallback: tasks with scheduledStart but NO session yet (e.g.
-    // older rows from before the WorkingSession-as-truth migration). Skip any
-    // task already represented by a session above to avoid double rendering.
-    for (const task of tasks) {
-      if (!task.scheduledStart) continue
-      if (taskIdsCoveredBySession.has(task.id)) continue
-
-      const start = parseISO(task.scheduledStart)
-      const end = task.scheduledEnd ? parseISO(task.scheduledEnd) : addMinutes(start, task.estimatedDuration ?? 30)
-
-      if (isNaN(start.getTime())) continue
-
-      result.push({
-        id: `task-${task.id}`,
-        title: task.title,
-        start,
-        end,
-        isAllDay: false,
-        color: colorMap[task.priority] ?? 'green',
-        type: 'task',
-        status: task.status,
-        priority: task.priority,
-        task,
       })
     }
 

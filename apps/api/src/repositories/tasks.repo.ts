@@ -160,8 +160,9 @@ class TasksRepository {
   }
 
   async findWeekTasks(userId: string, weekStartISO: string, weekEndISO: string) {
-    const start = new Date(`${weekStartISO}T00:00:00.000Z`)
-    const end = new Date(`${weekEndISO}T23:59:59.999Z`)
+    const tz = await getUserTz(userId)
+    const start = startOfLocalDayUtc(ymdToLocalDayUtc(weekStartISO, tz), tz)
+    const end = endOfLocalDayUtc(ymdToLocalDayUtc(weekEndISO, tz), tz)
     const tasks = await prisma.task.findMany({
       where: {
         userId,

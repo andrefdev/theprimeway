@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { tasksQueries, useUpdateTask, useDeleteTask } from '@/features/tasks/queries'
+import { useAutoSchedule } from '@/features/scheduling/queries'
+import { toastSchedulingResult } from '@/features/scheduling/lib/scheduling-toasts'
 import { WeekPlanner } from '@/features/tasks/components/WeekPlanner'
 import { TaskFullDialog, TaskQuickDialog } from '@/features/tasks/components/dialogs'
 import { QueryError } from '@/shared/components/QueryError'
@@ -44,6 +46,7 @@ function TasksWeeklyPage() {
   )
   const updateTask = useUpdateTask()
   const deleteTask = useDeleteTask()
+  const autoSchedule = useAutoSchedule()
   const showImpact = useCompletionImpact()
 
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -97,8 +100,8 @@ function TasksWeeklyPage() {
 
   async function handleMoveToDay(taskId: string, newDate: string) {
     try {
-      await updateTask.mutateAsync({ id: taskId, data: { scheduledDate: newDate } })
-      toast.success(t('taskMoved'))
+      const result = await autoSchedule.mutateAsync({ taskId, day: newDate })
+      toastSchedulingResult(result, t('taskMoved'))
     } catch {
       toast.error(t('failedToUpdate'))
     }
