@@ -11,7 +11,7 @@
  * Writes that set `weeklyGoalId` are translated to TaskGoal upsert/delete.
  */
 import { prisma } from '../lib/prisma'
-import { endOfLocalDayUtc, startOfLocalDayUtc, ymdToLocalDayUtc } from '@repo/shared/utils'
+import { startOfLocalDayUtc } from '@repo/shared/utils'
 
 async function getUserTz(userId: string): Promise<string> {
   const settings = await prisma.userSettings.findUnique({
@@ -37,9 +37,23 @@ export interface FindTasksOptions {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-/** Normalize a date string to midnight UTC to prevent timezone day-boundary shifts */
-export function normalizeScheduledDate(dateStr: string): Date {
-  const datePart = dateStr.includes('T') ? dateStr.split('T')[0] : dateStr
+/**
+ * Normalize a scheduledDate input to UTC-midnight of its YYYY-MM-DD.
+ *
+ * `scheduledDate` is a calendar-date intent ("which day is this task for?"),
+ * not a timestamp — it's stored as UTC-midnight of the user's local Y-M-D so
+ * that all read paths can compare with simple UTC ranges. Callers that have a
+ * timestamp (e.g. session start) must convert to the local Y-M-D in the user's
+ * timezone first (see localYmd) and pass the string here.
+ */
+export function normalizeScheduledDate(input: string | Date): Date {
+  if (input instanceof Date) {
+    const y = input.getUTCFullYear()
+    const m = String(input.getUTCMonth() + 1).padStart(2, '0')
+    const d = String(input.getUTCDate()).padStart(2, '0')
+    return new Date(`${y}-${m}-${d}T00:00:00.000Z`)
+  }
+  const datePart = input.includes('T') ? input.split('T')[0] : input
   return new Date(`${datePart}T00:00:00.000Z`)
 }
 
@@ -121,10 +135,12 @@ class TasksRepository {
   }
 
   async findTodaysTasks(userId: string, todayISO: string) {
-    const tz = await getUserTz(userId)
-    const anchor = ymdToLocalDayUtc(todayISO, tz)
-    const dayStart = startOfLocalDayUtc(anchor, tz)
-    const dayEnd = endOfLocalDayUtc(anchor, tz)
+    // scheduledDate is stored as UTC-midnight of the user's local Y-M-D, so we
+    // can match by a simple UTC date range — no tz lookup needed here. The
+    // caller already resolved the user's local Y-M-D when picking todayISO.
+    const ymd = todayISO.slice(0, 10)
+    const dayStart = new Date(`${ymd}T00:00:00.000Z`)
+    const dayEnd = new Date(`${ymd}T23:59:59.999Z`)
     const tasks = await prisma.task.findMany({
       where: {
         userId,
@@ -160,9 +176,10 @@ class TasksRepository {
   }
 
   async findWeekTasks(userId: string, weekStartISO: string, weekEndISO: string) {
-    const tz = await getUserTz(userId)
-    const start = startOfLocalDayUtc(ymdToLocalDayUtc(weekStartISO, tz), tz)
-    const end = endOfLocalDayUtc(ymdToLocalDayUtc(weekEndISO, tz), tz)
+    const startYmd = weekStartISO.slice(0, 10)
+    const endYmd = weekEndISO.slice(0, 10)
+    const start = new Date(`${startYmd}T00:00:00.000Z`)
+    const end = new Date(`${endYmd}T23:59:59.999Z`)
     const tasks = await prisma.task.findMany({
       where: {
         userId,
@@ -343,10 +360,10 @@ class TasksRepository {
     return attachLegacyWeeklyMany(tasks)
   }
 
-  async findInstancesForDate(userId: string, parentId: string, date: Date) {
-    const tz = await getUserTz(userId)
-    const dayStart = startOfLocalDayUtc(date, tz)
-    const dayEnd = endOfLocalDayUtc(date, tz)
+  async findInstancesForDate(userId: string, parentId: string, ymd: string) {
+    const dayYmd = ymd.slice(0, 10)
+    const dayStart = new Date(`${dayYmd}T00:00:00.000Z`)
+    const dayEnd = new Date(`${dayYmd}T23:59:59.999Z`)
     return prisma.task.findMany({
       where: {
         userId,

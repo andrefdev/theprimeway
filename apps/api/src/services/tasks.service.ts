@@ -15,7 +15,7 @@ import { syncService } from './sync.service'
 import { webhooksService } from './webhooks.service'
 import { schedulingFacade } from './scheduling/scheduling-facade'
 import { collectBusyBlocks, computeGaps, getDayWindow, dt } from './scheduling/gap-finder'
-import { ymdToLocalDayUtc, startOfLocalDayUtc } from '@repo/shared/utils'
+import { ymdToLocalDayUtc, startOfLocalDayUtc, localYmd } from '@repo/shared/utils'
 import { enforceLimit } from '../lib/limits'
 import { FEATURES } from '@repo/shared/constants'
 import { prisma } from '../lib/prisma'
@@ -240,9 +240,10 @@ class TasksService {
     if (wantsExplicitTimes) {
       // The session created below will write scheduledStart/End/Date via
       // syncTaskMirror. We pre-fill scheduledDate so the row has a bucket date
-      // even before the session insert lands.
+      // even before the session insert lands. Pass a Y-M-D string (not a Date)
+      // so normalizeScheduledDate stores UTC-midnight of the user's local day.
       const tz = await getUserTz(userId)
-      data.scheduledDate = startOfLocalDayUtc(new Date(input.scheduledStart!), tz)
+      data.scheduledDate = localYmd(new Date(input.scheduledStart!), tz)
     }
     // All-day tasks: keep only the date.
 
@@ -579,6 +580,7 @@ class TasksService {
     })
     const tz = settings?.timezone ?? 'UTC'
     const today = startOfLocalDayUtc(new Date(), tz)
+    const todayYmd = localYmd(new Date(), tz)
 
     const generated: TaskModel[] = []
 
@@ -587,7 +589,7 @@ class TasksService {
       if (!rule) continue
 
       // Check if an instance already exists for today
-      const existing = await tasksRepository.findInstancesForDate(userId, parent.id, today)
+      const existing = await tasksRepository.findInstancesForDate(userId, parent.id, todayYmd)
       if (existing.length > 0) continue
 
       // Check if today is a valid day for this recurrence rule

@@ -31,17 +31,32 @@ import * as Notifications from 'expo-notifications';
 export { ErrorBoundary } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
+const __BOOT_T0 = Date.now();
+const __bootLog = (msg: string) =>
+  console.log(`[BOOT +${Date.now() - __BOOT_T0}ms] ${msg}`);
+__bootLog('module: _layout.tsx evaluated');
+// Safety fallback: force-hide the splash after 8s so a hung init path
+// reveals what's behind it instead of leaving the user on the splash forever.
+setTimeout(() => {
+  __bootLog('FALLBACK splash hideAsync');
+  SplashScreen.hideAsync().catch(() => {});
+}, 8000);
 
 // Register mutation defaults synchronously before the tree mounts so that
 // paused mutations hydrated from AsyncStorage can be resumed.
 registerMutationDefaults();
+__bootLog('module: registerMutationDefaults done');
+export { __bootLog };
 
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
   const isLoading = useAuthStore((s) => s.isLoading);
+  __bootLog(`RootLayout render isLoading=${isLoading}`);
 
   useEffect(() => {
+    __bootLog(`RootLayout splash-gate effect isLoading=${isLoading}`);
     if (!isLoading) {
+      __bootLog('RootLayout calling SplashScreen.hideAsync (natural)');
       SplashScreen.hideAsync();
     }
   }, [isLoading]);
