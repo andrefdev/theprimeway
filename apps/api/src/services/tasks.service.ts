@@ -15,13 +15,7 @@ import { syncService } from './sync.service'
 import { webhooksService } from './webhooks.service'
 import { schedulingFacade } from './scheduling/scheduling-facade'
 import { collectBusyBlocks, computeGaps, getDayWindow, dt } from './scheduling/gap-finder'
-import {
-  ymdToLocalDayUtc,
-  startOfLocalDayUtc,
-  localYmd,
-  localTimeToUtc,
-  formatInTz,
-} from '@repo/shared/utils'
+import { ymdToLocalDayUtc, startOfLocalDayUtc } from '@repo/shared/utils'
 import { enforceLimit } from '../lib/limits'
 import { FEATURES } from '@repo/shared/constants'
 import { prisma } from '../lib/prisma'
@@ -36,84 +30,6 @@ async function getUserTz(userId: string): Promise<string> {
     select: { timezone: true },
   })
   return settings?.timezone ?? 'UTC'
-}
-
-/**
- * Reconcile scheduledDate / scheduledStart / scheduledEnd in an update payload
- * so they never diverge after persistence. The invariant: when scheduledStart
- * is set, scheduledDate equals its local YYYY-MM-DD in the user's tz.
- *
- * Rules:
- *  - If scheduledStart actually changed (vs current task), it wins; scheduledDate
- *    is recomputed from it and any submitted scheduledDate is ignored.
- *  - Else if scheduledDate actually changed, the existing scheduledStart/End are
- *    re-anchored onto the new day preserving the time-of-day.
- *  - Else (neither changed) leave the data alone — the form may resubmit
- *    unchanged values.
- *
- * Re-anchoring Task fields is a mirror update; it does NOT move existing
- * WorkingSessions. Drag/drop scheduling should still go through
- * SchedulingFacade.moveSession.
- */
-async function reconcileScheduledFields(
-  data: Record<string, any>,
-  currentTask: { scheduledStart: Date | null; scheduledEnd: Date | null; scheduledDate: Date | null },
-  userId: string,
-) {
-  const hasStart = 'scheduledStart' in data
-  const hasDate = 'scheduledDate' in data
-
-  if (!hasStart && !hasDate) return
-
-  const tz = await getUserTz(userId)
-
-  const newStartIso = hasStart ? data.scheduledStart : undefined
-  const newDateIso = hasDate ? data.scheduledDate : undefined
-
-  const startInputDate = newStartIso ? new Date(newStartIso) : null
-  const dateInputDate = newDateIso ? new Date(newDateIso) : null
-
-  const startUnchanged =
-    !hasStart ||
-    (startInputDate?.getTime() ?? null) === (currentTask.scheduledStart?.getTime() ?? null)
-  const dateUnchanged =
-    !hasDate ||
-    (dateInputDate?.getTime() ?? null) === (currentTask.scheduledDate?.getTime() ?? null)
-
-  if (!startUnchanged) {
-    // scheduledStart wins.
-    if (startInputDate) {
-      data.scheduledDate = startOfLocalDayUtc(startInputDate, tz)
-    } else {
-      // start cleared
-      if (!dateUnchanged && dateInputDate) {
-        // User cleared start and set a new bucket date — keep the bucket date.
-        data.scheduledDate = dateInputDate
-      } else if (dateUnchanged) {
-        data.scheduledDate = null
-      }
-    }
-    return
-  }
-
-  if (!dateUnchanged) {
-    // Only scheduledDate changed; re-anchor start/end to the new day.
-    if (dateInputDate && currentTask.scheduledStart) {
-      const anchor = ymdToLocalDayUtc(localYmd(dateInputDate, tz), tz)
-      const startHm = formatInTz(currentTask.scheduledStart, tz, 'HH:mm')
-      data.scheduledStart = localTimeToUtc(anchor, startHm, tz)
-      if (currentTask.scheduledEnd) {
-        const endHm = formatInTz(currentTask.scheduledEnd, tz, 'HH:mm')
-        data.scheduledEnd = localTimeToUtc(anchor, endHm, tz)
-      }
-      data.scheduledDate = startOfLocalDayUtc(anchor, tz)
-    } else if (!dateInputDate) {
-      // Date cleared — drop start/end too.
-      data.scheduledStart = null
-      data.scheduledEnd = null
-    }
-    // If task had no scheduledStart, dateInputDate stands as bucket date.
-  }
 }
 
 type TaskModel = Task & { weeklyGoal?: unknown }
@@ -317,24 +233,39 @@ class TasksService {
 
     if (input.dueDate) data.dueDate = input.dueDate
     if (input.scheduledDate) data.scheduledDate = input.scheduledDate
-    if (input.scheduledStart) data.scheduledStart = input.scheduledStart
-    if (input.scheduledEnd) data.scheduledEnd = input.scheduledEnd
 
-    // All-day tasks: clear specific times, keep only the date
-    if (input.isAllDay) {
-      data.scheduledStart = null
-      data.scheduledEnd = null
-    }
+    const wantsExplicitTimes =
+      !!input.scheduledStart && !!input.scheduledEnd && !input.isAllDay
 
-    // On create, if scheduledStart is set, derive scheduledDate from it so the
-    // two never disagree (today filter is keyed on scheduledDate).
-    if (data.scheduledStart) {
+    if (wantsExplicitTimes) {
+      // The session created below will write scheduledStart/End/Date via
+      // syncTaskMirror. We pre-fill scheduledDate so the row has a bucket date
+      // even before the session insert lands.
       const tz = await getUserTz(userId)
-      data.scheduledDate = startOfLocalDayUtc(new Date(data.scheduledStart), tz)
+      data.scheduledDate = startOfLocalDayUtc(new Date(input.scheduledStart!), tz)
     }
+    // All-day tasks: keep only the date.
 
     console.log('📥 TasksService.createTask - data to be saved:', data)
     let task = await tasksRepository.create(userId, data)
+
+    // Explicit-times path: a single WorkingSession owns the schedule. The
+    // facade pushes to Google, mirrors back to Task, and publishes session.*.
+    if (task && wantsExplicitTimes) {
+      try {
+        await schedulingFacade.createSession({
+          userId,
+          taskId: task.id,
+          start: new Date(input.scheduledStart!),
+          end: new Date(input.scheduledEnd!),
+          createdBy: 'USER',
+        })
+        const refreshed = await tasksRepository.findById(userId, task.id)
+        if (refreshed) task = refreshed
+      } catch (err) {
+        console.error('[CREATE_SESSION_ON_CREATE]', err)
+      }
+    }
 
     // Opt-in: auto-fit into the first free gap on scheduledDate when no explicit times.
     if (
@@ -345,16 +276,9 @@ class TasksService {
       !input.isAllDay
     ) {
       try {
-        const result = await schedulingFacade.scheduleTask(task.id, input.scheduledDate.slice(0, 10), { triggeredBy: 'USER_ACTION' })
-        if (result.type === 'Success' && result.sessions.length > 0) {
-          const first = result.sessions[0]!
-          const last = result.sessions[result.sessions.length - 1]!
-          const refreshed = await tasksRepository.update(userId, task.id, {
-            scheduledStart: first.start,
-            scheduledEnd: last.end,
-          })
-          if (refreshed) task = refreshed
-        }
+        await schedulingFacade.scheduleTask(task.id, input.scheduledDate.slice(0, 10), { triggeredBy: 'USER_ACTION' })
+        const refreshed = await tasksRepository.findById(userId, task.id)
+        if (refreshed) task = refreshed
       } catch (err) {
         console.error('[AUTO_SCHEDULE_ON_CREATE]', err)
       }
@@ -405,23 +329,75 @@ class TasksService {
     if (input.actualDurationMinutes !== undefined) data.actualDurationMinutes = input.actualDurationMinutes
     if (input.actualDurationSeconds !== undefined) data.actualDurationSeconds = input.actualDurationSeconds
 
-    // All-day tasks: clear specific times, keep only the date
+    // Schedule-time changes (scheduledStart/End) are owned by the
+    // SchedulingFacade — it moves/creates/removes the WorkingSession and
+    // mirrors back to Task. Detect the user's intent up-front, strip those
+    // fields from the repo update, and route through the facade after.
+    const startProvided = 'scheduledStart' in input
+    const newStartTs = startProvided && input.scheduledStart
+      ? new Date(input.scheduledStart).getTime()
+      : null
+    const curStartTs = currentTask.scheduledStart?.getTime() ?? null
+    const startActuallyChanged = startProvided && newStartTs !== curStartTs
+
+    let scheduleIntent: 'clear' | 'set' | 'none' = 'none'
+    let intentStart: Date | null = null
+    let intentEnd: Date | null = null
     if (input.isAllDay) {
-      data.scheduledStart = null
-      data.scheduledEnd = null
+      scheduleIntent = 'clear'
+    } else if (startActuallyChanged) {
+      if (input.scheduledStart && input.scheduledEnd) {
+        scheduleIntent = 'set'
+        intentStart = new Date(input.scheduledStart)
+        intentEnd = new Date(input.scheduledEnd)
+      } else if (input.scheduledStart === null) {
+        scheduleIntent = 'clear'
+      }
     }
 
-    await reconcileScheduledFields(
-      data,
-      {
-        scheduledStart: currentTask.scheduledStart ?? null,
-        scheduledEnd: currentTask.scheduledEnd ?? null,
-        scheduledDate: currentTask.scheduledDate ?? null,
-      },
-      userId,
-    )
+    if (scheduleIntent !== 'none') {
+      // Facade owns scheduledStart/End; don't let the repo write them directly.
+      delete data.scheduledStart
+      delete data.scheduledEnd
+    }
+    if (input.isAllDay) {
+      data.isAllDay = true
+    }
 
     const updatedTask = await tasksRepository.update(userId, taskId, data)
+
+    if (updatedTask && scheduleIntent === 'clear') {
+      const sessions = await prisma.workingSession.findMany({
+        where: { taskId, userId },
+        select: { id: true },
+      })
+      for (const s of sessions) {
+        await schedulingFacade.removeSession(userId, s.id).catch((err) => {
+          console.error('[CLEAR_SESSIONS_ON_UPDATE]', err)
+        })
+      }
+    } else if (updatedTask && scheduleIntent === 'set' && intentStart && intentEnd) {
+      const first = await prisma.workingSession.findFirst({
+        where: { taskId, userId },
+        orderBy: { start: 'asc' },
+        select: { id: true },
+      })
+      try {
+        if (first) {
+          await schedulingFacade.moveSession(userId, first.id, intentStart, intentEnd)
+        } else {
+          await schedulingFacade.createSession({
+            userId,
+            taskId,
+            start: intentStart,
+            end: intentEnd,
+            createdBy: 'USER',
+          })
+        }
+      } catch (err) {
+        console.error('[FACADE_ON_UPDATE]', err)
+      }
+    }
 
     if (updatedTask) syncService.publish(userId, { type: 'task.updated', payload: { id: taskId } })
 

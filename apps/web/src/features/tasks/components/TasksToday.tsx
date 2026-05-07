@@ -2,6 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { localTimeToUtc, formatInTz } from '@repo/shared/utils'
 import { useUserTimezone } from '@/features/settings/hooks/use-user-timezone'
+import {
+  emptyFailureCounts,
+  classifyResult,
+  toastSchedulingBatch,
+  toastSchedulingResult,
+} from '@/features/scheduling/lib/scheduling-toasts'
 import { tasksQueries, useUpdateTask, useDeleteTask } from '@/features/tasks/queries'
 import { TaskFullDialog, TaskQuickDialog } from '@/features/tasks/components/dialogs'
 import { QueryError } from '@/shared/components/QueryError'
@@ -97,18 +103,33 @@ export function TasksToday() {
   const tasks = tasksQuery.data?.data ?? []
   const openTasks = tasks.filter((task: Task) => task.status === 'open')
 
+  // Membership ("is this task scheduled today?") is derived from sessions, not
+  // from the Task.scheduledStart mirror — that mirror can lag the source of
+  // truth right after a drag/move and produced the cross-view drift.
+  const sessionStartsByTaskId = useMemo(() => {
+    const map = new Map<string, number>()
+    for (const item of calendarItems) {
+      if (item.type !== 'session' || !item.task?.id) continue
+      const ts = item.start.getTime()
+      const prev = map.get(item.task.id)
+      if (prev === undefined || ts < prev) map.set(item.task.id, ts)
+    }
+    return map
+  }, [calendarItems])
+
   const { scheduled, unscheduled } = useMemo(() => {
     const sched: Task[] = []
     const unsched: Task[] = []
     for (const task of openTasks) {
-      if (task.scheduledStart) sched.push(task)
+      if (sessionStartsByTaskId.has(task.id)) sched.push(task)
       else unsched.push(task)
     }
     sched.sort(
-      (a, b) => new Date(a.scheduledStart!).getTime() - new Date(b.scheduledStart!).getTime(),
+      (a, b) =>
+        (sessionStartsByTaskId.get(a.id) ?? 0) - (sessionStartsByTaskId.get(b.id) ?? 0),
     )
     return { scheduled: sched, unscheduled: unsched }
-  }, [openTasks])
+  }, [openTasks, sessionStartsByTaskId])
 
   function openCreate(start?: Date) {
     if (start) {
@@ -167,40 +188,16 @@ export function TasksToday() {
   async function planDay() {
     if (unscheduled.length === 0) return
     let ok = 0
-    const failures: Record<'NO_WORKING_HOURS' | 'NO_GAPS' | 'WOULD_NOT_FIT' | 'UNKNOWN', number> = {
-      NO_WORKING_HOURS: 0,
-      NO_GAPS: 0,
-      WOULD_NOT_FIT: 0,
-      UNKNOWN: 0,
-    }
+    const failures = emptyFailureCounts()
     for (const task of unscheduled) {
       try {
         const r = await autoSchedule.mutateAsync({ taskId: task.id, day: dayKey })
-        if (r.type === 'Success') ok++
-        else failures[r.reason] = (failures[r.reason] ?? 0) + 1
+        if (classifyResult(r, failures)) ok++
       } catch {
         failures.UNKNOWN++
       }
     }
-    if (ok > 0) toast.success(`Scheduled ${ok} task${ok === 1 ? '' : 's'}`)
-    if (failures.NO_WORKING_HOURS > 0) {
-      toast.warning(
-        `${failures.NO_WORKING_HOURS} task${failures.NO_WORKING_HOURS === 1 ? '' : 's'} skipped — no working hours set for this day`,
-      )
-    }
-    if (failures.NO_GAPS > 0) {
-      toast.warning(
-        `${failures.NO_GAPS} task${failures.NO_GAPS === 1 ? '' : 's'} skipped — your day is already full`,
-      )
-    }
-    if (failures.WOULD_NOT_FIT > 0) {
-      toast.warning(
-        `${failures.WOULD_NOT_FIT} task${failures.WOULD_NOT_FIT === 1 ? '' : 's'} too long for any free gap — try splitting or rescheduling`,
-      )
-    }
-    if (failures.UNKNOWN > 0) {
-      toast.error(`${failures.UNKNOWN} task${failures.UNKNOWN === 1 ? '' : 's'} failed to schedule`)
-    }
+    toastSchedulingBatch(ok, failures)
   }
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
@@ -242,42 +239,52 @@ export function TasksToday() {
       return
     }
 
-    // Case 2: dropped on another task in the list — reschedule dragged right after
-    // the target. If target is unscheduled, just put dragged at start of working day.
+    // Case 2: dropped on another task in the list. If the target has a session
+    // visible today, anchor right after it (keeps adjacency). Otherwise let
+    // the gap-finder pick the next free slot from "now".
     if (overData.type === 'task' && overData.taskId) {
       if (overData.taskId === taskId) return
-      const target = openTasks.find((x) => x.id === overData.taskId)
-      if (!target) return
-      const duration = task.estimatedDuration ?? 30
-      // Anchor the target's time-of-day (in user TZ) onto the visible day so
-      // reorder never crosses days, even if the target's session is split or
-      // its mirror is stale.
-      const anchorTimeOnDay = (utcInstant: Date): Date =>
-        localTimeToUtc(day, formatInTz(utcInstant, tz, 'HH:mm'), tz)
-      const DURATION_MS = duration * 60_000
-      const dayStartUtc = localTimeToUtc(day, fmtHour(dayBounds.startHour), tz)
-      const dayEndUtc = localTimeToUtc(day, fmtHour(dayBounds.endHour), tz)
-      let start: Date
-      if (target.scheduledEnd) {
-        start = anchorTimeOnDay(new Date(target.scheduledEnd))
-      } else if (target.scheduledStart) {
-        const targetDur = target.estimatedDuration ?? 30
-        const computed = new Date(
-          new Date(target.scheduledStart).getTime() + targetDur * 60_000,
-        )
-        start = anchorTimeOnDay(computed)
-      } else {
-        start = dayStartUtc
+      const targetSessionEnd = (() => {
+        let max = -Infinity
+        for (const item of calendarItems) {
+          if (item.type !== 'session' || item.task?.id !== overData.taskId) continue
+          const ts = item.end.getTime()
+          if (ts > max) max = ts
+        }
+        return max === -Infinity ? null : new Date(max)
+      })()
+
+      if (targetSessionEnd) {
+        const duration = task.estimatedDuration ?? 30
+        const DURATION_MS = duration * 60_000
+        // Anchor the target's time-of-day (in user TZ) onto the visible day so
+        // reorder never crosses days, even if the target's session is split.
+        const anchorTimeOnDay = (utcInstant: Date): Date =>
+          localTimeToUtc(day, formatInTz(utcInstant, tz, 'HH:mm'), tz)
+        const dayStartUtc = localTimeToUtc(day, fmtHour(dayBounds.startHour), tz)
+        const dayEndUtc = localTimeToUtc(day, fmtHour(dayBounds.endHour), tz)
+        let start = anchorTimeOnDay(targetSessionEnd)
+        if (start.getTime() < dayStartUtc.getTime()) {
+          start = dayStartUtc
+        } else if (start.getTime() + DURATION_MS > dayEndUtc.getTime()) {
+          start = new Date(
+            Math.max(dayStartUtc.getTime(), dayEndUtc.getTime() - DURATION_MS),
+          )
+        }
+        const end = new Date(start.getTime() + DURATION_MS)
+        await placeTaskAt(taskId, start, end)
+        return
       }
-      if (start.getTime() < dayStartUtc.getTime()) {
-        start = dayStartUtc
-      } else if (start.getTime() + DURATION_MS > dayEndUtc.getTime()) {
-        start = new Date(
-          Math.max(dayStartUtc.getTime(), dayEndUtc.getTime() - DURATION_MS),
-        )
+
+      // Target without a session today → auto-schedule the dragged task into
+      // the next gap. The gap-finder respects "now" when day === today, so a
+      // 7 PM drag lands at the next free slot from 7 PM, not 9 AM.
+      try {
+        const result = await autoSchedule.mutateAsync({ taskId, day: dayKey })
+        toastSchedulingResult(result, t('taskMoved'))
+      } catch {
+        toast.error(t('failedToUpdate'))
       }
-      const end = new Date(start.getTime() + DURATION_MS)
-      await placeTaskAt(taskId, start, end)
     }
   }
 

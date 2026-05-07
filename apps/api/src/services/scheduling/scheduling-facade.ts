@@ -25,6 +25,7 @@ import { commandManager, CommandChange } from './CommandManager'
 import { calendarService } from '../calendar.service'
 import { syncService } from '../sync.service'
 import { withUserLock } from './user-lock'
+import { syncTaskMirror } from './task-mirror'
 
 export interface CreateSessionInput {
   userId: string
@@ -51,38 +52,9 @@ class SchedulingFacade {
 
   /**
    * Recompute Task.scheduledStart/End/Date as the (min start, max end) of the
-   * task's existing WorkingSessions. If the task has no sessions, clears the
-   * mirror so the task drops back to "unscheduled" in the UI.
+   * task's existing WorkingSessions. Re-exposed on the facade for convenience.
    */
-  async syncTaskMirror(taskId: string): Promise<void> {
-    if (!taskId) return
-    const sessions = await prisma.workingSession.findMany({
-      where: { taskId },
-      select: { start: true, end: true },
-      orderBy: { start: 'asc' },
-    })
-    if (sessions.length === 0) {
-      await prisma.task
-        .update({
-          where: { id: taskId },
-          data: { scheduledStart: null, scheduledEnd: null },
-        })
-        .catch(() => undefined)
-      return
-    }
-    const first = sessions[0]!
-    const last = sessions[sessions.length - 1]!
-    await prisma.task
-      .update({
-        where: { id: taskId },
-        data: {
-          scheduledStart: first.start,
-          scheduledEnd: last.end,
-          scheduledDate: first.start,
-        },
-      })
-      .catch(() => undefined)
-  }
+  syncTaskMirror = syncTaskMirror
 
   // -------------------------------------------------------------------------
   // High-level operations

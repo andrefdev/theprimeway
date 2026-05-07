@@ -168,29 +168,14 @@ export function useMoveSession() {
   return useMutation({
     mutationFn: (input: MoveSessionInput) => schedulingApi.moveSession(input, newIdempotencyKey()),
     onMutate: async (input) => {
+      // Only the existing-session path gets an optimistic patch — the
+      // create-from-task path used to fabricate a placeholder that polluted
+      // every range query and caused the "Working session" flicker.
+      if (!input.sessionId) return { snaps: undefined }
       const snaps = await snapshotQueries<WorkingSession[]>(qc, schedulingKeys.sessions)
-      if (input.sessionId) {
-        patchQueries<WorkingSession[]>(qc, schedulingKeys.sessions, (cur) =>
-          listOps.patch(cur, input.sessionId!, { start: input.start, end: input.end }),
-        )
-      } else if (input.taskId) {
-        const placeholder: WorkingSession = {
-          id: `optimistic-${input.taskId}-${Date.now()}`,
-          userId: 'optimistic',
-          taskId: input.taskId,
-          kind: 'WORK',
-          start: input.start,
-          end: input.end,
-          externalCalendarId: null,
-          externalEventId: null,
-          createdBy: 'USER',
-          createdAt: new Date().toISOString(),
-          task: null,
-        }
-        patchQueries<WorkingSession[]>(qc, schedulingKeys.sessions, (cur) =>
-          listOps.upsert(cur, placeholder),
-        )
-      }
+      patchQueries<WorkingSession[]>(qc, schedulingKeys.sessions, (cur) =>
+        listOps.patch(cur, input.sessionId!, { start: input.start, end: input.end }),
+      )
       return { snaps }
     },
     onError: (_err, _vars, ctx) => {
