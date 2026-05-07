@@ -54,22 +54,30 @@ async function removeOtherDaySessions(
     where: { taskId, userId },
     select: { id: true, start: true },
   })
-  let deleted = 0
-  for (const s of sessions) {
-    if (localYmd(s.start, tz) === keepYmd) continue
-    // Best-effort google cleanup before local delete (so undo doesn't chase a
-    // dangling externalEventId).
-    await calendarService
+  const stale = sessions.filter((s) => localYmd(s.start, tz) !== keepYmd)
+  if (stale.length === 0) return 0
+
+  // DB deletes in parallel — they're cheap and independent.
+  await Promise.all(
+    stale.map((s) =>
+      prisma.workingSession.delete({ where: { id: s.id } }).catch((err) => {
+        console.error('[CLEANUP_OTHER_DAY] db delete failed', err)
+      }),
+    ),
+  )
+
+  // Google removal is fire-and-forget so the caller's request returns fast.
+  // A dangling externalEventId on the deleted local row is acceptable — the
+  // user's calendar drag UX shouldn't pay a 1-2s round-trip per stale block.
+  for (const s of stale) {
+    calendarService
       .removeSessionFromCalendar(s.id)
       .catch((err) =>
         console.error('[CLEANUP_OTHER_DAY] google remove failed', err),
       )
-    await prisma.workingSession.delete({ where: { id: s.id } }).catch((err) => {
-      console.error('[CLEANUP_OTHER_DAY] db delete failed', err)
-    })
-    deleted++
   }
-  return deleted
+
+  return stale.length
 }
 
 export interface CreateSessionInput {

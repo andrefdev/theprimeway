@@ -168,24 +168,90 @@ export function useMoveSession() {
   return useMutation({
     mutationFn: (input: MoveSessionInput) => schedulingApi.moveSession(input, newIdempotencyKey()),
     onMutate: async (input) => {
-      // Only the existing-session path gets an optimistic patch — the
-      // create-from-task path used to fabricate a placeholder that polluted
-      // every range query and caused the "Working session" flicker.
-      if (!input.sessionId) return { snaps: undefined }
-      const snaps = await snapshotQueries<WorkingSession[]>(qc, schedulingKeys.sessions)
-      patchQueries<WorkingSession[]>(qc, schedulingKeys.sessions, (cur) =>
-        listOps.patch(cur, input.sessionId!, { start: input.start, end: input.end }),
-      )
-      return { snaps }
+      // Cancel in-flight refetches so the optimistic patch isn't immediately
+      // overwritten by a stale response.
+      await qc.cancelQueries({ queryKey: schedulingKeys.sessions })
+      const snaps = qc.getQueriesData<WorkingSession[]>({ queryKey: schedulingKeys.sessions })
+
+      if (input.sessionId) {
+        // Existing-session move: shift its start/end in every cache that has it.
+        for (const [key, value] of snaps) {
+          if (!value) continue
+          qc.setQueryData<WorkingSession[]>(
+            key,
+            value.map((s) =>
+              s.id === input.sessionId ? { ...s, start: input.start, end: input.end } : s,
+            ),
+          )
+        }
+        return { snaps, placeholderId: undefined as string | undefined }
+      }
+
+      if (input.taskId) {
+        // Create-from-task: drop a temp placeholder into range caches whose
+        // [from, to] window contains the new slot. Scoped insertion avoids
+        // the cross-day pollution the previous version had.
+        const placeholderId = `temp-${Math.random().toString(36).slice(2, 10)}`
+        const startMs = new Date(input.start).getTime()
+        const placeholder: WorkingSession = {
+          id: placeholderId,
+          userId: '',
+          taskId: input.taskId,
+          kind: 'WORK',
+          start: input.start,
+          end: input.end,
+          externalCalendarId: null,
+          externalEventId: null,
+          createdBy: 'USER',
+          createdAt: new Date().toISOString(),
+          task: null,
+        }
+        for (const [key, value] of snaps) {
+          if (!value) continue
+          // key shapes: ['working-sessions'] | [..., 'range', from, to] | [..., 'day', day, tz]
+          const arr = key as readonly unknown[]
+          const kind = arr[1]
+          if (kind === 'range') {
+            const from = arr[2] as string | undefined
+            const to = arr[3] as string | undefined
+            if (from && new Date(from).getTime() > startMs) continue
+            if (to && new Date(to).getTime() < startMs) continue
+          }
+          qc.setQueryData<WorkingSession[]>(key, [...value, placeholder])
+        }
+        return { snaps, placeholderId }
+      }
+
+      return { snaps, placeholderId: undefined as string | undefined }
+    },
+    onSuccess: (data, _vars, ctx) => {
+      // Swap the placeholder id for the real one returned by the server.
+      // This keeps the calendar block stable through the round-trip — no
+      // disappear-and-reappear flicker that a full invalidate would produce.
+      if (ctx?.placeholderId && data?.session?.id) {
+        const realId = data.session.id
+        const placeholderId = ctx.placeholderId
+        const all = qc.getQueriesData<WorkingSession[]>({ queryKey: schedulingKeys.sessions })
+        for (const [key, value] of all) {
+          if (!value) continue
+          qc.setQueryData<WorkingSession[]>(
+            key,
+            value.map((s) => (s.id === placeholderId ? { ...s, id: realId } : s)),
+          )
+        }
+      }
     },
     onError: (_err, _vars, ctx) => {
       if (ctx?.snaps) rollbackQueries(qc, ctx.snaps)
     },
     onSettled: () => {
+      // The optimistic patch (and onSuccess id-swap) already represents the
+      // server truth for `sessions`; no need to refetch and risk a flicker.
+      // Tasks (mirror) DO need to refresh so scheduledStart/End line up, and
+      // commands feeds the undo strip. Calendar (Google events) is unaffected
+      // by a session move so we leave it alone.
       qc.invalidateQueries({ queryKey: ['tasks'] })
-      qc.invalidateQueries({ queryKey: schedulingKeys.sessions })
       qc.invalidateQueries({ queryKey: schedulingKeys.commands })
-      qc.invalidateQueries({ queryKey: ['calendar'] })
     },
   })
 }

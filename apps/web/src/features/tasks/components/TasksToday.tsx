@@ -37,13 +37,14 @@ import { useLocale } from '@/i18n/useLocale'
 import { useCompletionImpact } from '@/features/tasks/hooks/use-completion-impact'
 import {
   DndContext,
+  DragOverlay,
   PointerSensor,
-  useDraggable,
-  useDroppable,
   useSensor,
   useSensors,
   type DragEndEvent,
+  type DragStartEvent,
 } from '@dnd-kit/core'
+import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import type { Task } from '@repo/shared/types'
 
@@ -81,6 +82,7 @@ export function TasksToday() {
   const [quickStart, setQuickStart] = useState<string | undefined>(undefined)
   const [quickEnd, setQuickEnd] = useState<string | undefined>(undefined)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
+  const [activeDragTask, setActiveDragTask] = useState<Task | null>(null)
   const [planDismissed, setPlanDismissed] = useState(false)
   const [planOpen, setPlanOpen] = useState(false)
   const [shutdownDismissed, setShutdownDismissed] = useState(false)
@@ -221,7 +223,13 @@ export function TasksToday() {
     }
   }
 
+  function handleDragStart(event: DragStartEvent) {
+    const t = openTasks.find((x) => x.id === String(event.active.id))
+    setActiveDragTask(t ?? null)
+  }
+
   async function handleDragEnd(event: DragEndEvent) {
+    setActiveDragTask(null)
     const { active, over } = event
     if (!over) return
     const taskId = String(active.id)
@@ -323,7 +331,12 @@ export function TasksToday() {
         {tasksQuery.isError && <QueryError message={t('failedToLoad')} onRetry={() => tasksQuery.refetch()} />}
 
         {!tasksQuery.isLoading && !tasksQuery.isError && (
-          <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+          <DndContext
+            sensors={sensors}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            onDragCancel={() => setActiveDragTask(null)}
+          >
             <div className="flex flex-col gap-4 lg:flex-row lg:gap-6">
               {/* Left pane — task list */}
               <div className="lg:w-[420px] flex-shrink-0 space-y-2">
@@ -335,32 +348,37 @@ export function TasksToday() {
                   + {t('addTask')}
                 </button>
 
-                {scheduled.map((task) => (
-                  <DraggableTask
-                    key={task.id}
-                    task={task}
-                    onToggle={() => toggleTask(task)}
-                    onEdit={() => openEdit(task)}
-                    onDelete={() => handleDelete(task)}
-                    onArchive={() => handleArchive(task)}
-                  />
-                ))}
+                <SortableContext
+                  items={[...scheduled, ...unscheduled].map((t) => t.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {scheduled.map((task) => (
+                    <SortableTask
+                      key={task.id}
+                      task={task}
+                      onToggle={() => toggleTask(task)}
+                      onEdit={() => openEdit(task)}
+                      onDelete={() => handleDelete(task)}
+                      onArchive={() => handleArchive(task)}
+                    />
+                  ))}
 
-                {unscheduled.length > 0 && (
-                  <p className="pt-2 text-[10px] uppercase tracking-wide text-muted-foreground">
-                    {t('unscheduled', { defaultValue: 'Unscheduled' })}
-                  </p>
-                )}
-                {unscheduled.map((task) => (
-                  <DraggableTask
-                    key={task.id}
-                    task={task}
-                    onToggle={() => toggleTask(task)}
-                    onEdit={() => openEdit(task)}
-                    onDelete={() => handleDelete(task)}
-                    onArchive={() => handleArchive(task)}
-                  />
-                ))}
+                  {unscheduled.length > 0 && (
+                    <p className="pt-2 text-[10px] uppercase tracking-wide text-muted-foreground">
+                      {t('unscheduled', { defaultValue: 'Unscheduled' })}
+                    </p>
+                  )}
+                  {unscheduled.map((task) => (
+                    <SortableTask
+                      key={task.id}
+                      task={task}
+                      onToggle={() => toggleTask(task)}
+                      onEdit={() => openEdit(task)}
+                      onDelete={() => handleDelete(task)}
+                      onArchive={() => handleArchive(task)}
+                    />
+                  ))}
+                </SortableContext>
 
                 {tasks.length === 0 && (
                   <EmptyState title={t('allDone')} description={t('noOpenTasks')} />
@@ -404,6 +422,18 @@ export function TasksToday() {
                 </div>
               </div>
             </div>
+            <DragOverlay dropAnimation={null}>
+              {activeDragTask ? (
+                <div className="w-[400px] opacity-95 shadow-2xl rounded-md rotate-1 pointer-events-none">
+                  <TaskItem
+                    task={activeDragTask}
+                    onToggle={() => {}}
+                    onEdit={() => {}}
+                    onDelete={() => {}}
+                  />
+                </div>
+              ) : null}
+            </DragOverlay>
           </DndContext>
         )}
       </div>
@@ -443,7 +473,7 @@ export function TasksToday() {
   )
 }
 
-function DraggableTask({
+function SortableTask({
   task,
   onToggle,
   onEdit,
@@ -456,19 +486,23 @@ function DraggableTask({
   onDelete: () => void
   onArchive: () => void
 }) {
-  const { attributes, listeners, setNodeRef: setDragRef, transform, isDragging } = useDraggable({ id: task.id })
-  const { setNodeRef: setDropRef, isOver } = useDroppable({
-    id: `drop-${task.id}`,
+  // `data` is read by handleDragEnd Case 2 to detect "drop on another task"
+  // and route to the in-list reorder logic. SortableContext fills in the
+  // visual reorder feedback (items shift to make room) so the dragged task
+  // doesn't visually overlap the target the way the old useDraggable+
+  // useDroppable combo did.
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: task.id,
     data: { type: 'task', taskId: task.id },
   })
   const style: React.CSSProperties = {
-    transform: CSS.Translate.toString(transform),
-    opacity: isDragging ? 0.5 : 1,
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
   }
   const handle = (
     <button
       type="button"
-      ref={setDragRef}
       {...listeners}
       {...attributes}
       className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground"
@@ -478,11 +512,7 @@ function DraggableTask({
     </button>
   )
   return (
-    <div
-      ref={setDropRef}
-      style={style}
-      className={isOver ? 'rounded-md ring-2 ring-primary/60' : undefined}
-    >
+    <div ref={setNodeRef} style={style}>
       <TaskItem
         task={task}
         onToggle={onToggle}
