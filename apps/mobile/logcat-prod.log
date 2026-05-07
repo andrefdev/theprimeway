@@ -1,0 +1,1529 @@
+﻿--------- beginning of system
+05-07 09:09:44.856 W/Looper  (22939): Slow dispatch took 342ms android.ui app=system_server main=false group=TOP_APP h=com.android.server.am.ActivityManagerService$UiHandler c=null m=68
+05-07 09:09:44.857 W/Looper  (22939): Slow delivery took 346ms android.ui app=system_server main=false group=TOP_APP h=com.android.server.am.ActivityManagerService$UiHandler c=null m=68
+--------- beginning of main
+05-07 09:09:44.927 E/SatelliteController(23382): registerForSatelliteModemStateChanged: mSatelliteSessionController is not initialized yet
+05-07 09:09:44.927 E/SatelliteController(23382): unregisterForModemStateChanged: mSatelliteSessionController is not initialized yet
+05-07 09:09:44.970 W/Looper  (22939): Drained
+05-07 09:09:45.139 E/SatelliteController(23382): registerForSatelliteCommunicationAccessStateChanged: SatelliteManager is null
+05-07 09:09:45.230 W/ContextImpl(22939): Calling a method in the system process without a qualified user: android.app.ContextImpl.sendBroadcastMultiplePermissions:1375 android.content.Context.sendBroadcastMultiplePermissions:2803 com.android.server.TelephonyRegistry.broadcastServiceStateChanged:4404 com.android.server.TelephonyRegistry.notifyServiceStateForPhoneId:1930 com.android.internal.telephony.ITelephonyRegistry$Stub.onTransact:629 
+05-07 09:09:45.258 W/ContextImpl(22939): Calling a method in the system process without a qualified user: android.app.ContextImpl.sendBroadcastMultiplePermissions:1408 com.android.server.TelephonyRegistry.broadcastServiceStateChanged:4409 com.android.server.TelephonyRegistry.notifyServiceStateForPhoneId:1930 com.android.internal.telephony.ITelephonyRegistry$Stub.onTransact:629 android.os.Binder.execTransactInternal:1364 
+05-07 09:09:45.287 W/.apps.wellbeing(27484): Suspending all threads took: 92.271ms
+05-07 09:09:45.341 W/ContextImpl(22939): Calling a method in the system process without a qualified user: android.app.ContextImpl.sendBroadcastMultiplePermissions:1408 com.android.server.TelephonyRegistry.broadcastServiceStateChanged:4418 com.android.server.TelephonyRegistry.notifyServiceStateForPhoneId:1930 com.android.internal.telephony.ITelephonyRegistry$Stub.onTransact:629 android.os.Binder.execTransactInternal:1364 
+05-07 09:09:45.360 W/BatteryUsageContentProvider(28397): getBatteryEvents() in 9/ms
+05-07 09:09:45.383 W/ContextImpl(22939): Calling a method in the system process without a qualified user: android.app.ContextImpl.sendBroadcastMultiplePermissions:1408 com.android.server.TelephonyRegistry.broadcastServiceStateChanged:4424 com.android.server.TelephonyRegistry.notifyServiceStateForPhoneId:1930 com.android.internal.telephony.ITelephonyRegistry$Stub.onTransact:629 android.os.Binder.execTransactInternal:1364 
+05-07 09:09:45.610 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:09:45.781 W/ActivityManager(22939): Slow operation: 62ms so far, now at startProcess: done starting proc!
+05-07 09:09:45.791 W/ContextImpl(22939): Calling a method in the system process without a qualified user: android.app.ContextImpl.sendBroadcastMultiplePermissions:1408 android.content.Context.sendBroadcastMultiplePermissions:2749 android.content.Context.sendBroadcastMultiplePermissions:2737 com.android.server.TelephonyRegistry.broadcastDataConnectionStateChanged:4623 com.android.server.TelephonyRegistry.notifyDataConnectionForSubscriber:2405 
+05-07 09:09:45.805 W/m.android.phone(23382): Suspending all threads took: 14.637ms
+05-07 09:09:45.847 E/WifiDataStall(22939): onDataConnectionStateChanged unexpected State: 3
+05-07 09:09:45.908 W/ActivityManager(22939): Slow operation: 151ms so far, now at startProcess: returned from zygote!
+05-07 09:09:45.909 W/ActivityManager(22939): Slow operation: 151ms so far, now at startProcess: done updating battery stats
+05-07 09:09:45.923 W/ActivityManager(22939): Slow operation: 166ms so far, now at startProcess: building log message
+05-07 09:09:45.935 W/ActivityManager(22939): Slow operation: 177ms so far, now at startProcess: starting to update pids map
+05-07 09:09:45.939 W/ActivityManager(22939): Slow operation: 182ms so far, now at startProcess: done updating pids map
+05-07 09:09:45.953 W/JobInfo (27484): Requested important-while-foreground flag for job47 is ignored and takes no effect
+05-07 09:09:45.961 W/UsageSyncManager(27484): <DWB> Last (TimeDelta{wallTime=2026-05-07T13:54:14.445Z, elapsedSinceBoot=PT30M6.037S}, boot count 4) and current (TimeDelta{wallTime=2026-05-07T14:09:45.181Z, elapsedSinceBoot=PT41M11.75S}, boot count 4) deltas are different. Increase event shift by PT4M25.023S.
+05-07 09:09:45.975 E/MboOceController(22939): onDataConnectionStateChanged unexpected State: 3
+05-07 09:09:45.995 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:09:46.128 W/oadcastreceiver(29371): Unexpected CPU variant for x86: x86_64.
+05-07 09:09:46.128 W/oadcastreceiver(29371): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, pantherlake, default
+05-07 09:09:46.147 W/UsageSyncManager(27484): <DWB> Deferring shifting events by PT10H54M38.174S
+05-07 09:09:46.152 W/libc    (26209): Access denied finding property "vendor.mesa.virtgpu.kumquat"
+05-07 09:09:46.205 W/HWUI    (26209): Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+05-07 09:09:46.211 W/HWUI    (26209): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+05-07 09:09:46.388 W/ForegroundServiceTypeLoggerModule(22939): Foreground service start for UID: 10159 does not have any types
+05-07 09:09:46.461 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:09:46.461 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:09:46.465 E/AppOps  (22939): attributionTag VCN not declared in manifest of android
+05-07 09:09:46.476 W/ActivityManager(22939): Slow operation: 83ms so far, now at attachApplicationLocked: immediately after bindApplication
+05-07 09:09:46.476 W/ActivityManager(22939): Slow operation: 83ms so far, now at attachApplicationLocked: after updateLruProcessLocked
+05-07 09:09:46.485 W/ActivityManager(22939): Slow operation: 91ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+05-07 09:09:46.523 W/HeadsetPhoneState(23365): startListenForPhoneState: no event to listen
+05-07 09:09:46.553 W/libbinder.Binder(27484): Binder transaction to android.content.IContentProvider, function: UNKNOWN_FUNCTION_NAME, code: 21, took 1477ms. Data bytes: 336 Reply bytes: 80 Flags: 18
+05-07 09:09:46.644 E/CCTFlatFileLogStore(26411): Failed to get boot count.
+05-07 09:09:46.644 E/CCTFlatFileLogStore(26411): java.util.concurrent.TimeoutException: Timed out waiting for Task
+05-07 09:09:46.644 E/CCTFlatFileLogStore(26411): 	at fpig.o(:com.google.android.gms@261631038@26.16.31 (260800-900800821):57)
+05-07 09:09:46.644 E/CCTFlatFileLogStore(26411): 	at bhnj.v(:com.google.android.gms@261631038@26.16.31 (260800-900800821):21)
+05-07 09:09:46.644 E/CCTFlatFileLogStore(26411): 	at bhoz.run(:com.google.android.gms@261631038@26.16.31 (260800-900800821):14)
+05-07 09:09:46.644 E/CCTFlatFileLogStore(26411): 	at bjwq.c(:com.google.android.gms@261631038@26.16.31 (260800-900800821):50)
+05-07 09:09:46.644 E/CCTFlatFileLogStore(26411): 	at bjwq.run(:com.google.android.gms@261631038@26.16.31 (260800-900800821):66)
+05-07 09:09:46.644 E/CCTFlatFileLogStore(26411): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)
+05-07 09:09:46.644 E/CCTFlatFileLogStore(26411): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+05-07 09:09:46.644 E/CCTFlatFileLogStore(26411): 	at bkch.run(:com.google.android.gms@261631038@26.16.31 (260800-900800821):8)
+05-07 09:09:46.644 E/CCTFlatFileLogStore(26411): 	at java.lang.Thread.run(Thread.java:1572)
+05-07 09:09:46.665 W/Telephony(23382): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+05-07 09:09:46.692 W/ForegroundServiceTypeLoggerModule(22939): FGS stop call for: 10159 has no types!
+05-07 09:09:46.792 W/m.android.phone(23382): Suspending all threads took: 7.991ms
+05-07 09:09:46.902 E/SatelliteController(23382): registerForSatelliteModemStateChanged: mSatelliteSessionController is not initialized yet
+05-07 09:09:46.902 E/SatelliteController(23382): unregisterForModemStateChanged: mSatelliteSessionController is not initialized yet
+05-07 09:09:46.930 E/SatelliteController(23382): registerForSatelliteModemStateChanged: mSatelliteSessionController is not initialized yet
+05-07 09:09:46.930 E/SatelliteController(23382): unregisterForModemStateChanged: mSatelliteSessionController is not initialized yet
+05-07 09:09:46.987 E/SatelliteController(23382): registerForSatelliteCommunicationAccessStateChanged: SatelliteManager is null
+05-07 09:09:47.046 W/ContextImpl(22939): Calling a method in the system process without a qualified user: android.app.ContextImpl.sendBroadcastMultiplePermissions:1375 android.content.Context.sendBroadcastMultiplePermissions:2803 com.android.server.TelephonyRegistry.broadcastServiceStateChanged:4404 com.android.server.TelephonyRegistry.notifyServiceStateForPhoneId:1930 com.android.internal.telephony.ITelephonyRegistry$Stub.onTransact:629 
+05-07 09:09:47.055 W/ContextImpl(22939): Calling a method in the system process without a qualified user: android.app.ContextImpl.sendBroadcastMultiplePermissions:1408 com.android.server.TelephonyRegistry.broadcastServiceStateChanged:4409 com.android.server.TelephonyRegistry.notifyServiceStateForPhoneId:1930 com.android.internal.telephony.ITelephonyRegistry$Stub.onTransact:629 android.os.Binder.execTransactInternal:1364 
+05-07 09:09:47.064 W/ContextImpl(22939): Calling a method in the system process without a qualified user: android.app.ContextImpl.sendBroadcastMultiplePermissions:1408 com.android.server.TelephonyRegistry.broadcastServiceStateChanged:4418 com.android.server.TelephonyRegistry.notifyServiceStateForPhoneId:1930 com.android.internal.telephony.ITelephonyRegistry$Stub.onTransact:629 android.os.Binder.execTransactInternal:1364 
+05-07 09:09:47.067 W/ContextImpl(22939): Calling a method in the system process without a qualified user: android.app.ContextImpl.sendBroadcastMultiplePermissions:1408 com.android.server.TelephonyRegistry.broadcastServiceStateChanged:4424 com.android.server.TelephonyRegistry.notifyServiceStateForPhoneId:1930 com.android.internal.telephony.ITelephonyRegistry$Stub.onTransact:629 android.os.Binder.execTransactInternal:1364 
+05-07 09:09:47.161 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:09:47.184 W/ContextImpl(22939): Calling a method in the system process without a qualified user: android.app.ContextImpl.sendBroadcastMultiplePermissions:1408 android.content.Context.sendBroadcastMultiplePermissions:2749 android.content.Context.sendBroadcastMultiplePermissions:2737 com.android.server.TelephonyRegistry.broadcastDataConnectionStateChanged:4623 com.android.server.TelephonyRegistry.notifyDataConnectionForSubscriber:2405 
+05-07 09:09:47.255 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:09:47.255 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:09:47.262 E/AppOps  (22939): attributionTag VCN not declared in manifest of android
+05-07 09:09:47.278 W/HeadsetPhoneState(23365): startListenForPhoneState: no event to listen
+05-07 09:09:47.306 W/.gms.persistent(26411): Cleared Reference was only reachable from finalizer (only reported once)
+05-07 09:09:47.423 W/Telephony(23382): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+05-07 09:09:47.423 W/Telephony(23382): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+05-07 09:09:47.508 W/Telephony(23382): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+05-07 09:09:47.508 W/Telephony(23382): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+05-07 09:09:47.528 W/Telephony(23382): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+05-07 09:09:47.683 W/Telephony(23382): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+05-07 09:09:47.684 W/Telephony(23382): registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+05-07 09:09:47.689 W/Telephony(23382): registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+05-07 09:09:49.013 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:09:52.604 W/ReactNativeJS(29055): Cannot connect to Expo CLI.
+05-07 09:09:52.604 W/ReactNativeJS(29055): 
+05-07 09:09:52.604 W/ReactNativeJS(29055): Try the following to fix the issue:
+05-07 09:09:52.604 W/ReactNativeJS(29055): - Ensure that Expo dev server is running and available on the same network
+05-07 09:09:52.604 W/ReactNativeJS(29055): - Ensure that your device/emulator is connected to your machine and has USB debugging enabled - run 'adb devices' to see a list of connected devices
+05-07 09:09:52.604 W/ReactNativeJS(29055): - If you're on a physical device connected to the same machine, run 'adb reverse tcp:8081 tcp:8081' to forward requests from your device
+05-07 09:09:52.604 W/ReactNativeJS(29055): 
+05-07 09:09:52.604 W/ReactNativeJS(29055): URL: 10.0.2.2:8081
+05-07 09:09:52.604 W/ReactNativeJS(29055): 
+05-07 09:09:52.604 W/ReactNativeJS(29055): Error: undefined
+05-07 09:09:52.850 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:09:52.902 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 79 startTime of in progress event=1778162986723
+05-07 09:09:53.852 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:10:00.175 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:10:19.095 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:10:39.058 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:10:42.109 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:10:42.110 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:10:42.112 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:10:42.114 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:10:42.115 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:10:42.115 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:10:46.853 W/Looper  (22939): Slow dispatch took 193ms android.ui app=system_server main=false group=TOP_APP h=com.android.server.am.ActivityManagerService$UiHandler c=com.android.server.am.UidObserverController$$ExternalSyntheticLambda0@8fa8333 m=0
+05-07 09:10:51.976 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:10:51.976 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:10:51.991 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:10:51.991 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:10:51.991 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:10:51.991 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:10:53.811 W/libbinder.Binder(22939): Binder transaction to android.content.pm.IPackageManager, function: UNKNOWN_FUNCTION_NAME, code: 1598311760, took 2718ms. Data bytes: 80 Reply bytes: 4 Flags: 16
+05-07 09:10:58.576 E/libbinder.IPCThreadState(  488): binder thread pool (1 threads) starved for 104 ms
+05-07 09:10:59.582 W/Looper  (22939): Slow delivery took 247ms android.fg app=system_server main=false group=FOREGROUND h=android.os.Handler c=com.android.server.net.NetworkManagementService$NetdUnsolicitedEventListener$$ExternalSyntheticLambda3@74aac70 m=0
+05-07 09:11:07.896 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:11:13.029 W/libbinder.Binder(22939): Binder transaction to android.content.pm.IPackageManager, function: UNKNOWN_FUNCTION_NAME, code: 1598311760, took 2753ms. Data bytes: 80 Reply bytes: 4 Flags: 16
+05-07 09:11:19.525 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:11:22.267 W/libbinder.Binder(22939): Binder transaction to android.content.pm.IPackageManager, function: UNKNOWN_FUNCTION_NAME, code: 1598311760, took 1694ms. Data bytes: 80 Reply bytes: 4 Flags: 16
+05-07 09:11:31.340 W/libbinder.Binder(22939): Binder transaction to android.content.pm.IPackageManager, function: UNKNOWN_FUNCTION_NAME, code: 1598311760, took 1051ms. Data bytes: 80 Reply bytes: 4 Flags: 16
+05-07 09:11:42.995 W/Looper  (22939): Drained
+05-07 09:11:43.397 W/libbinder.Binder(22939): Binder transaction to android.content.pm.IPackageManager, function: UNKNOWN_FUNCTION_NAME, code: 1598311760, took 2037ms. Data bytes: 80 Reply bytes: 4 Flags: 16
+05-07 09:11:48.657 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:48.657 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:48.657 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:48.657 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:48.657 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:48.657 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:51.685 W/libbinder.Binder(22939): Binder transaction to android.content.pm.IPackageManager, function: UNKNOWN_FUNCTION_NAME, code: 1598311760, took 1333ms. Data bytes: 80 Reply bytes: 4 Flags: 16
+05-07 09:11:53.739 F/bluetooth(23365): system/gd/hci/hci_layer.cc:565 on_hardware_error: Hardware Error Event with code 0x42
+--------- beginning of crash
+05-07 09:11:54.404 F/libc    (23365): Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 23503 (gd_stack_thread), pid 23365 (droid.bluetooth)
+05-07 09:11:54.737 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:54.738 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:54.738 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:54.738 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:54.738 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:54.738 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:56.611 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 8
+05-07 09:11:56.612 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 16
+05-07 09:11:57.299 W/Nl80211Utils(22939): Malformed NEW_INTERFACE response: missing attributes
+05-07 09:11:57.849 E/DEBUG   (29470): failed to read process info: failed to open /proc/23365: No such file or directory
+05-07 09:11:58.018 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:58.018 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:58.019 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:58.019 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:58.019 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:58.019 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:11:59.815 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:12:00.457 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:12:01.670 W/libbinder.Binder(22939): Binder transaction to android.content.pm.IPackageManager, function: UNKNOWN_FUNCTION_NAME, code: 1598311760, took 1368ms. Data bytes: 80 Reply bytes: 4 Flags: 16
+05-07 09:12:07.836 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:07.836 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:07.837 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:07.837 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:07.837 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:07.837 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:12.022 W/libbinder.Binder(22939): Binder transaction to android.content.pm.IPackageManager, function: UNKNOWN_FUNCTION_NAME, code: 1598311760, took 1665ms. Data bytes: 80 Reply bytes: 4 Flags: 16
+05-07 09:12:22.525 W/libbinder.Binder(22939): Binder transaction to android.content.pm.IPackageManager, function: UNKNOWN_FUNCTION_NAME, code: 1598311760, took 1803ms. Data bytes: 80 Reply bytes: 4 Flags: 16
+05-07 09:12:26.862 E/android.hardware.bluetooth.service.default(  489): unable to open /dev/rfkill: Permission denied
+05-07 09:12:26.863 E/android.hardware.bluetooth.service.default(  489): rfkill unavailable
+05-07 09:12:26.867 E/libbinder.IPCThreadState(  489): attemptIncStrongHandle(1): Not supported
+05-07 09:12:26.947 W/AS.PlaybackActivityMon(22939): client died
+05-07 09:12:27.833 E/BluetoothSystemServer(22939): BluetoothManagerService: ServiceConnection.onServiceDisconnected(com.android.bluetooth.btservice.AdapterService)
+05-07 09:12:27.851 W/Looper  (22939): Slow dispatch took 980ms main app=system_server main=true group=FOREGROUND h=android.app.ActivityThread$H c=android.app.LoadedApk$ServiceDispatcher$RunConnection@af58628 m=0
+05-07 09:12:27.884 E/BluetoothSystemServer(22939): BluetoothManagerService: MESSAGE_BLUETOOTH_SERVICE_DISCONNECTED
+05-07 09:12:30.513 W/ActivityManager(22939): Scheduling restart of crashed service com.google.android.bluetooth/com.android.bluetooth.btservice.AdapterService in 1000ms for connection
+05-07 09:12:30.858 W/Looper  (22939): Slow dispatch took 134ms android.fg app=system_server main=false group=FOREGROUND h=android.os.Handler c=com.android.server.power.hint.HintManagerService$MyUidObserver$$ExternalSyntheticLambda1@6a96227 m=0
+05-07 09:12:31.521 W/libbinder.Binder(22939): Binder transaction to com.android.internal.telephony.ITelephonyRegistry, function: UNKNOWN_FUNCTION_NAME, code: 8, took 2245ms. Data bytes: 804 Reply bytes: 4 Flags: 18
+05-07 09:12:31.946 W/Looper  (22939): Slow dispatch took 1374ms android.ui app=system_server main=false group=TOP_APP h=com.android.server.am.ActivityManagerService$UiHandler c=com.android.server.am.UidObserverController$$ExternalSyntheticLambda0@8fa8333 m=0
+05-07 09:12:32.170 W/ActivityManager(22939): Slow operation: 427ms so far, now at startProcess: done creating new process record
+05-07 09:12:32.170 W/ActivityManager(22939): Slow operation: 427ms so far, now at startProcess: stepping in to startProcess
+05-07 09:12:32.237 W/ActivityManager(22939): Slow operation: 67ms so far, now at startProcess: getting gids from package manager
+05-07 09:12:32.291 W/ActivityManager(22939): Slow operation: 121ms so far, now at startProcess: building args
+05-07 09:12:32.344 W/ActivityManager(22939): Slow operation: 600ms so far, now at startProcess: done starting proc!
+05-07 09:12:32.344 W/ActivityManager(22939): Slow operation: 173ms so far, now at startProcess: asking zygote to start proc
+05-07 09:12:32.357 W/Looper  (22939): Slow dispatch took 410ms android.fg app=system_server main=false group=FOREGROUND h=android.os.Handler c=com.android.server.location.injector.SystemAppForegroundHelper$$ExternalSyntheticLambda1@40c933 m=0
+05-07 09:12:32.401 E/BluetoothSystemServer(22939): BluetoothManagerService: Recovery #1 scheduled in 0.4S
+05-07 09:12:32.505 W/ActivityManager(22939): Slow operation: 334ms so far, now at startProcess: returned from zygote!
+05-07 09:12:32.551 W/ActivityManager(22939): Slow operation: 380ms so far, now at startProcess: done updating battery stats
+05-07 09:12:32.568 W/ActivityManager(22939): Slow operation: 398ms so far, now at startProcess: building log message
+05-07 09:12:32.569 W/ActivityManager(22939): Slow operation: 398ms so far, now at startProcess: starting to update pids map
+05-07 09:12:32.582 W/ActivityManager(22939): Slow operation: 412ms so far, now at startProcess: done updating pids map
+05-07 09:12:32.620 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:32.621 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:32.621 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:32.811 W/Looper  (22939): Slow delivery took 217ms main app=system_server main=true group=FOREGROUND h=android.app.ActivityThread$H c=android.app.LoadedApk$ReceiverDispatcher$Args$$ExternalSyntheticLambda0@64c1217 m=0
+05-07 09:12:32.835 W/ApplicationInfo(22939): Large ApplicationInfo parcel: size=17700 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=2 overlayPaths=2
+05-07 09:12:32.836 W/droid.bluetooth(29494): Unexpected CPU variant for x86: x86_64.
+05-07 09:12:32.836 W/droid.bluetooth(29494): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, pantherlake, default
+05-07 09:12:32.908 W/Looper  (22939): Slow dispatch took 149ms android.ui app=system_server main=false group=TOP_APP h=com.android.server.am.ActivityManagerService$UiHandler c=null m=68
+05-07 09:12:32.934 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:32.934 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:32.935 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:32.936 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:32.960 E/SmsApplication(23382): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+05-07 09:12:32.989 W/libbinder.Binder(22939): Binder transaction to android.content.pm.IPackageManager, function: UNKNOWN_FUNCTION_NAME, code: 1598311760, took 2381ms. Data bytes: 80 Reply bytes: 4 Flags: 16
+05-07 09:12:33.080 W/ProcessStats(22939): Tracking association SourceState{34b67f6 system/1000 ImpFg #2735} whose proc state 5 is better than process ProcessState{d7b1807 com.google.android.permissioncontroller/10227 pkg=com.google.android.permissioncontroller} proc state 14 (1 skipped)
+05-07 09:12:33.091 W/Looper  (22939): Slow dispatch took 188ms main app=system_server main=true group=FOREGROUND h=android.app.ActivityThread$H c=android.app.LoadedApk$ReceiverDispatcher$Args$$ExternalSyntheticLambda0@f0c67f7 m=0
+05-07 09:12:33.101 W/SignedPackage(22939): Package doesn't have required signing certificate: com.google.android.retaildemo
+05-07 09:12:33.156 E/RoleControllerServiceImpl(22939): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION, user: 0
+05-07 09:12:33.193 W/SignedPackage(22939): Package doesn't have required signing certificate: com.google.android.apps.work.clouddpc
+05-07 09:12:33.321 E/SmsApplication(23382): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+05-07 09:12:33.324 W/Looper  (22939): Slow dispatch took 180ms main app=system_server main=true group=FOREGROUND h=android.app.ActivityThread$H c=android.app.LoadedApk$ReceiverDispatcher$Args$$ExternalSyntheticLambda0@8f13ce7 m=0
+05-07 09:12:33.430 W/Looper  (22939): Slow dispatch took 240ms android.ui app=system_server main=false group=TOP_APP h=com.android.server.am.ActivityManagerService$UiHandler c=null m=68
+05-07 09:12:33.432 W/Looper  (22939): Slow delivery took 245ms android.ui app=system_server main=false group=TOP_APP h=com.android.server.am.ActivityManagerService$UiHandler c=null m=68
+05-07 09:12:33.511 W/Looper  (22939): Drained
+05-07 09:12:33.551 W/chbox:googleapp(28065): Suspending all threads took: 20.001ms
+05-07 09:12:33.584 W/ActivityManager(22939): Slow operation: 58ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+05-07 09:12:33.593 W/Looper  (22939): Slow dispatch took 142ms android.ui app=system_server main=false group=TOP_APP h=com.android.server.am.ActivityManagerService$UiHandler c=null m=68
+05-07 09:12:33.655 E/RoleControllerServiceImpl(22939): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.SYSTEM_DEPENDENCY_INSTALLER, user: 0
+05-07 09:12:33.701 W/Looper  (22939): Drained
+05-07 09:12:34.126 E/RoleControllerServiceImpl(22939): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET, user: 0
+05-07 09:12:34.387 W/NearbyMediums(26411): [BLUETOOTH_RADIO] State was changed outside of our control. Updating the snapshot to match current radio state.
+05-07 09:12:34.392 W/NearbyMediums(26411): [BLUETOOTH_RADIO] State was changed outside of our control. Updating the snapshot to match current radio state.
+05-07 09:12:34.422 W/BluetoothLeScanner(26411): stopScan(callback): BLE is not available
+05-07 09:12:34.500 W/ContentProviderHelper(22939): Slow operation: 89ms so far, now at getContentProviderImpl: before updateOomAdj
+05-07 09:12:34.501 W/ContentProviderHelper(22939): Slow operation: 89ms so far, now at getContentProviderImpl: after updateOomAdj
+05-07 09:12:34.503 W/ContentProviderHelper(22939): Slow operation: 91ms so far, now at getContentProviderImpl: done!
+05-07 09:12:34.957 W/ActivityManager(22939): Slow operation: 52ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+05-07 09:12:35.070 W/Looper  (22939): Slow dispatch took 131ms android.ui app=system_server main=false group=TOP_APP h=com.android.server.am.ActivityManagerService$UiHandler c=com.android.server.am.UidObserverController$$ExternalSyntheticLambda0@8fa8333 m=0
+05-07 09:12:35.192 W/SignedPackage(22939): Cannot get ApplicationInfo for package: com.google.android.devicelockcontroller
+05-07 09:12:35.264 W/SignedPackage(22939): Package doesn't have required signing certificate: com.google.android.retaildemo
+05-07 09:12:35.270 E/RoleControllerServiceImpl(22939): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION, user: 0
+05-07 09:12:35.282 W/SignedPackage(22939): Package doesn't have required signing certificate: com.google.android.apps.work.clouddpc
+05-07 09:12:35.327 E/RoleControllerServiceImpl(22939): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.SYSTEM_DEPENDENCY_INSTALLER, user: 0
+05-07 09:12:35.639 W/ActivityManager(22939): Skipping manifest association check for null package. SourceUid: 10224, SourcePkg: null, TargetUid: 10224, TargetPkg: com.google.android.gms
+05-07 09:12:35.673 W/ActivityManager(22939): Skipping manifest association check for null package. SourceUid: 10224, SourcePkg: null, TargetUid: 10224, TargetPkg: com.google.android.gms
+05-07 09:12:35.679 E/RoleControllerServiceImpl(22939): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET, user: 0
+05-07 09:12:35.701 W/SignedPackage(22939): Cannot get ApplicationInfo for package: com.google.android.devicelockcontroller
+05-07 09:12:35.830 W/ProximityAuth(26411): [PhoneHubNotificationProcessor] shutdown(): context is null.
+05-07 09:12:35.845 W/ChimeraUtils(26411): Module com.google.android.gms.auth_proximity missing resource null(0)
+05-07 09:12:36.322 W/MagnificationConnectionManager(22939): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+05-07 09:12:36.348 W/MagnificationConnectionManager(22939): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+05-07 09:12:36.349 W/Looper  (22939): Slow dispatch took 361ms main app=system_server main=true group=FOREGROUND h=com.android.server.accessibility.AccessibilityManagerService$MainHandler c=com.android.server.accessibility.AccessibilityManagerService$$ExternalSyntheticLambda35@93d768 m=0
+05-07 09:12:36.477 W/Looper  (22939): Slow delivery took 251ms main app=system_server main=true group=FOREGROUND h=com.android.server.power.Notifier$NotifierHandler c=null m=7
+05-07 09:12:36.494 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:36.495 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:36.495 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:36.509 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:36.509 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:36.510 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:36.524 W/Looper  (22939): Drained
+05-07 09:12:36.972 W/droid.bluetooth(29494): AIBinder_linkToDeath is being called with a non-null cookie and no onUnlink callback set. Use AIBinder_DeathRecipient_setOnUnlinked to manage the lifetime of the cookie. This will become an abort.
+05-07 09:12:37.032 W/droid.bluetooth(29494): AIBinder_linkToDeath is being called with a non-null cookie and no onUnlink callback set. Use AIBinder_DeathRecipient_setOnUnlinked to manage the lifetime of the cookie. This will become an abort.
+05-07 09:12:37.037 E/android.hardware.bluetooth.service.default(  489): unable to open /dev/rfkill: Permission denied
+05-07 09:12:37.037 E/android.hardware.bluetooth.service.default(  489): rfkill unavailable
+05-07 09:12:37.236 E/bluetooth(29494): system/gd/hal/socket_hal_impl_android.cc:98 SocketHalImpl: Socket service is not declared (checked for android.hardware.bluetooth.socket.IBluetoothSocket/lpp and android.hardware.bluetooth.socket.IBluetoothSocket/default)
+05-07 09:12:37.243 E/bluetooth(29494): system/gd/hal/gatt_hal_impl_android.cc:107 GattHalImpl: The service android.hardware.bluetooth.gatt.IBluetoothGatt/default is not declared
+05-07 09:12:37.501 W/gatt_offload(29494): system/stack/gatt/gatt_offload.cc:127 gatt_offload_init: InitializeGattHal() failed!
+05-07 09:12:37.501 W/bluetooth(29494): system/stack/gatt/gatt_main.cc:106 gatt_init: error initializing gatt offload
+05-07 09:12:37.506 W/bluetooth(29494): system/stack/btm/btm_inq.cc:1013 btm_clr_inq_result_flt: Memory being reset multiple times
+05-07 09:12:37.526 W/bt_btm_ble(29494): system/stack/btm/btm_ble_gap.cc:573 BTM_BleConfigPrivacy: 1
+05-07 09:12:37.526 W/bluetooth(29494): system/btif/src/btif_bqr.cc:455 EnableDisableBtQualityReport: Bluetooth Quality Report is disabled. bqr_prop_evtmask: , bqr_prop_interval_ms: 
+05-07 09:12:37.529 W/bt_btif_sock_hal(29494): system/btif/src/btif_sock_hal.cc:67 btsock_hal_init: RegisterSocketHalCallback() failed!
+05-07 09:12:37.529 W/bt_btif_sock(29494): system/btif/src/btif_sock.cc:118 btif_sock_init: error initializing socket hal: FAIL
+05-07 09:12:37.674 W/droid.bluetooth(29494): AIBinder_linkToDeath is being called with a non-null cookie and no onUnlink callback set. Use AIBinder_DeathRecipient_setOnUnlinked to manage the lifetime of the cookie. This will become an abort.
+05-07 09:12:37.822 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:37.881 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:37.881 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:37.881 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:37.881 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:37.882 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:37.882 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:37.883 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:37.885 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:37.885 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:37.885 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:37.886 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:37.886 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:37.888 E/BluetoothHeadsetServiceJni(29494): android/app/jni/com_android_bluetooth_hfp.cpp:785 enableSwbNative: Failed to disable
+05-07 09:12:37.910 W/HeadsetPhoneState(29494): startListenForPhoneState: no event to listen
+05-07 09:12:37.924 W/droid.bluetooth(29494): AIBinder_linkToDeath is being called with a non-null cookie and no onUnlink callback set. Use AIBinder_DeathRecipient_setOnUnlinked to manage the lifetime of the cookie. This will become an abort.
+05-07 09:12:37.963 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:37.994 W/MediaControlGattService(29494): Feature MEDIA_STATE support: true
+05-07 09:12:37.999 W/MediaControlGattService(29494): Feature PLAYER_NAME support: true
+05-07 09:12:38.000 W/MediaControlGattService(29494): Feature PLAYER_NAME_NOTIFY support: true
+05-07 09:12:38.004 W/MediaControlGattService(29494): Feature PLAYER_ICON_URL support: false
+05-07 09:12:38.004 W/MediaControlGattService(29494): Feature PLAYER_ICON_OBJ_ID support: false
+05-07 09:12:38.005 W/MediaControlGattService(29494): Feature CURRENT_TRACK_SEGMENT_OBJ_ID support: false
+05-07 09:12:38.005 W/MediaControlGattService(29494): Feature CURRENT_TRACK_OBJ_ID support: false
+05-07 09:12:38.005 W/MediaControlGattService(29494): Feature NEXT_TRACK_OBJ_ID support: false
+05-07 09:12:38.005 W/MediaControlGattService(29494): Feature CURRENT_GROUP_OBJ_ID support: false
+05-07 09:12:38.005 W/MediaControlGattService(29494): Feature PARENT_GROUP_OBJ_ID support: false
+05-07 09:12:38.005 W/MediaControlGattService(29494): Feature SEARCH_RESULT_OBJ_ID support: false
+05-07 09:12:38.005 W/MediaControlGattService(29494): Feature TRACK_TITLE support: true
+05-07 09:12:38.005 W/MediaControlGattService(29494): Feature TRACK_TITLE_NOTIFY support: true
+05-07 09:12:38.006 W/MediaControlGattService(29494): Feature TRACK_DURATION support: true
+05-07 09:12:38.006 W/MediaControlGattService(29494): Feature TRACK_DURATION_NOTIFY support: true
+05-07 09:12:38.007 W/MediaControlGattService(29494): Feature TRACK_POSITION support: true
+05-07 09:12:38.008 W/MediaControlGattService(29494): Feature TRACK_POSITION_NOTIFY support: true
+05-07 09:12:38.008 W/MediaControlGattService(29494): Feature MEDIA_STATE support: true
+05-07 09:12:38.008 W/MediaControlGattService(29494): Feature MEDIA_STATE support: true
+05-07 09:12:38.013 W/MediaControlGattService(29494): Feature PLAYBACK_SPEED support: true
+05-07 09:12:38.013 W/MediaControlGattService(29494): Feature PLAYBACK_SPEED support: true
+05-07 09:12:38.014 W/MediaControlGattService(29494): Feature PLAYBACK_SPEED_NOTIFY support: true
+05-07 09:12:38.020 W/MediaControlGattService(29494): Feature SEEKING_SPEED support: true
+05-07 09:12:38.020 W/MediaControlGattService(29494): Feature SEEKING_SPEED support: true
+05-07 09:12:38.020 W/MediaControlGattService(29494): Feature SEEKING_SPEED_NOTIFY support: true
+05-07 09:12:38.022 W/MediaControlGattService(29494): Feature PLAYING_ORDER_SUPPORTED support: true
+05-07 09:12:38.022 W/MediaControlGattService(29494): Feature PLAYING_ORDER support: true
+05-07 09:12:38.024 W/MediaControlGattService(29494): Feature PLAYING_ORDER_NOTIFY support: true
+05-07 09:12:38.032 W/MediaControlGattService(29494): Feature MEDIA_CONTROL_POINT_OPCODES_SUPPORTED support: true
+05-07 09:12:38.032 W/MediaControlGattService(29494): Feature MEDIA_CONTROL_POINT_OPCODES_SUPPORTED_NOTIFY support: true
+05-07 09:12:38.034 W/MediaControlGattService(29494): Feature MEDIA_STATE support: true
+05-07 09:12:38.034 W/MediaControlGattService(29494): Feature PLAYER_ICON_URL support: false
+05-07 09:12:38.034 W/MediaControlGattService(29494): Feature PLAYER_ICON_OBJ_ID support: false
+05-07 09:12:38.035 W/MediaControlGattService(29494): Feature PLAYER_NAME support: true
+05-07 09:12:38.035 W/MediaControlGattService(29494): Feature PLAYING_ORDER_SUPPORTED support: true
+05-07 09:12:38.035 W/MediaControlProfile(29494): MCS service state fields left unhandled: 
+05-07 09:12:38.035 W/MediaControlProfile(29494):    > PLAYBACK_STATE
+05-07 09:12:38.038 W/MediaControlProfile(29494):    > PLAYER_NAME
+05-07 09:12:38.038 W/MediaControlProfile(29494):    > PLAYING_ORDER_SUPPORTED
+05-07 09:12:38.137 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:38.169 W/ActivityManager(22939): Receiver with filter android.content.IntentFilter@a1d870a already registered for pid 23243, callerPackage is com.android.systemui
+05-07 09:12:38.206 W/rfcomm_port_utils(29494): system/stack/rfcomm/port_utils.cc:290 port_find_mcb: not found, bd_addr:ff:ff:ff:ff:ff:ff
+05-07 09:12:38.221 W/Binder  (22939): Outgoing transactions from this process must be FLAG_ONEWAY
+05-07 09:12:38.221 W/Binder  (22939): java.lang.Throwable
+05-07 09:12:38.221 W/Binder  (22939): 	at android.os.BinderProxy.transact(BinderProxy.java:587)
+05-07 09:12:38.221 W/Binder  (22939): 	at android.bluetooth.IBluetooth$Stub$Proxy.getActiveDevices(IBluetooth.java:3698)
+05-07 09:12:38.221 W/Binder  (22939): 	at android.bluetooth.BluetoothAdapter.lambda$getActiveDevices$13(BluetoothAdapter.java:2019)
+05-07 09:12:38.221 W/Binder  (22939): 	at android.bluetooth.BluetoothAdapter.$r8$lambda$I2gWJzpMar4LhBuQcD-bahLbnCc(BluetoothAdapter.java:0)
+05-07 09:12:38.221 W/Binder  (22939): 	at android.bluetooth.BluetoothAdapter$$ExternalSyntheticLambda31.applyOrThrow(D8$$SyntheticClass:0)
+05-07 09:12:38.221 W/Binder  (22939): 	at android.bluetooth.BluetoothUtils$RemoteExceptionIgnoringFunction.apply(BluetoothUtils.java:411)
+05-07 09:12:38.221 W/Binder  (22939): 	at android.bluetooth.BluetoothAdapter.callServiceIfEnabled(BluetoothAdapter.java:1041)
+05-07 09:12:38.221 W/Binder  (22939): 	at android.bluetooth.BluetoothAdapter.getActiveDevices(BluetoothAdapter.java:2018)
+05-07 09:12:38.221 W/Binder  (22939): 	at com.android.server.audio.BtHelper.onBtProfileConnected(BtHelper.java:1197)
+05-07 09:12:38.221 W/Binder  (22939): 	at com.android.server.audio.AudioDeviceBroker$BrokerHandler.handleMessage(AudioDeviceBroker.java:2085)
+05-07 09:12:38.221 W/Binder  (22939): 	at android.os.Handler.dispatchMessageImpl(Handler.java:142)
+05-07 09:12:38.221 W/Binder  (22939): 	at android.os.Handler.dispatchMessage(Handler.java:125)
+05-07 09:12:38.221 W/Binder  (22939): 	at android.os.Looper.loopOnce(Looper.java:296)
+05-07 09:12:38.221 W/Binder  (22939): 	at android.os.Looper.loop(Looper.java:397)
+05-07 09:12:38.221 W/Binder  (22939): 	at com.android.server.audio.AudioDeviceBroker$BrokerThread.run(AudioDeviceBroker.java:1830)
+05-07 09:12:38.445 W/MagicTether(26411): [HostEnablementUtils] Invalid account list. [CONTEXT service_id=276 ]
+05-07 09:12:38.482 W/(setupdesign) Partner(26527): No partner package found!
+05-07 09:12:38.547 W/ProximityAuth(26411): [PhoneHubNotificationProcessor] shutdown(): context is null.
+05-07 09:12:38.549 W/ChimeraUtils(26411): Module com.google.android.gms.auth_proximity missing resource null(0)
+05-07 09:12:38.674 W/NearbyMediums(26411): [BLUETOOTH_RADIO] State was changed outside of our control. Updating the snapshot to match current radio state.
+05-07 09:12:38.708 W/ActivityManager(22939): Slow operation: 77ms so far, now at startProcess: returned from zygote!
+05-07 09:12:38.720 W/ActivityManager(22939): Slow operation: 91ms so far, now at startProcess: done updating battery stats
+05-07 09:12:38.723 W/ActivityManager(22939): Slow operation: 93ms so far, now at startProcess: building log message
+05-07 09:12:38.728 W/ActivityManager(22939): Slow operation: 99ms so far, now at startProcess: starting to update pids map
+05-07 09:12:38.731 W/ActivityManager(22939): Slow operation: 101ms so far, now at startProcess: done updating pids map
+05-07 09:12:38.762 W/MagicTether(26411): [HostEnablementUtils] Invalid account list. [CONTEXT service_id=276 ]
+05-07 09:12:38.798 W/SyntheticOperationsLogg(26411): SyntheticOperationsLogger unable to log "com.google.android.gms.auth_proximity"'s use of "change_component_enabled_state" because installOperationsCollector never executed [CONTEXT service_id=238 ]
+05-07 09:12:38.822 W/earchbox:search(29578): Unexpected CPU variant for x86: x86_64.
+05-07 09:12:38.822 W/earchbox:search(29578): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, pantherlake, default
+05-07 09:12:38.849 W/ActivityManager(22939): Skipping manifest association check for null package. SourceUid: 10224, SourcePkg: null, TargetUid: 10224, TargetPkg: com.google.android.gms
+05-07 09:12:39.074 W/Looper  (22939): Slow dispatch took 111ms android.fg app=system_server main=false group=FOREGROUND h=android.os.Handler c=com.android.server.am.SameProcessApplicationThread$$ExternalSyntheticLambda1@bab7fb1 m=0
+05-07 09:12:39.115 W/SignedPackage(22939): Package doesn't have required signing certificate: com.google.android.retaildemo
+05-07 09:12:39.118 E/RoleControllerServiceImpl(22939): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION, user: 0
+05-07 09:12:39.138 W/SignedPackage(22939): Package doesn't have required signing certificate: com.google.android.apps.work.clouddpc
+05-07 09:12:39.189 E/SmsApplication(23382): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+05-07 09:12:39.191 E/RoleControllerServiceImpl(22939): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.SYSTEM_DEPENDENCY_INSTALLER, user: 0
+05-07 09:12:39.196 W/EasyUnlock(26411): [HostValidator] Invalid account list. [CONTEXT service_id=234 ]
+05-07 09:12:39.215 W/ConsentManagerApiServic(26494): Consent Manager API is not enabled. [CONTEXT service_id=460 ]
+05-07 09:12:39.220 W/ApplicationInfo(22939): Large ApplicationInfo parcel: size=17700 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=2 overlayPaths=2
+05-07 09:12:39.242 W/ApplicationInfo(22939): Large ApplicationInfo parcel: size=17700 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=2 overlayPaths=2
+05-07 09:12:39.246 W/ProximityAuth(26411): [PhoneHubNotificationProcessor] shutdown(): context is null.
+05-07 09:12:39.246 W/ChimeraUtils(26411): Module com.google.android.gms.auth_proximity missing resource null(0)
+05-07 09:12:39.298 W/PackageInfo(22939): Large parcel: size=74052 pkg=com.google.android.gms uid=10224 perm=18140(95) reqPerm=20040(383) attr=27136(327) prevAllowSquashing=false
+05-07 09:12:39.336 W/ActivityManager(22939): Slow operation: 70ms so far, now at attachApplicationLocked: immediately after bindApplication
+05-07 09:12:39.336 W/ActivityManager(22939): Slow operation: 70ms so far, now at attachApplicationLocked: after updateLruProcessLocked
+05-07 09:12:39.338 W/ActivityManager(22939): Slow operation: 71ms so far, now at attachApplicationLocked: after updateOomAdjLocked
+05-07 09:12:39.369 E/RoleControllerServiceImpl(22939): Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET, user: 0
+05-07 09:12:39.411 E/SmsApplication(23382): com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)
+05-07 09:12:39.694 W/SignedPackage(22939): Cannot get ApplicationInfo for package: com.google.android.devicelockcontroller
+05-07 09:12:39.874 E/BluetoothLeScanner(26411): stopLeScan(): Error state, mScannerId=0
+05-07 09:12:40.059 W/ApplicationInfo(22939): Large ApplicationInfo parcel: size=17700 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=2 overlayPaths=2
+05-07 09:12:40.074 W/BtScan.ScanRadioStats(29494): recordScanRadioStop(caller=configureRegularScanParams): No scan radio to stop
+05-07 09:12:40.171 W/Settings(26411): Setting airplane_mode_on has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+05-07 09:12:40.229 W/MagnificationConnectionManager(22939): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+05-07 09:12:40.233 W/Settings(26411): Setting airplane_mode_on has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+05-07 09:12:40.239 W/MagnificationConnectionManager(22939): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+05-07 09:12:40.244 W/Looper  (22939): Slow dispatch took 107ms main app=system_server main=true group=FOREGROUND h=com.android.server.accessibility.AccessibilityManagerService$MainHandler c=com.android.server.accessibility.AccessibilityManagerService$$ExternalSyntheticLambda35@68d6134 m=0
+05-07 09:12:40.249 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:40.249 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:40.251 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:40.254 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:40.254 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:40.256 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:40.261 W/MagnificationConnectionManager(22939): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+05-07 09:12:40.265 W/MagnificationConnectionManager(22939): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+05-07 09:12:40.268 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:40.268 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:40.268 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:40.272 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:40.272 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:40.273 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:12:40.548 W/PersonalSafety(26411): Reject: Too frequent location with insignificant accuracy improvement. [CONTEXT service_id=310 ]
+05-07 09:12:40.559 W/ApplicationInfo(22939): Large ApplicationInfo parcel: size=17700 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=2 overlayPaths=2
+05-07 09:12:40.603 W/PersonalSafety(26411): BleScanner not running, ignore location update [CONTEXT service_id=310 ]
+05-07 09:12:40.724 W/libbinder.Binder(22939): Binder transaction to android.content.pm.IPackageManager, function: UNKNOWN_FUNCTION_NAME, code: 1598311760, took 1055ms. Data bytes: 80 Reply bytes: 4 Flags: 16
+05-07 09:12:41.416 W/ApplicationInfo(22939): Large ApplicationInfo parcel: size=17700 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=2 overlayPaths=2
+05-07 09:12:42.679 W/ApplicationInfo(22939): Large ApplicationInfo parcel: size=17700 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=2 overlayPaths=2
+05-07 09:12:42.680 W/ApplicationInfo(22939): Large ApplicationInfo parcel: size=17700 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=2 overlayPaths=2
+05-07 09:12:42.716 W/ApplicationInfo(22939): Large ApplicationInfo parcel: size=17700 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=2 overlayPaths=2
+05-07 09:12:42.729 W/ApplicationInfo(22939): Large ApplicationInfo parcel: size=17700 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=2 overlayPaths=2
+05-07 09:12:42.733 W/ApplicationInfo(22939): Large ApplicationInfo parcel: size=17700 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=2 overlayPaths=2
+05-07 09:12:42.741 W/ApplicationInfo(22939): Large ApplicationInfo parcel: size=17700 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=2 overlayPaths=2
+05-07 09:12:42.743 W/ApplicationInfo(22939): Large ApplicationInfo parcel: size=17700 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=2 overlayPaths=2
+05-07 09:12:43.644 W/ApplicationInfo(22939): Large ApplicationInfo parcel: size=17700 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=2 overlayPaths=2
+05-07 09:12:47.779 W/Looper  (23243): Slow dispatch took 1275ms SysUiBg app=com.android.systemui main=false group=FOREGROUND h=android.net.ConnectivityManager$CallbackHandler c=null m=6
+05-07 09:12:47.781 W/Looper  (23243): Slow delivery took 1759ms SysUiBg app=com.android.systemui main=false group=FOREGROUND h=android.net.ConnectivityManager$CallbackHandler c=null m=6
+05-07 09:12:48.009 W/libbinder.Binder(22939): Binder transaction to android.net.wifi.IWifiManager, function: UNKNOWN_FUNCTION_NAME, code: 41, took 1493ms. Data bytes: 184 Reply bytes: 576 Flags: 16
+05-07 09:12:48.126 W/Looper  (23243): Drained
+05-07 09:12:48.970 E/SharingClientImpl(26494): Unsuspend failed: null
+05-07 09:12:50.076 W/ApplicationInfo(22939): Large ApplicationInfo parcel: size=17700 package=com.google.android.googlequicksearchbox sharedLibs=3 resDirs=2 overlayPaths=2
+05-07 09:12:50.083 W/PackageInfo(22939): Large parcel: size=17964 pkg=com.google.android.googlequicksearchbox uid=10158 prevAllowSquashing=false
+05-07 09:12:50.157 W/Looper  (22939): Slow dispatch took 135ms android.ui app=system_server main=false group=TOP_APP h=com.android.server.am.ActivityManagerService$UiHandler c=com.android.server.am.UidObserverController$$ExternalSyntheticLambda0@8fa8333 m=0
+05-07 09:12:50.440 W/Looper  (22939): Slow dispatch took 683ms android.perm app=system_server main=false group=FOREGROUND h=android.os.Handler c=com.android.internal.infra.ServiceConnector$Impl$$ExternalSyntheticLambda0@491f2d5 m=0
+05-07 09:12:50.761 W/ssioncontroller(28300): Suspending all threads took: 26.822ms
+05-07 09:12:51.732 W/Looper  (23243): Slow dispatch took 1172ms SysUiBg app=com.android.systemui main=false group=FOREGROUND h=com.android.systemui.appops.AppOpsControllerImpl$H c=com.android.systemui.appops.AppOpsControllerImpl$H$1@92c837b m=0
+05-07 09:12:52.059 W/libbinder.Binder(26494): Binder transaction to com.google.android.gms.common.internal.IGmsServiceBroker, function: UNKNOWN_FUNCTION_NAME, code: 46, took 1007ms. Data bytes: 824 Reply bytes: 4 Flags: 18
+05-07 09:12:52.937 W/Looper  (23243): Slow delivery took 1022ms SysUiBg app=com.android.systemui main=false group=FOREGROUND h=android.os.Handler c=android.telephony.TelephonyCallback$IPhoneStateListenerStub$$ExternalSyntheticLambda58@425a598 m=0
+05-07 09:12:52.937 W/Looper  (23243): Slow dispatch took 1204ms SysUiBg app=com.android.systemui main=false group=FOREGROUND h=android.os.Handler c=android.telephony.TelephonyCallback$IPhoneStateListenerStub$$ExternalSyntheticLambda58@425a598 m=0
+05-07 09:12:53.346 W/System  (29494): A resource failed to call close. 
+05-07 09:12:53.346 W/System  (29494): A resource failed to call close. 
+05-07 09:12:53.378 W/Looper  (23243): Drained
+05-07 09:12:55.515 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:12:56.098 W/libbinder.Binder(22939): Binder transaction to android.content.pm.IPackageManager, function: UNKNOWN_FUNCTION_NAME, code: 1598311760, took 3159ms. Data bytes: 80 Reply bytes: 4 Flags: 16
+05-07 09:13:00.189 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:13:11.641 W/JobInfo (29578): Requested important-while-foreground flag for job0 is ignored and takes no effect
+05-07 09:13:11.663 W/JobInfo (29578): Requested important-while-foreground flag for job1 is ignored and takes no effect
+05-07 09:13:11.667 W/JobInfo (29578): Requested important-while-foreground flag for job2 is ignored and takes no effect
+05-07 09:13:11.684 W/JobInfo (29578): Requested important-while-foreground flag for job3 is ignored and takes no effect
+05-07 09:13:11.707 W/JobInfo (29578): Requested important-while-foreground flag for job40 is ignored and takes no effect
+05-07 09:13:11.712 W/JobInfo (29578): Requested important-while-foreground flag for job10 is ignored and takes no effect
+05-07 09:13:11.716 W/JobInfo (29578): Requested important-while-foreground flag for job11 is ignored and takes no effect
+05-07 09:13:11.720 W/JobInfo (29578): Requested important-while-foreground flag for job12 is ignored and takes no effect
+05-07 09:13:11.733 W/JobInfo (29578): Requested important-while-foreground flag for job13 is ignored and takes no effect
+05-07 09:13:11.752 W/JobInfo (29578): Requested important-while-foreground flag for job45 is ignored and takes no effect
+05-07 09:13:11.757 W/JobInfo (29578): Requested important-while-foreground flag for job50 is ignored and takes no effect
+05-07 09:13:11.761 W/JobInfo (29578): Requested important-while-foreground flag for job47 is ignored and takes no effect
+05-07 09:13:11.827 W/JobInfo (29578): Requested important-while-foreground flag for job65 is ignored and takes no effect
+05-07 09:13:19.330 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:13:39.325 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:13:44.444 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:13:44.444 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:13:44.445 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:13:44.445 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:13:44.445 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:13:44.445 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:13:47.097 E/GnssPsdsDownloader(22939): No Long-Term PSDS servers were specified in the GnssConfiguration
+05-07 09:13:50.451 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:13:50.451 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:13:50.451 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:13:50.451 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:13:50.451 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:13:50.451 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:00.141 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:14:08.541 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:08.541 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:08.542 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:08.542 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:08.542 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:08.543 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:08.544 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:08.545 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:14.592 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:14.592 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:14.592 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:14.592 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:14.592 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:14.592 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:14.594 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:14.594 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:19.498 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:14:23.741 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:23.741 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:23.741 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:23.741 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:23.742 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:23.742 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:23.744 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:23.745 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:29.757 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:29.758 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:29.758 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:29.758 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:29.758 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:29.758 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:29.760 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:29.761 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:36.591 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 8
+05-07 09:14:36.591 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 16
+05-07 09:14:36.726 W/Nl80211Utils(22939): Malformed NEW_INTERFACE response: missing attributes
+05-07 09:14:41.717 W/libbinder.Binder(22939): Binder transaction to android.content.pm.IPackageManager, function: UNKNOWN_FUNCTION_NAME, code: 1598311760, took 1436ms. Data bytes: 80 Reply bytes: 4 Flags: 16
+05-07 09:14:54.340 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:54.340 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:54.340 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:54.340 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:54.341 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:54.341 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:54.343 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:54.343 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:14:59.732 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:15:00.785 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:15:01.846 W/libbinder.Binder(22939): Binder transaction to android.content.pm.IPackageManager, function: UNKNOWN_FUNCTION_NAME, code: 1598311760, took 1885ms. Data bytes: 80 Reply bytes: 4 Flags: 16
+05-07 09:15:03.451 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:03.451 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:03.452 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:03.452 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:03.452 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:03.453 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:03.457 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:03.458 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:09.538 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:09.539 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:09.542 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:09.542 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:09.542 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:09.542 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:09.543 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:09.548 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:12.455 W/ProcessStats(22939): Tracking association SourceState{5c7f64a system/1000 ImpBg #2907} whose proc state 6 is better than process ProcessState{e012953 com.google.android.apps.photos/10171 pkg=com.google.android.apps.photos} proc state 14 (0 skipped)
+05-07 09:15:13.028 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:15:13.164 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 79 startTime of in progress event=1778163156513
+05-07 09:15:13.984 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:15:18.539 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:18.539 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:18.540 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:18.540 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:18.540 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:18.540 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:18.541 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:18.541 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:19.611 W/m.android.phone(23382): Suspending all threads took: 7.637ms
+05-07 09:15:42.637 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:42.638 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:42.638 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:42.638 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:42.639 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:42.639 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:42.639 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:42.639 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:48.665 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:48.665 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:48.665 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:48.665 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:48.665 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:48.665 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:48.667 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:48.667 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:15:49.590 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:16:00.095 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:16:19.613 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:16:30.859 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:30.860 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:30.860 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:30.860 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:30.860 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:30.860 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:30.862 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:30.863 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:36.886 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:36.886 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:36.886 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:36.886 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:36.886 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:36.886 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:36.890 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:36.890 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:39.630 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:16:45.932 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:45.932 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:45.932 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:45.932 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:45.932 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:45.933 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:45.935 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:45.936 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:54.974 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:54.974 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:54.974 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:54.974 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:54.974 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:54.975 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:54.977 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:16:54.977 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:00.058 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:17:16.595 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 8
+05-07 09:17:16.595 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 16
+05-07 09:17:16.715 W/Nl80211Utils(22939): Malformed NEW_INTERFACE response: missing attributes
+05-07 09:17:19.655 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:17:25.135 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:25.136 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:25.136 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:25.136 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:25.136 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:25.136 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:25.139 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:25.140 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:34.194 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:34.195 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:34.195 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:34.195 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:34.195 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:34.195 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:34.197 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:34.197 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:17:40.190 W/BtScan.ScanManager(29494): handleRegularScanTimeout(ScanClient(com.google.android.gmsid=1, mode[BALANCED, used=BALANCED])): Moving filtered scan to downgraded scan
+05-07 09:17:40.198 W/BtScan.ScanManager(29494): handleRegularScanTimeout(ScanClient(com.google.android.gmsid=2, mode[BALANCED, used=BALANCED])): Moving filtered scan to downgraded scan
+05-07 09:17:59.700 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:18:00.056 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:18:00.155 W/System  (23243): A resource failed to call release. 
+05-07 09:18:00.158 W/System  (23243): A resource failed to call release. 
+05-07 09:18:00.158 W/System  (23243): A resource failed to call release. 
+05-07 09:18:27.789 W/WakeLock(26411): GCM_HB_ALARM release without a matched acquire! [CONTEXT service_id=259 ]
+05-07 09:18:27.821 W/WakeLock(26411): GCM_HB_ALARM release without a matched acquire! [CONTEXT service_id=259 ]
+05-07 09:18:27.821 W/WakeLock(26411): GCM_HB_ALARM counter does not exist
+05-07 09:18:37.477 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:37.477 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:37.477 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:37.477 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:37.477 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:37.477 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:37.479 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:37.479 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:40.495 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:40.495 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:40.495 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:40.495 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:40.495 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:40.495 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:40.497 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:40.498 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:43.509 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:43.509 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:43.509 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:43.509 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:43.510 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:43.510 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:43.510 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:43.510 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:46.527 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:46.527 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:46.527 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:46.527 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:46.527 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:46.528 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:46.528 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:46.528 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:18:49.711 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:19:00.056 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:19:19.729 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:19:38.453 W/AlarmManager(23320): Unrecognized alarm listener com.android.networkstack.android.net.ip.IpClientLinkObserver$Dhcp6PdPreferredPrefixAlarmListener@7686fb9
+05-07 09:19:39.742 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:19:40.833 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:40.833 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:40.833 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:40.833 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:40.833 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:40.834 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:40.838 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:40.838 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:49.863 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:49.864 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:49.864 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:49.864 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:49.864 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:49.864 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:49.866 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:49.867 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:19:56.617 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 8
+05-07 09:19:56.617 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 16
+05-07 09:19:56.718 W/Nl80211Utils(22939): Malformed NEW_INTERFACE response: missing attributes
+05-07 09:20:00.061 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:20:19.789 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:20:32.019 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:20:32.046 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 79 startTime of in progress event=1778163156513
+05-07 09:20:33.025 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:20:59.810 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:21:00.057 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:21:41.341 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:41.344 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:41.344 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:41.345 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:41.345 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:41.345 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:41.349 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:41.349 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:49.865 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:21:50.396 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:50.396 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:50.397 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:50.397 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:50.397 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:50.397 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:50.398 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:50.399 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:59.414 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:59.414 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:59.415 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:59.416 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:59.416 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:59.416 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:59.416 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:21:59.417 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:22:00.066 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:22:05.443 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:22:05.444 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:22:05.444 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:22:05.444 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:22:05.444 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:22:05.444 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:22:05.447 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:22:05.448 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:22:19.873 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:22:36.629 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 8
+05-07 09:22:36.630 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 16
+05-07 09:22:36.767 W/Nl80211Utils(22939): Malformed NEW_INTERFACE response: missing attributes
+05-07 09:22:39.895 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:23:00.060 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:23:19.927 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:23:26.797 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:26.797 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:26.797 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:26.797 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:26.798 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:26.798 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:26.799 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:26.799 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:32.820 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:32.821 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:32.821 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:32.821 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:32.822 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:32.822 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:32.824 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:32.824 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:23:59.955 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:24:00.062 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:24:30.073 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:30.073 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:30.073 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:30.073 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:30.074 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:30.075 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:30.076 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:30.076 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:39.123 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:39.123 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:39.124 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:39.124 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:39.127 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:39.127 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:39.127 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:39.128 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:24:49.980 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:25:00.082 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:25:16.634 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 8
+05-07 09:25:16.634 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 16
+05-07 09:25:16.713 W/Nl80211Utils(22939): Malformed NEW_INTERFACE response: missing attributes
+05-07 09:25:19.991 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:25:29.672 W/WakeLock(26411): GCM_HB_ALARM release without a matched acquire! [CONTEXT service_id=259 ]
+05-07 09:25:33.421 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:33.421 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:33.421 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:33.421 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:33.421 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:33.421 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:33.423 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:33.424 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:36.445 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:36.445 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:36.446 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:36.446 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:36.446 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:36.446 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:36.448 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:36.449 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:40.007 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:25:42.480 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:42.480 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:42.480 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:42.480 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:42.480 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:42.480 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:42.481 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:42.481 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:48.499 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:48.499 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:48.500 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:48.500 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:48.501 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:48.501 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:48.501 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:48.501 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:50.721 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:25:50.745 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 79 startTime of in progress event=1778163156513
+05-07 09:25:51.326 W/WakeLock(26411): GCM_HB_ALARM release without a matched acquire! [CONTEXT service_id=259 ]
+05-07 09:25:51.326 W/WakeLock(26411): GCM_HB_ALARM counter does not exist
+05-07 09:25:51.521 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:51.522 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:51.522 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:51.522 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:51.522 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:51.524 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:51.526 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:51.526 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:51.733 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:25:54.543 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:54.543 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:54.543 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:54.546 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:54.547 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:54.547 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:54.549 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:25:54.549 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:00.048 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:26:12.651 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:12.651 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:12.651 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:12.651 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:12.651 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:12.652 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:12.653 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:12.653 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:20.043 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:26:21.677 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:21.679 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:21.680 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:21.680 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:21.680 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:21.681 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:21.681 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:21.682 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:36.755 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:36.755 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:36.755 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:36.755 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:36.755 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:36.755 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:36.755 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:36.755 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:45.796 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:45.796 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:45.796 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:45.796 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:45.796 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:45.796 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:45.799 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:45.799 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:26:57.316 W/AlarmManager(23320): Unrecognized alarm listener com.android.networkstack.android.net.ip.IpClientLinkObserver$Dhcp6PdPreferredPrefixAlarmListener@7686fb9
+05-07 09:27:00.056 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:27:35.768 W/theprimeway.twa(29055): Cleared Reference was only reachable from finalizer (only reported once)
+05-07 09:27:36.918 W/theprimeway.twa(29055): Reducing the number of considered missed Gc histogram windows from 124 to 100
+05-07 09:27:43.047 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:43.048 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:43.048 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:43.048 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:43.048 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:43.049 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:43.050 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:43.051 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:49.078 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:49.078 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:49.078 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:49.078 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:49.078 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:49.078 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:49.080 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:49.080 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:27:50.134 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:27:56.642 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 8
+05-07 09:27:56.642 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 16
+05-07 09:27:56.737 W/Nl80211Utils(22939): Malformed NEW_INTERFACE response: missing attributes
+05-07 09:28:00.065 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:28:20.145 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:28:33.492 W/KernelCpuProcStringReader(22939): File not found. It's normal if not implemented: /proc/uid_time_in_state
+05-07 09:28:33.493 W/KernelCpuProcStringReader(22939): File not found. It's normal if not implemented: /proc/uid_concurrent_active_time
+05-07 09:28:33.493 W/KernelCpuProcStringReader(22939): File not found. It's normal if not implemented: /proc/uid_concurrent_policy_time
+05-07 09:28:37.270 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:37.270 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:37.270 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:37.272 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:37.272 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:37.273 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:37.274 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:37.274 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:40.166 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:28:46.307 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:46.307 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:46.307 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:46.307 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:46.308 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:46.308 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:46.309 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:46.309 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:55.351 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:55.353 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:55.353 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:55.353 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:55.353 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:55.354 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:55.356 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:28:55.358 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:00.078 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:29:01.382 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:01.382 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:01.384 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:01.384 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:01.384 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:01.384 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:01.385 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:01.385 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:20.191 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:29:25.484 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:25.484 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:25.486 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:25.486 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:25.486 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:25.486 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:25.488 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:25.488 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:34.514 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:34.514 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:34.514 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:34.514 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:34.516 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:34.516 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:34.519 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:29:34.519 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:00.060 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:30:00.214 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:30:13.702 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:13.703 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:13.703 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:13.703 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:13.704 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:13.704 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:13.704 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:13.704 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:22.725 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:22.725 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:22.725 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:22.725 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:22.725 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:22.725 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:22.725 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:22.726 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:28.789 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:28.789 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:28.789 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:28.789 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:28.789 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:28.790 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:28.792 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:28.792 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:36.647 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 8
+05-07 09:30:36.647 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 16
+05-07 09:30:36.740 W/Nl80211Utils(22939): Malformed NEW_INTERFACE response: missing attributes
+05-07 09:30:37.828 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:37.829 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:37.829 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:37.829 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:37.830 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:37.830 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:37.832 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:37.833 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:30:50.255 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:31:00.041 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:31:09.613 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:31:09.718 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 79 startTime of in progress event=1778163156513
+05-07 09:31:10.511 W/gle.android.gms(26494): Reducing the number of considered missed Gc histogram windows from 148 to 100
+05-07 09:31:10.619 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:31:10.981 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:10.981 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:10.981 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:10.986 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:10.987 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:17.025 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:17.026 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:17.026 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:17.029 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:17.030 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:20.263 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:31:29.595 W/AlarmManager(23320): Unrecognized alarm listener com.android.networkstack.android.net.ip.IpClientLinkObserver$Dhcp6PdPreferredPrefixAlarmListener@7686fb9
+05-07 09:31:40.280 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:31:53.621 W/WakeLock(26411): GCM_HB_ALARM release without a matched acquire! [CONTEXT service_id=259 ]
+05-07 09:31:59.218 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:59.219 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:59.219 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:59.219 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:59.219 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:59.219 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:59.223 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:31:59.223 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:00.071 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:32:12.842 W/WakeLock(26411): GCM_HB_ALARM release without a matched acquire! [CONTEXT service_id=259 ]
+05-07 09:32:12.842 W/WakeLock(26411): GCM_HB_ALARM counter does not exist
+05-07 09:32:14.281 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:14.281 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:14.281 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:14.281 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:14.281 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:14.282 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:14.283 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:14.283 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:20.317 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:32:23.329 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:23.329 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:23.329 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:23.329 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:23.330 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:23.330 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:23.331 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:23.331 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:26.343 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:26.343 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:26.343 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:26.343 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:26.344 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:26.344 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:26.344 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:26.344 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:38.385 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:38.385 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:38.388 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:38.388 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:38.388 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:38.389 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:38.391 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:38.391 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:44.419 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:44.420 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:44.420 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:44.420 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:44.420 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:44.421 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:44.422 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:32:44.422 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:00.071 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:33:00.350 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:33:16.661 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 8
+05-07 09:33:16.661 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 16
+05-07 09:33:16.756 W/Nl80211Utils(22939): Malformed NEW_INTERFACE response: missing attributes
+05-07 09:33:26.602 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:26.602 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:26.604 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:26.604 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:26.604 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:26.604 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:26.605 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:26.605 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:32.627 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:32.627 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:32.627 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:32.628 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:32.629 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:32.629 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:32.630 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:32.630 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:41.665 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:41.666 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:41.666 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:41.666 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:41.666 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:41.666 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:41.668 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:41.669 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:47.103 E/GnssPsdsDownloader(22939): No Long-Term PSDS servers were specified in the GnssConfiguration
+05-07 09:33:50.343 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:33:50.702 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:50.702 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:50.702 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:50.703 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:50.703 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:50.703 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:50.705 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:50.705 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:56.741 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:56.742 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:56.743 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:56.743 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:56.744 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:56.744 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:56.745 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:33:56.746 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:00.071 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:34:05.781 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:05.782 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:05.783 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:05.783 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:05.785 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:05.785 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:05.786 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:05.787 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:14.818 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:14.818 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:14.818 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:14.819 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:14.820 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:14.820 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:14.820 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:14.821 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:20.373 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:34:20.853 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:20.853 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:20.853 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:20.854 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:20.854 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:20.854 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:20.855 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:20.855 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:40.372 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:34:44.974 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:44.974 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:44.974 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:44.974 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:44.974 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:44.975 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:44.977 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:44.977 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:54.011 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:54.011 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:54.011 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:54.012 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:54.012 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:54.012 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:54.013 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:34:54.013 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:00.068 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:35:20.415 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:35:33.224 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:33.224 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:33.224 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:33.224 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:33.224 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:33.224 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:33.226 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:33.226 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:42.284 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:42.284 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:42.284 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:42.284 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:42.284 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:42.284 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:42.288 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:42.288 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:51.348 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:51.350 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:51.350 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:51.350 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:51.350 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:51.350 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:51.351 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:51.351 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:35:56.674 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 8
+05-07 09:35:56.674 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 16
+05-07 09:35:56.768 W/Nl80211Utils(22939): Malformed NEW_INTERFACE response: missing attributes
+05-07 09:36:00.060 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:36:00.432 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:36:03.396 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:03.396 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:03.396 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:03.397 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:03.397 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:03.397 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:03.398 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:03.398 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:06.409 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:06.410 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:06.410 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:06.410 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:06.410 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:06.410 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:06.411 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:06.411 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:12.442 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:12.442 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:12.442 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:12.442 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:12.442 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:12.442 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:12.443 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:12.443 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:36:27.950 W/ProcessStats(22939): Tracking association SourceState{5c7f64a system/1000 ImpBg #3003} whose proc state 6 is better than process ProcessState{e012953 com.google.android.apps.photos/10171 pkg=com.google.android.apps.photos} proc state 14 (0 skipped)
+05-07 09:36:28.437 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:36:28.456 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 79 startTime of in progress event=1778163156513
+05-07 09:36:29.440 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:36:50.463 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:37:00.071 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:37:18.784 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:18.784 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:18.784 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:18.784 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:18.787 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:18.788 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:18.789 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:18.790 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:20.477 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:37:24.812 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:24.812 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:24.812 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:24.812 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:24.812 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:24.813 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:24.814 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:24.814 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:33.858 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:33.858 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:33.858 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:33.858 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:33.858 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:33.858 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:33.862 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:33.862 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:40.497 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:37:42.905 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:42.905 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:42.907 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:42.908 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:42.909 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:42.909 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:42.910 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:42.910 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:48.931 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:48.931 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:48.932 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:48.932 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:48.932 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:48.933 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:48.935 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:48.935 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:51.953 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:51.953 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:51.953 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:51.953 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:51.954 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:51.954 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:51.956 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:51.956 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:57.984 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:57.985 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:57.985 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:57.985 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:57.985 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:57.985 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:57.986 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:37:57.986 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:00.061 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:38:04.872 W/AlarmManager(23320): Unrecognized alarm listener com.android.networkstack.android.net.ip.IpClientLinkObserver$Dhcp6PdPreferredPrefixAlarmListener@7686fb9
+05-07 09:38:07.042 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:07.042 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:07.042 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:07.042 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:07.042 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:07.042 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:07.044 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:07.045 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:20.523 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:38:36.688 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 8
+05-07 09:38:36.688 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 16
+05-07 09:38:36.768 W/Nl80211Utils(22939): Malformed NEW_INTERFACE response: missing attributes
+05-07 09:38:46.236 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:46.236 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:46.236 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:46.236 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:46.237 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:46.237 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:46.239 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:46.239 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:55.289 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:55.291 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:55.291 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:55.292 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:55.292 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:55.293 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:55.295 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:38:55.296 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:00.040 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:39:00.556 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:39:34.512 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:34.513 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:34.514 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:34.514 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:34.514 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:34.514 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:34.515 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:34.515 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:37.526 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:37.526 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:37.526 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:37.526 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:37.526 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:37.528 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:37.529 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:37.529 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:40.539 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:40.540 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:40.540 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:40.540 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:40.540 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:40.540 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:40.540 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:40.540 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:43.556 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:43.556 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:43.557 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:43.557 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:43.558 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:43.558 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:43.559 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:43.559 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:39:50.613 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:39:52.670 W/ogle.android.as(27591): Reducing the number of considered missed Gc histogram windows from 182 to 100
+05-07 09:40:00.040 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:40:20.623 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:40:40.631 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:41:00.067 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:41:16.701 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 8
+05-07 09:41:16.701 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 16
+05-07 09:41:16.797 W/Nl80211Utils(22939): Malformed NEW_INTERFACE response: missing attributes
+05-07 09:41:16.989 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:16.990 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:16.990 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:16.991 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:16.992 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:16.992 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:16.994 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:16.995 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:20.677 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:41:26.043 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:26.043 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:26.043 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:26.043 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:26.043 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:26.043 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:26.046 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:26.047 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:35.091 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:35.092 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:35.092 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:35.092 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:35.092 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:35.092 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:35.097 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:35.097 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:41.129 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:41.129 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:41.129 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:41.129 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:41.130 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:41.130 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:41.132 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:41.133 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:41:47.176 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:41:47.222 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 79 startTime of in progress event=1778163156513
+05-07 09:41:48.188 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:42:00.073 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:42:00.708 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:42:15.297 W/AlarmManager(23320): Unrecognized alarm listener com.android.networkstack.android.net.ip.IpClientLinkObserver$Dhcp6PdPreferredPrefixAlarmListener@7686fb9
+05-07 09:42:23.320 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:23.320 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:23.321 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:23.321 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:23.321 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:23.322 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:23.322 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:23.322 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:29.354 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:29.355 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:29.356 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:29.356 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:29.357 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:29.358 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:29.358 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:29.359 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:35.399 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:35.399 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:35.399 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:35.399 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:35.399 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:35.400 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:35.401 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:35.401 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:42:50.780 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:43:00.084 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:43:08.589 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:08.590 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:08.590 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:08.590 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:08.591 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:08.591 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:08.592 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:08.593 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:17.619 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:17.619 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:17.619 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:17.620 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:17.620 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:17.620 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:17.621 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:17.621 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:20.776 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:43:26.674 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:26.676 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:26.676 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:26.676 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:26.677 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:26.677 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:26.679 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:26.679 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:32.704 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:32.705 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:32.705 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:32.707 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:32.707 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:32.708 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:32.709 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:32.710 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:40.821 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:43:41.754 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:41.755 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:41.755 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:41.755 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:41.756 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:41.756 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:41.757 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:41.758 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:50.805 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:50.805 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:50.805 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:50.805 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:50.805 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:50.806 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:50.807 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:50.808 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:43:56.715 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 8
+05-07 09:43:56.715 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 16
+05-07 09:43:56.810 W/Nl80211Utils(22939): Malformed NEW_INTERFACE response: missing attributes
+05-07 09:44:00.058 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:44:20.807 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:44:39.038 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:44:39.038 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:44:39.038 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:44:39.038 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:44:39.039 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:44:39.039 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:44:39.040 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:44:39.041 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:44:45.059 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:44:45.059 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:44:45.059 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:44:45.059 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:44:45.059 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:44:45.059 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:44:45.062 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:44:45.062 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:00.067 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:45:00.867 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:45:27.228 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:27.228 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:27.228 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:27.228 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:27.228 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:27.228 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:27.231 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:27.232 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:33.255 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:33.255 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:33.256 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:33.256 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:33.256 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:33.256 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:33.257 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:33.257 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:42.290 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:42.291 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:42.293 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:42.295 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:42.295 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:42.295 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:42.296 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:42.296 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:48.321 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:48.321 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:48.321 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:48.321 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:48.321 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:48.321 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:48.323 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:48.323 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:45:50.860 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:46:00.040 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:46:06.722 W/AlarmManager(23320): Unrecognized alarm listener com.android.networkstack.android.net.ip.IpClientLinkObserver$Dhcp6PdPreferredPrefixAlarmListener@7686fb9
+05-07 09:46:20.880 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:46:30.499 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:30.499 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:30.499 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:30.500 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:30.501 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:30.501 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:30.503 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:30.503 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:36.529 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:36.530 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:36.530 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:36.530 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:36.530 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:36.530 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:36.532 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:36.532 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:46:36.726 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 8
+05-07 09:46:36.727 E/Nl80211Native(22939): getChannelsMhzForBand: Wiphy index not recorded for band 16
+05-07 09:46:36.804 W/Nl80211Utils(22939): Malformed NEW_INTERFACE response: missing attributes
+05-07 09:46:40.900 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:47:00.084 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159
+05-07 09:47:05.867 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:47:05.894 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 79 startTime of in progress event=1778163156513
+05-07 09:47:06.881 W/AppOps  (22939): Noting op not finished: uid 10224 pkg com.google.android.gms code 113 startTime of in progress event=1778162986723
+05-07 09:47:09.673 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:09.674 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:09.674 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:09.676 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:09.676 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:09.676 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:09.677 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:09.678 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:18.715 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:18.716 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:18.716 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:18.716 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:18.716 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:18.716 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:18.718 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:18.718 W/libbinder.IPCThreadState(22939): Sending oneway calls to frozen process.
+05-07 09:47:20.914 W/skia    (  529): AGTM parsing failed flags.readFromStream(s) at 159

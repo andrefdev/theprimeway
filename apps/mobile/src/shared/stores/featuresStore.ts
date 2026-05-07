@@ -23,14 +23,20 @@ export const useFeaturesStore = create<FeaturesState>((set) => ({
   },
 
   loadStoredFeatures: async () => {
+    const __t = Date.now()
+    const __l = (m: string) => console.log(`[BOOT-FEAT +${Date.now() - __t}ms] ${m}`)
+    __l('loadStoredFeatures ENTER')
     try {
+      __l('before SecureStore.getItemAsync FEATURES_KEY')
       const raw = await SecureStore.getItemAsync(FEATURES_KEY)
+      __l(`after SecureStore.getItemAsync raw=${raw ? 'present' : 'null'}`)
       if (raw) {
         const { features, resolvedAt } = JSON.parse(raw)
         set({ features, resolvedAt })
       }
-    } catch {
-      // Ignore — fresh load will fetch from server
+      __l('loadStoredFeatures DONE')
+    } catch (e) {
+      __l('loadStoredFeatures CATCH: ' + String((e as Error)?.message ?? e))
     }
   },
 

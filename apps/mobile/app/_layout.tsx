@@ -7,11 +7,12 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from 'nativewind';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryProvider } from '@/shared/providers/QueryProvider';
 import { AuthProvider } from '@/shared/providers/AuthProvider';
 import { useAuthStore } from '@/shared/stores/authStore';
+import { useFeaturesStore } from '@/shared/stores/featuresStore';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { OfflineBanner } from '@/shared/components/ui/offline-banner';
 import { Toaster } from '@/shared/components/ui/toaster';
@@ -51,18 +52,23 @@ export { __bootLog };
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
   const isLoading = useAuthStore((s) => s.isLoading);
+  const loadStoredAuth = useAuthStore((s) => s.loadStoredAuth);
+  const loadStoredFeatures = useFeaturesStore((s) => s.loadStoredFeatures);
   __bootLog(`RootLayout render isLoading=${isLoading}`);
 
+  // Kick off boot work even while we keep the splash visible (we render null
+  // below until isLoading flips false, so this useEffect is the only path
+  // that fires loadStoredAuth on cold start).
   useEffect(() => {
-    __bootLog(`RootLayout splash-gate effect isLoading=${isLoading}`);
-    if (!isLoading) {
-      __bootLog('RootLayout calling SplashScreen.hideAsync (natural)');
-      SplashScreen.hideAsync();
-    }
-  }, [isLoading]);
+    loadStoredAuth();
+    loadStoredFeatures();
+  }, [loadStoredAuth, loadStoredFeatures]);
 
-  // Register push notifications and notification channels on app start
+  // Register push notifications and notification channels on app start.
+  // Wait until isLoading flips false so the router is mounted before any
+  // routeFromNotification() can fire.
   useEffect(() => {
+    if (isLoading) return;
     setupTimerChannel();
     setupReminderChannel();
     registerForPushNotifications();
@@ -76,10 +82,22 @@ export default function RootLayout() {
 
     const sub = addNotificationResponseListener(routeFromNotification);
     return () => sub.remove();
+  }, [isLoading]);
+
+  // Hide the splash only once the real tree has been laid out, so users
+  // never see a black gap between the splash and the first screen.
+  const onRootLayout = useCallback(() => {
+    __bootLog('onRootLayout — hiding splash');
+    SplashScreen.hideAsync().catch(() => {});
   }, []);
 
+  // Keep the splash visible until boot work completes. Returning null here
+  // means the React tree below stays unmounted while loading, so when we do
+  // mount it the splash hides exactly when the first frame is ready.
+  if (isLoading) return null;
+
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1 }} onLayout={onRootLayout}>
       <ThemeProvider value={NAV_THEME[colorScheme ?? 'dark']}>
         <QueryProvider>
           <AuthProvider>

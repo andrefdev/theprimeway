@@ -1,15 +1,8 @@
-import { useEffect, type ReactNode } from 'react';
-import { useAuthStore } from '@shared/stores/authStore';
-import { useFeaturesStore } from '@shared/stores/featuresStore';
+import type { ReactNode } from 'react';
 
+// Pure passthrough wrapper. Boot work (loadStoredAuth/loadStoredFeatures)
+// runs from app/_layout.tsx so that it fires while the splash is still up
+// and the rest of the tree is unmounted.
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const loadStoredAuth = useAuthStore((s) => s.loadStoredAuth);
-  const loadStoredFeatures = useFeaturesStore((s) => s.loadStoredFeatures);
-
-  useEffect(() => {
-    loadStoredAuth();
-    loadStoredFeatures();
-  }, [loadStoredAuth, loadStoredFeatures]);
-
   return <>{children}</>;
 }

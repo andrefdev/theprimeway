@@ -120,22 +120,34 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   loadStoredAuth: async () => {
-    if (loadStoredAuthPromise) return loadStoredAuthPromise;
+    const __t = Date.now();
+    const __l = (m: string) => console.log(`[BOOT-AUTH +${Date.now() - __t}ms] ${m}`);
+    __l('loadStoredAuth ENTER');
+    if (loadStoredAuthPromise) {
+      __l('loadStoredAuth: returning existing promise');
+      return loadStoredAuthPromise;
+    }
     loadStoredAuthPromise = (async () => {
       try {
+        __l('before SecureStore.getItemAsync TOKEN_KEY');
         const token = await SecureStore.getItemAsync(TOKEN_KEY);
+        __l(`after SecureStore.getItemAsync token=${token ? 'present' : 'null'}`);
         if (!token) {
+          __l('no token → set isLoading=false');
           set({ isLoading: false });
           return;
         }
         // Hydrate token first so apiClient interceptor can attach it
         set({ token });
         try {
+          __l('before apiClient.get AUTH.ME');
           const { data } = await apiClient.get<{ user: User }>(AUTH.ME, {
             timeout: 8000,
           });
+          __l('after apiClient.get AUTH.ME success');
           set({ user: data.user, isAuthenticated: true, isLoading: false });
-        } catch {
+        } catch (e) {
+          __l('apiClient.get AUTH.ME ERROR: ' + String((e as Error)?.message ?? e));
           // 401 will have been handled by interceptor (refresh attempt or logout)
           // If still unauthenticated, ensure cleanup
           if (!get().isAuthenticated) {
@@ -145,9 +157,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           }
           set({ isLoading: false });
         }
-      } catch {
+      } catch (e) {
+        __l('outer catch: ' + String((e as Error)?.message ?? e));
         set({ isLoading: false });
       } finally {
+        __l('loadStoredAuth FINALLY');
         loadStoredAuthPromise = null;
       }
     })();
