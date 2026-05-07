@@ -53,8 +53,13 @@ const createTaskSchema = z.object({
   isRecurring: z.boolean().optional(),
   recurrenceRule: z.string().optional(),
   recurrenceEndDate: z.string().optional(),
-  /** Auto-fit into the first free gap on scheduledDate when no explicit times are provided. */
+  /**
+   * Legacy opt-in flag. Now redundant: dated tasks without explicit times are
+   * auto-scheduled by default. Kept for backwards compat.
+   */
   autoSchedule: z.boolean().optional(),
+  /** Opt out of the default auto-schedule for dated tasks. */
+  skipAutoSchedule: z.boolean().optional(),
 })
 
 const updateTaskSchema = createTaskSchema.partial().extend({

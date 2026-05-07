@@ -29,7 +29,11 @@ export interface UseTaskFormOptions {
   autoEstimate?: boolean
   /** Enable repeat controls (only meaningful on create). */
   enableRepeat?: boolean
-  /** Pass `autoSchedule: true` on create so server fits task into first free gap. */
+  /**
+   * Forwards `autoSchedule: true` on create. Mostly redundant now that the
+   * server auto-schedules dated tasks by default; kept for explicitness and
+   * for the rare caller that wants to flip it off (pass `false`).
+   */
   autoSchedule?: boolean
   onSaved?: () => void
 }
@@ -66,7 +70,7 @@ export function useTaskForm({
   defaultBucket,
   autoEstimate = false,
   enableRepeat = false,
-  autoSchedule = false,
+  autoSchedule = true,
   onSaved,
 }: UseTaskFormOptions): UseTaskFormReturn {
   const { t } = useTranslation('tasks')

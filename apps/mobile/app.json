@@ -41,7 +41,7 @@
     },
     "android": {
       "package": "app.theprimeway.twa",
-      "versionCode": 29,
+      "versionCode": 30,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#1a08c7"

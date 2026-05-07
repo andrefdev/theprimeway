@@ -57,8 +57,18 @@ export interface CreateTaskInput {
   isRecurring?: boolean
   recurrenceRule?: string
   recurrenceEndDate?: string
-  /** Auto-fit into the first free gap on scheduledDate when no times provided. */
+  /**
+   * Legacy opt-in flag. Now redundant: dated tasks without an explicit time
+   * are auto-scheduled by default. Kept for backwards compat with older
+   * clients; setting it true is harmless, false is ignored.
+   */
   autoSchedule?: boolean
+  /**
+   * Opt out of the default auto-schedule for dated tasks. Use for imports,
+   * backfills, or flows that want the task to stay unscheduled until the
+   * user picks a slot.
+   */
+  skipAutoSchedule?: boolean
 }
 
 export interface UpdateTaskInput {
@@ -268,13 +278,17 @@ class TasksService {
       }
     }
 
-    // Opt-in: auto-fit into the first free gap on scheduledDate when no explicit times.
+    // Default-on: auto-fit any dated task without an explicit time into the
+    // first free gap on its scheduledDate. Callers that want a dated task to
+    // stay sessionless (imports, backfills) opt out via skipAutoSchedule. The
+    // explicit-times branch above already created the session, so we skip
+    // that case here. All-day tasks also skip — they own the whole day.
     if (
       task &&
-      input.autoSchedule &&
       input.scheduledDate &&
       !input.scheduledStart &&
-      !input.isAllDay
+      !input.isAllDay &&
+      !input.skipAutoSchedule
     ) {
       try {
         await schedulingFacade.scheduleTask(task.id, input.scheduledDate.slice(0, 10), { triggeredBy: 'USER_ACTION' })

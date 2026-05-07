@@ -32,6 +32,13 @@ export const createTaskSchema = z.object({
   recurrenceRule: z.string().optional(),
   recurrenceEndDate: z.string().optional(),
   autoSchedule: z.boolean().optional(),
+  /**
+   * Opt out of the default behavior where dated tasks without an explicit time
+   * get auto-scheduled into the next free gap. Use for imports, backfills, or
+   * any flow that wants the task to remain unscheduled until the user picks a
+   * slot.
+   */
+  skipAutoSchedule: z.boolean().optional(),
 })
 
 export const updateTaskSchema = createTaskSchema.partial().extend({
