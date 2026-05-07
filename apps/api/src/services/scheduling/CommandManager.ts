@@ -10,7 +10,10 @@
  * Changes are replayed in REVERSE order. Children commands are undone first.
  */
 import { prisma } from '../../lib/prisma'
-import { calendarService } from '../calendar.service'
+import {
+  removeSessionFromCalendar,
+  updateSessionOnCalendar,
+} from '../calendar/session-push.service'
 
 export interface CommandChange {
   entity: string
@@ -63,14 +66,14 @@ const handlers: Record<string, EntityHandler> = {
     },
     async applyUpdate(id, snap) {
       await prisma.workingSession.update({ where: { id }, data: pickSessionUpdate(snap) })
-      calendarService
-        .updateSessionOnCalendar(id)
-        .catch((err) => console.error('[UNDO] update calendar failed', err))
+      updateSessionOnCalendar(id).catch((err) =>
+        console.error('[UNDO] update calendar failed', err),
+      )
     },
     async remove(id) {
-      await calendarService
-        .removeSessionFromCalendar(id)
-        .catch((err) => console.error('[UNDO] remove from calendar failed', err))
+      await removeSessionFromCalendar(id).catch((err) =>
+        console.error('[UNDO] remove from calendar failed', err),
+      )
       await prisma.workingSession.delete({ where: { id } }).catch(() => undefined)
     },
   },

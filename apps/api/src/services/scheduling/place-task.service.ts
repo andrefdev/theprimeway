@@ -20,7 +20,10 @@
 import { prisma } from '../../lib/prisma'
 import { collectBusyBlocks, computeGaps, getDayWindow, Gap } from './gap-finder'
 import { commandManager, CommandChange } from './CommandManager'
-import { calendarService } from '../calendar.service'
+import {
+  pushSessionToCalendar,
+  removeSessionFromCalendar,
+} from '../calendar/session-push.service'
 import { syncTaskMirror } from './task-mirror'
 
 export interface PlaceTaskOptions {
@@ -276,14 +279,14 @@ async function applyPlacement(
   // sessions, push the new ones. Failures here are logged but don't block
   // the user's drag — the local DB is already authoritative.
   for (const id of oldSessionIds) {
-    calendarService
-      .removeSessionFromCalendar(id)
-      .catch((err) => console.error('[PLACE_TASK] google remove failed', err))
+    removeSessionFromCalendar(id).catch((err) =>
+      console.error('[PLACE_TASK] google remove failed', err),
+    )
   }
   for (const s of created) {
-    calendarService
-      .pushSessionToCalendar(s.id)
-      .catch((err) => console.error('[PLACE_TASK] google push failed', err))
+    pushSessionToCalendar(s.id).catch((err) =>
+      console.error('[PLACE_TASK] google push failed', err),
+    )
   }
 
   return {

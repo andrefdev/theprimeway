@@ -1,7 +1,8 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { createMiddleware } from 'hono/factory'
 import { cronService } from '../services/cron.service'
-import { calendarService } from '../services/calendar.service'
+import { renewExpiringWatchChannels } from '../services/calendar/google-watch.service'
+import { refreshExpiringGoogleTokens } from '../services/calendar/google-account.service'
 import { recurringService } from '../services/recurring.service'
 import { ritualsService } from '../services/rituals.service'
 
@@ -91,7 +92,7 @@ cronRoutes.post('/weekly-review', async (c) => {
 // POST /calendar-watch-renew
 cronRoutes.post('/calendar-watch-renew', async (c) => {
   try {
-    const result = await calendarService.renewExpiringWatchChannels()
+    const result = await renewExpiringWatchChannels()
     return c.json({ data: result }, 200)
   } catch (err: any) {
     console.error('[CRON_CAL_WATCH_RENEW]', err)
@@ -102,7 +103,7 @@ cronRoutes.post('/calendar-watch-renew', async (c) => {
 // POST /refresh-google-tokens — schedule every 30min to keep tokens warm.
 cronRoutes.post('/refresh-google-tokens', async (c) => {
   try {
-    const result = await calendarService.refreshExpiringGoogleTokens()
+    const result = await refreshExpiringGoogleTokens()
     return c.json({ data: result }, 200)
   } catch (err: any) {
     console.error('[CRON_GOOGLE_TOKEN_REFRESH]', err)

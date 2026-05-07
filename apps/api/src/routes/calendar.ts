@@ -11,6 +11,23 @@ import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
 import { updateCalendarSchema, googleCallbackSchema, syncCalendarSchema } from '@repo/shared/validators'
 import { authMiddleware } from '../middleware/auth'
 import { calendarService } from '../services/calendar.service'
+import {
+  handleWatchNotification,
+  resubscribeWatchChannelsForUser,
+} from '../services/calendar/google-watch.service'
+import {
+  listAccounts,
+  deleteAccount,
+  updateAccountSettings,
+  updateCalendar,
+  getGoogleOAuthUrl,
+  handleGoogleCallback,
+} from '../services/calendar/google-account.service'
+import {
+  getGoogleEvent,
+  updateGoogleEvent,
+  deleteGoogleEvent,
+} from '../services/calendar/google-events.service'
 import type { AppEnv } from '../types/env'
 
 export const calendarRoutes = new OpenAPIHono<AppEnv>()
@@ -24,7 +41,7 @@ calendarRoutes.post('/google/webhook', async (c) => {
   const token = c.req.header('x-goog-channel-token') || c.req.header('X-Goog-Channel-Token')
 
   try {
-    const result = await calendarService.handleWatchNotification({
+    const result = await handleWatchNotification({
       channelId,
       resourceId,
       resourceState,
@@ -68,7 +85,7 @@ const listAccountsRoute = createRoute({
 
 calendarRoutes.openapi(listAccountsRoute, (async (c: any) => {
   const userId = c.get('user').userId
-  const accounts = await calendarService.listAccounts(userId)
+  const accounts = await listAccounts(userId)
   return c.json({ data: accounts }, 200)
 }) as any)
 
@@ -94,7 +111,7 @@ calendarRoutes.openapi(deleteAccountRoute, async (c) => {
 
   if (!id) return c.json({ error: 'Missing id parameter' }, 400)
 
-  const result = await calendarService.deleteAccount(userId, id)
+  const result = await deleteAccount(userId, id)
   if (!result) return c.json({ error: 'Not found or unauthorized' }, 404)
   return c.json({ success: true }, 200)
 })
@@ -327,7 +344,7 @@ calendarRoutes.openapi(updateCalendarRoute, (async (c: any) => {
   const id = c.req.param('id')
   const body = c.req.valid('json')
 
-  const result = await calendarService.updateCalendar(userId, id, body)
+  const result = await updateCalendar(userId, id, body)
 
   if ('error' in result) {
     if (result.error === 'not_found') return c.json({ error: 'Not found' }, 404)
@@ -353,7 +370,7 @@ const googleConnectRoute = createRoute({
 })
 
 calendarRoutes.openapi(googleConnectRoute, async (c) => {
-  const url = calendarService.getGoogleOAuthUrl()
+  const url = getGoogleOAuthUrl()
   if (!url) return c.json({ error: 'Google Calendar not configured' }, 500)
   return c.json({ url }, 200)
 })
@@ -378,7 +395,15 @@ calendarRoutes.openapi(googleCallbackRoute, (async (c: any) => {
   const userId = c.get('user').userId
   const { code } = c.req.valid('json')
 
-  const result = await calendarService.handleGoogleCallback(userId, code)
+  const result = await handleGoogleCallback(userId, code, (uid) => {
+    // Initial pull on connect — fire-and-forget so the user isn't blocked on
+    // a multi-second sync. The OAuth handler doesn't import calendar.service
+    // directly to avoid a circular dependency once events fetch/sync also
+    // moves out.
+    calendarService
+      .syncCalendars(uid)
+      .catch((err) => console.error('[CAL_SYNC] initial pull on connect failed', err))
+  })
 
   if ('error' in result) {
     const detail = (result as any).detail
@@ -488,7 +513,7 @@ const resubscribeRoute = createRoute({
 
 calendarRoutes.openapi(resubscribeRoute, async (c) => {
   const userId = c.get('user').userId
-  const result = await calendarService.resubscribeWatchChannelsForUser(userId)
+  const result = await resubscribeWatchChannelsForUser(userId)
   return c.json({ data: result }, 200)
 })
 
@@ -626,7 +651,7 @@ calendarRoutes.get('/events/:calendarId/:eventId', async (c) => {
   const userId = (c.get('user') as any).userId
   const calendarId = decodeURIComponent(c.req.param('calendarId'))
   const eventId = decodeURIComponent(c.req.param('eventId'))
-  const result = await calendarService.getGoogleEvent(userId, calendarId, eventId)
+  const result = await getGoogleEvent(userId, calendarId, eventId)
   if (!result.success) {
     return c.json({ error: result.error || 'failed' }, result.error === 'not_found' ? 404 : 400)
   }
@@ -642,7 +667,7 @@ calendarRoutes.patch('/events/:calendarId/:eventId', async (c) => {
   if (!parsed.success) {
     return c.json({ error: 'Invalid input', issues: parsed.error.flatten() }, 400)
   }
-  const result = await calendarService.updateGoogleEvent(userId, calendarId, eventId, parsed.data)
+  const result = await updateGoogleEvent(userId, calendarId, eventId, parsed.data)
   if (!result.success) {
     return c.json({ error: result.error || 'failed' }, result.error === 'not_found' ? 404 : 400)
   }
@@ -653,7 +678,7 @@ calendarRoutes.delete('/events/:calendarId/:eventId', async (c) => {
   const userId = (c.get('user') as any).userId
   const calendarId = decodeURIComponent(c.req.param('calendarId'))
   const eventId = decodeURIComponent(c.req.param('eventId'))
-  const result = await calendarService.deleteGoogleEvent(userId, calendarId, eventId)
+  const result = await deleteGoogleEvent(userId, calendarId, eventId)
   if (!result.success) {
     return c.json({ error: result.error || 'failed' }, result.error === 'not_found' ? 404 : 400)
   }
@@ -786,7 +811,7 @@ calendarRoutes.patch('/accounts/:id', async (c: any) => {
   const id = c.req.param('id')
   const body = await c.req.json().catch(() => ({}))
 
-  const account = await calendarService.updateAccountSettings(userId, id, body)
+  const account = await updateAccountSettings(userId, id, body)
   if (!account) return c.json({ error: 'Not found or unauthorized' }, 404)
   return c.json({ data: account }, 200)
 })

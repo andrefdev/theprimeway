@@ -22,7 +22,11 @@ import { deconflict } from './deconflict'
 import { onTaskCompletedEarly } from './early-completion-reflow'
 import { onTimerStart } from './late-timer-detector'
 import { commandManager, CommandChange } from './CommandManager'
-import { calendarService } from '../calendar.service'
+import {
+  pushSessionToCalendar,
+  removeSessionFromCalendar,
+  updateSessionOnCalendar,
+} from '../calendar/session-push.service'
 import { syncService } from '../sync.service'
 import { withUserLock } from './user-lock'
 import { syncTaskMirror } from './task-mirror'
@@ -75,11 +79,9 @@ async function removeOtherDaySessions(
   // A dangling externalEventId on the deleted local row is acceptable — the
   // user's calendar drag UX shouldn't pay a 1-2s round-trip per stale block.
   for (const s of stale) {
-    calendarService
-      .removeSessionFromCalendar(s.id)
-      .catch((err) =>
-        console.error('[CLEANUP_OTHER_DAY] google remove failed', err),
-      )
+    removeSessionFromCalendar(s.id).catch((err) =>
+      console.error('[CLEANUP_OTHER_DAY] google remove failed', err),
+    )
   }
 
   return stale.length
@@ -232,9 +234,9 @@ class SchedulingFacade {
     if (input.taskId) await this.syncTaskMirror(input.taskId)
 
     if (opts.pushToCalendar !== false) {
-      calendarService
-        .pushSessionToCalendar(session.id)
-        .catch((err) => console.error('[FACADE_CREATE] push to calendar failed', err))
+      pushSessionToCalendar(session.id).catch((err) =>
+        console.error('[FACADE_CREATE] push to calendar failed', err),
+      )
     }
 
     if (opts.deconflict !== false) {
@@ -323,9 +325,9 @@ class SchedulingFacade {
     if (existing.taskId) await this.syncTaskMirror(existing.taskId)
 
     if (opts.pushToCalendar !== false) {
-      calendarService
-        .updateSessionOnCalendar(sessionId)
-        .catch((err) => console.error('[FACADE_MOVE] update calendar failed', err))
+      updateSessionOnCalendar(sessionId).catch((err) =>
+        console.error('[FACADE_MOVE] update calendar failed', err),
+      )
     }
 
     if (opts.deconflict !== false) {
@@ -366,9 +368,9 @@ class SchedulingFacade {
 
     // Best-effort: remove from Google before deleting locally so undo logic
     // doesn't have to chase a dangling externalEventId.
-    await calendarService
-      .removeSessionFromCalendar(sessionId)
-      .catch((err) => console.error('[FACADE_REMOVE] remove from calendar failed', err))
+    await removeSessionFromCalendar(sessionId).catch((err) =>
+      console.error('[FACADE_REMOVE] remove from calendar failed', err),
+    )
     await prisma.workingSession.delete({ where: { id: sessionId } })
 
     const change: CommandChange = {

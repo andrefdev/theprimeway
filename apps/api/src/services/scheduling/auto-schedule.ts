@@ -7,7 +7,7 @@
 import { prisma } from '../../lib/prisma'
 import { collectBusyBlocks, computeGaps, getDayWindow, dt, Gap } from './gap-finder'
 import { commandManager, CommandChange } from './CommandManager'
-import { calendarService } from '../calendar.service'
+import { pushSessionToCalendar } from '../calendar/session-push.service'
 import { syncTaskMirror } from './task-mirror'
 import { ymdToLocalDayUtc } from '@repo/shared/utils'
 
@@ -142,8 +142,7 @@ async function writeSessions(
 
   // Fire-and-forget Google Calendar push (via Channel.timeboxToCalendarId)
   for (const s of created) {
-    calendarService
-      .pushSessionToCalendar(s.id)
+    pushSessionToCalendar(s.id)
       .catch((err) => console.error('[AUTO_SCHEDULE] push to calendar failed', err))
   }
 

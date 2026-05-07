@@ -8,7 +8,7 @@ import { prisma } from '../../lib/prisma'
 import { commandManager, CommandChange } from './CommandManager'
 import { autoSchedule } from './auto-schedule'
 import { dt } from './gap-finder'
-import { calendarService } from '../calendar.service'
+import { removeSessionFromCalendar } from '../calendar/session-push.service'
 
 export interface DeconflictResult {
   commandId: string
@@ -74,9 +74,9 @@ export async function deconflict(anchorSessionId: string): Promise<DeconflictRes
   for (const s of conflicting) {
     const before = { id: s.id, userId: s.userId, taskId: s.taskId, start: s.start, end: s.end, kind: s.kind, createdBy: s.createdBy }
     // Remove from Google Calendar before local delete (fire-and-forget; failure non-fatal)
-    calendarService
-      .removeSessionFromCalendar(s.id)
-      .catch((err) => console.error('[DECONFLICT] remove from calendar failed', err))
+    removeSessionFromCalendar(s.id).catch((err) =>
+      console.error('[DECONFLICT] remove from calendar failed', err),
+    )
     await prisma.workingSession.delete({ where: { id: s.id } })
     changes.push({ entity: 'WorkingSession', id: s.id, before, after: null })
 

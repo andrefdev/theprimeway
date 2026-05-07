@@ -7,7 +7,7 @@
 import { prisma } from '../../lib/prisma'
 import { commandManager, CommandChange } from './CommandManager'
 import { findCalendarEventOverlapping, dt } from './gap-finder'
-import { calendarService } from '../calendar.service'
+import { updateSessionOnCalendar } from '../calendar/session-push.service'
 
 export interface EarlyReflowResult {
   commandId: string
@@ -62,9 +62,9 @@ export async function onTaskCompletedEarly(taskId: string, completedAt: Date = n
     before: beforeActive,
     after: { id: updatedActive.id, start: updatedActive.start, end: updatedActive.end },
   })
-  calendarService
-    .updateSessionOnCalendar(active.id)
-    .catch((err) => console.error('[EARLY_COMPLETION] update calendar failed', err))
+  updateSessionOnCalendar(active.id).catch((err) =>
+    console.error('[EARLY_COMPLETION] update calendar failed', err),
+  )
 
   // 2) Find contiguous group after `completedAt`
   const contiguity = settings?.contiguityThresholdMinutes ?? 10
@@ -106,9 +106,9 @@ export async function onTaskCompletedEarly(taskId: string, completedAt: Date = n
     const before = { id: s.id, start: s.start, end: s.end }
     const updated = await prisma.workingSession.update({ where: { id: s.id }, data: { start: proposedStart, end: proposedEnd } })
     changes.push({ entity: 'WorkingSession', id: s.id, before, after: { id: updated.id, start: updated.start, end: updated.end } })
-    calendarService
-      .updateSessionOnCalendar(s.id)
-      .catch((err) => console.error('[EARLY_COMPLETION] update calendar failed', err))
+    updateSessionOnCalendar(s.id).catch((err) =>
+      console.error('[EARLY_COMPLETION] update calendar failed', err),
+    )
     shifted++
     proposedStart = proposedEnd
   }

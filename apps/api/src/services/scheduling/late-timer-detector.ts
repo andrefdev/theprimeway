@@ -8,7 +8,7 @@ import { prisma } from '../../lib/prisma'
 import { commandManager, CommandChange } from './CommandManager'
 import { deconflict } from './deconflict'
 import { dt } from './gap-finder'
-import { calendarService } from '../calendar.service'
+import { updateSessionOnCalendar } from '../calendar/session-push.service'
 
 export type LateTimerAction =
   | { action: 'NONE' }
@@ -74,9 +74,9 @@ export async function moveSessionToNow(sessionId: string, now: Date, userId: str
 
   const before = { id: session.id, start: session.start, end: session.end }
   const updated = await prisma.workingSession.update({ where: { id: session.id }, data: { start: now, end: newEnd } })
-  calendarService
-    .updateSessionOnCalendar(session.id)
-    .catch((err) => console.error('[LATE_TIMER] update calendar failed', err))
+  updateSessionOnCalendar(session.id).catch((err) =>
+    console.error('[LATE_TIMER] update calendar failed', err),
+  )
 
   const parent = await commandManager.record({
     userId,
