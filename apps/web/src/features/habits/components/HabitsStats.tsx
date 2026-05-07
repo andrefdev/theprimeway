@@ -32,7 +32,7 @@ export function HabitsStats() {
     rate: Math.round(d.completionRate),
   }))
 
-  const currentStreaks = [...(stats.streaks?.current ?? [])].sort((a, b) => b.streak - a.streak).slice(0, 5)
+  const currentStreaks = [...(stats.streaks?.current ?? [])].sort((a, b) => b.currentStreak - a.currentStreak).slice(0, 5)
 
   return (
     <div className="space-y-4">
@@ -131,10 +131,10 @@ export function HabitsStats() {
                   </span>
                   <span
                     className={`text-sm font-bold ${
-                      s.streak >= 10 ? 'text-success' : s.streak >= 5 ? 'text-primary' : 'text-muted-foreground'
+                      s.currentStreak >= 10 ? 'text-success' : s.currentStreak >= 5 ? 'text-primary' : 'text-muted-foreground'
                     }`}
                   >
-                    {s.streak} {t('days')}
+                    {s.currentStreak} {t('days')}
                   </span>
                 </div>
               ))}
