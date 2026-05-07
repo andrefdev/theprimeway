@@ -270,31 +270,72 @@ export function TasksToday() {
       return
     }
 
-    // Case 2: dropped on another task in the list. If the target has a session
-    // visible today, anchor right after it (keeps adjacency). Otherwise let
-    // the gap-finder pick the next free slot from "now".
+    // Case 2: dropped on another task in the list.
     if (overData.type === 'task' && overData.taskId) {
       if (overData.taskId === taskId) return
-      const targetSessionEnd = (() => {
-        let max = -Infinity
-        for (const item of calendarItems) {
-          if (item.type !== 'session' || item.task?.id !== overData.taskId) continue
-          const ts = item.end.getTime()
-          if (ts > max) max = ts
-        }
-        return max === -Infinity ? null : new Date(max)
-      })()
 
-      if (targetSessionEnd) {
+      const earliestSessionForTask = (id: string) => {
+        let earliest: { sessionId: string; start: Date; end: Date } | null = null
+        for (const item of calendarItems) {
+          if (item.type !== 'session' || item.task?.id !== id) continue
+          if (!earliest || item.start.getTime() < earliest.start.getTime()) {
+            earliest = { sessionId: item.sessionId!, start: item.start, end: item.end }
+          }
+        }
+        return earliest
+      }
+
+      const draggedSession = earliestSessionForTask(taskId)
+      const targetSession = earliestSessionForTask(overData.taskId)
+
+      // SWAP path: both tasks already have a session today → swap their
+      // start times in parallel, preserving each task's duration. This kills
+      // the "drift forever" feedback loop where each reorder placed the
+      // dragged session AFTER target.end — repeating the gesture pushed
+      // both tasks 30 min later every cycle, until they fell off the day.
+      if (
+        draggedSession &&
+        targetSession &&
+        !draggedSession.sessionId.startsWith('temp-') &&
+        !targetSession.sessionId.startsWith('temp-')
+      ) {
+        const draggedDurationMs =
+          draggedSession.end.getTime() - draggedSession.start.getTime()
+        const targetDurationMs =
+          targetSession.end.getTime() - targetSession.start.getTime()
+        const draggedNewStart = targetSession.start
+        const targetNewStart = draggedSession.start
+        try {
+          await Promise.all([
+            moveSession.mutateAsync({
+              sessionId: draggedSession.sessionId,
+              start: draggedNewStart.toISOString(),
+              end: new Date(draggedNewStart.getTime() + draggedDurationMs).toISOString(),
+            }),
+            moveSession.mutateAsync({
+              sessionId: targetSession.sessionId,
+              start: targetNewStart.toISOString(),
+              end: new Date(targetNewStart.getTime() + targetDurationMs).toISOString(),
+            }),
+          ])
+        } catch {
+          toast.error(t('failedToUpdate'))
+        }
+        return
+      }
+
+      // Append path: target has a session today but dragged doesn't yet
+      // (or has only a temp placeholder mid-flight) → place dragged right
+      // after target.end. Same anchoring rule as before so reorder never
+      // crosses days for split target sessions.
+      if (targetSession) {
         const duration = task.estimatedDuration ?? 30
         const DURATION_MS = duration * 60_000
-        // Anchor the target's time-of-day (in user TZ) onto the visible day so
-        // reorder never crosses days, even if the target's session is split.
         const anchorTimeOnDay = (utcInstant: Date): Date =>
           localTimeToUtc(day, formatInTz(utcInstant, tz, 'HH:mm'), tz)
         const dayStartUtc = localTimeToUtc(day, fmtHour(dayBounds.startHour), tz)
         const dayEndUtc = localTimeToUtc(day, fmtHour(dayBounds.endHour), tz)
-        let start = anchorTimeOnDay(targetSessionEnd)
+        let start = anchorTimeOnDay(targetSession.end)
         if (start.getTime() < dayStartUtc.getTime()) {
           start = dayStartUtc
         } else if (start.getTime() + DURATION_MS > dayEndUtc.getTime()) {
