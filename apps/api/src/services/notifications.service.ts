@@ -1,6 +1,6 @@
 import { notificationsRepo } from '../repositories/notifications.repo'
 import { gamificationService } from './gamification.service'
-import { calendarService } from './calendar.service'
+import { getGoogleEvents } from './calendar/google-events-sync.service'
 import { sendExpoPush, isPushEnabled as isExpoEnabled, isValidExpoPushToken } from '../lib/expo-push'
 import { sendFcm, isFcmEnabled } from '../lib/firebase'
 import { startOfLocalDayUtc } from '@repo/shared/utils'
@@ -185,7 +185,7 @@ class NotificationsService {
     try {
       const dayStart = new Date(`${todayStr}T00:00:00.000Z`)
       const dayEnd = new Date(`${todayStr}T23:59:59.999Z`)
-      const events = await calendarService.getGoogleEvents(
+      const events = await getGoogleEvents(
         userId,
         dayStart.toISOString(),
         dayEnd.toISOString(),

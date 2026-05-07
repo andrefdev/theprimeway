@@ -28,6 +28,12 @@ import {
   updateGoogleEvent,
   deleteGoogleEvent,
 } from '../services/calendar/google-events.service'
+import {
+  importGoogleCalendar,
+  syncCalendars,
+  listCachedEventsForUi,
+  listEventsInRange,
+} from '../services/calendar/google-events-sync.service'
 import type { AppEnv } from '../types/env'
 
 export const calendarRoutes = new OpenAPIHono<AppEnv>()
@@ -397,12 +403,12 @@ calendarRoutes.openapi(googleCallbackRoute, (async (c: any) => {
 
   const result = await handleGoogleCallback(userId, code, (uid) => {
     // Initial pull on connect — fire-and-forget so the user isn't blocked on
-    // a multi-second sync. The OAuth handler doesn't import calendar.service
-    // directly to avoid a circular dependency once events fetch/sync also
-    // moves out.
-    calendarService
-      .syncCalendars(uid)
-      .catch((err) => console.error('[CAL_SYNC] initial pull on connect failed', err))
+    // a multi-second sync. The OAuth handler takes this as a callback so it
+    // doesn't import google-events-sync directly (would be a back-edge in
+    // the dependency graph since events-sync imports nothing from account).
+    syncCalendars(uid).catch((err: unknown) =>
+      console.error('[CAL_SYNC] initial pull on connect failed', err),
+    )
   })
 
   if ('error' in result) {
@@ -442,7 +448,7 @@ calendarRoutes.openapi(googleEventsRoute, (async (c: any) => {
   // kept fresh by Google webhooks + the `syncCalendars` job. Falling back to
   // a live fetch on every UI render created the inconsistency the planner saw
   // (UI sees event X, scheduler doesn't).
-  const allEvents = await calendarService.listCachedEventsForUi(
+  const allEvents = await listCachedEventsForUi(
     userId,
     new Date(timeMin),
     new Date(timeMax),
@@ -467,7 +473,7 @@ const googleImportRoute = createRoute({
 
 calendarRoutes.openapi(googleImportRoute, async (c) => {
   const userId = c.get('user').userId
-  const account = await calendarService.importGoogleCalendar(userId)
+  const account = await importGoogleCalendar(userId)
   if (!account) return c.json({ error: 'No Google Auth account found with refresh token' }, 404)
   return c.json({ data: account }, 200)
 })
@@ -491,7 +497,7 @@ calendarRoutes.openapi(syncRoute, async (c) => {
   const userId = c.get('user').userId
   const body = c.req.valid('json')
   const calendarId = body.calendarId || body.calendar_id
-  const result = await calendarService.syncCalendars(userId, calendarId)
+  const result = await syncCalendars(userId, calendarId)
   return c.json(result, 200)
 })
 
@@ -825,7 +831,7 @@ calendarRoutes.get('/events', async (c) => {
   const from = c.req.query('from')
   const to = c.req.query('to')
   if (!from || !to) return c.json({ error: 'from and to required' }, 400)
-  const events = await calendarService.listEventsInRange(userId, new Date(from), new Date(to))
+  const events = await listEventsInRange(userId, new Date(from), new Date(to))
   return c.json({ data: events })
 })
 

@@ -9,6 +9,7 @@
  */
 import { tasksRepository } from '../repositories/tasks.repo'
 import { calendarService } from './calendar.service'
+import { getGoogleEvents } from './calendar/google-events-sync.service'
 import { gamificationService } from './gamification.service'
 import { gamificationEvents } from './gamification/events'
 import { syncService } from './sync.service'
@@ -710,7 +711,7 @@ Pick the single best task to do next. Return its exact ID from the list.
     const endOfDay = `${date}T23:59:59Z`
     let calendarEvents: any[] = []
     try {
-      calendarEvents = await calendarService.getGoogleEvents(userId, startOfDay, endOfDay)
+      calendarEvents = await getGoogleEvents(userId, startOfDay, endOfDay)
     } catch {
       // Calendar not connected — can only check task-task conflicts
     }

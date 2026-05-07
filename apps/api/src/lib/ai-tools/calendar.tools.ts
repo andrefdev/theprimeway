@@ -1,6 +1,7 @@
 import { tool } from 'ai'
 import { z } from 'zod'
 import { calendarService } from '../../services/calendar.service'
+import { getGoogleEvents } from '../../services/calendar/google-events-sync.service'
 
 export function calendarReadTools(userId: string) {
   return {
@@ -13,7 +14,7 @@ export function calendarReadTools(userId: string) {
       }),
       execute: async ({ from, to }) => {
         try {
-          const events = await calendarService.getGoogleEvents(userId, from, to)
+          const events = await getGoogleEvents(userId, from, to)
           return {
             events: (events as any[]).slice(0, 50).map((e) => ({
               id: e.id,
