@@ -41,10 +41,10 @@
     },
     "android": {
       "package": "app.theprimeway.twa",
-      "versionCode": 30,
+      "versionCode": 31,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#1a08c7"
+        "backgroundColor": "#280FFB"
       },
       "intentFilters": [
         {
