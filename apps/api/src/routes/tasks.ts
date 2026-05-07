@@ -11,6 +11,14 @@ import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
 import type { AppEnv } from '../types/env'
 import { authMiddleware } from '../middleware/auth'
 import { tasksService } from '../services/tasks.service'
+import {
+  getCalendarView,
+  getTimelineView,
+} from '../services/tasks/tasks-views.service'
+import {
+  getCompletionImpact,
+  getStatistics,
+} from '../services/tasks/tasks-stats.service'
 import { parsePaginationLimit, parsePaginationOffset } from '../lib/utils'
 import { LimitExceededError } from '../lib/limits'
 
@@ -300,7 +308,7 @@ const statsRoute = createRoute({
 taskRoutes.openapi(statsRoute, (async (c: any) => {
   const { userId } = c.get('user')
   const days = parseInt(c.req.query('days') || '30', 10)
-  const data = await tasksService.getStatistics(userId, days)
+  const data = await getStatistics(userId, days)
   return c.json({ data }, 200)
 }) as any)
 
@@ -349,7 +357,7 @@ taskRoutes.openapi(calendarViewRoute, (async (c: any) => {
     return c.json({ error: 'start and end query params are required (YYYY-MM-DD)' }, 400)
   }
 
-  const data = await tasksService.getCalendarView(userId, start, end)
+  const data = await getCalendarView(userId, start, end)
   return c.json({ data }, 200)
 }) as any)
 
@@ -377,7 +385,7 @@ taskRoutes.openapi(timelineViewRoute, (async (c: any) => {
     return c.json({ error: 'start and end query params are required (YYYY-MM-DD)' }, 400)
   }
 
-  const data = await tasksService.getTimelineView(userId, start, end)
+  const data = await getTimelineView(userId, start, end)
   return c.json({ data }, 200)
 }) as any)
 
@@ -445,7 +453,7 @@ const impactRoute = createRoute({
 taskRoutes.openapi(impactRoute, (async (c: any) => {
   const { userId } = c.get('user')
   const taskId = c.req.param('id')
-  const data = await tasksService.getCompletionImpact(userId, taskId)
+  const data = await getCompletionImpact(userId, taskId)
   if (!data) return c.json({ error: 'Task not found or not completed' }, 404)
   return c.json({ data }, 200)
 }) as any)
