@@ -426,6 +426,13 @@ jobs:
             docker compose -f docker-compose.prod.yml exec -T nginx nginx -t
             docker compose -f docker-compose.prod.yml exec -T nginx nginx -s reload
 
+            # Reclaim disk from the just-replaced images. Without this the VPS
+            # filled to 100% after ~80 deploys (each tagged image ~750MB),
+            # tipped the api container into a crash loop with ENOSPC on the
+            # next pull, and 502'd the health check. Filter `until=24h` keeps
+            # the previous deploy around for emergency rollback.
+            docker image prune -af --filter "until=24h" >/dev/null 2>&1 || true
+
       - name: Health check - API
         id: health_api
         run: |
