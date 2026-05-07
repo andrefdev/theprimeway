@@ -20,7 +20,9 @@ import { useTranslation } from '@/shared/hooks/useTranslation';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import { useChatStream } from '../hooks/useChatStream';
+import { useExecuteTool } from '../hooks/useExecuteTool';
 import { useSpeechLang } from '../hooks/useSpeechLang';
+import type { ToolCall } from './ToolCallCard';
 
 const SUGGESTIONS = [
   { icon: CheckSquare, key: 'firstAction' },
@@ -31,11 +33,21 @@ const SUGGESTIONS = [
 export function ChatPanel() {
   const { t } = useTranslation('features.ai');
   const user = useAuthStore((s) => s.user);
-  const { messages, isLoading, sendMessage, reset } = useChatStream();
+  const { messages, isLoading, sendMessage, reset, addToolResult, rejectTool } = useChatStream();
+  const { execute, busyToolCallId } = useExecuteTool();
   const [input, setInput] = useState('');
   const scrollRef = useRef<ScrollView>(null);
   const tabBarHeight = useBottomTabBarHeight();
   const speechLang = useSpeechLang(messages);
+
+  const handleAcceptTool = async (toolCall: ToolCall) => {
+    const output = await execute(toolCall.toolCallId, toolCall.toolName, toolCall.args);
+    addToolResult(toolCall.toolCallId, output);
+  };
+
+  const handleRejectTool = (toolCall: ToolCall) => {
+    rejectTool(toolCall.toolCallId);
+  };
 
   const handleSend = (text?: string, attachments?: import('./ChatMessage').ChatAttachment[]) => {
     const value = text ?? input;
@@ -138,7 +150,13 @@ export function ChatPanel() {
         )}
 
         {messages.map((msg) => (
-          <ChatMessage key={msg.id} message={msg} />
+          <ChatMessage
+            key={msg.id}
+            message={msg}
+            onAcceptTool={handleAcceptTool}
+            onRejectTool={handleRejectTool}
+            busyToolCallId={busyToolCallId}
+          />
         ))}
 
         {showTypingIndicator && (

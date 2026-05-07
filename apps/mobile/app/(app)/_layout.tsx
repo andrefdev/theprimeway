@@ -18,20 +18,11 @@ export default function AppLayout() {
     <BiometricGate>
       <View className="flex-1">
         <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="calendar" />
-        <Stack.Screen name="pomodoro" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="profile" />
-        <Stack.Screen name="settings" />
-        <Stack.Screen name="subscription" />
-        <Stack.Screen name="customize-section" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="weekly-review" />
-        <Stack.Screen name="alignment-setup" />
-        <Stack.Screen name="notifications" />
-        <Stack.Screen name="habits-analytics" />
-        <Stack.Screen name="brain/index" />
-        <Stack.Screen name="brain/[id]" />
-        <Stack.Screen name="delete-account" />
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="profile" />
+          <Stack.Screen name="settings" />
+          <Stack.Screen name="notifications" />
+          <Stack.Screen name="delete-account" />
         </Stack>
         <CelebrationOverlay />
       </View>

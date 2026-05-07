@@ -22,7 +22,19 @@ export interface ChatMessageData {
   isStreaming?: boolean;
 }
 
-export function ChatMessage({ message }: { message: ChatMessageData }) {
+interface ChatMessageProps {
+  message: ChatMessageData;
+  onAcceptTool?: (toolCall: ToolCall) => Promise<void> | void;
+  onRejectTool?: (toolCall: ToolCall) => void;
+  busyToolCallId?: string | null;
+}
+
+export function ChatMessage({
+  message,
+  onAcceptTool,
+  onRejectTool,
+  busyToolCallId,
+}: ChatMessageProps) {
   const isUser = message.role === 'user';
 
   return (
@@ -81,8 +93,14 @@ export function ChatMessage({ message }: { message: ChatMessageData }) {
 
       {!isUser && message.toolCalls && message.toolCalls.length > 0 && (
         <View className="mt-1.5 gap-1.5">
-          {message.toolCalls.map((tc, idx) => (
-            <ToolCallCard key={`${tc.toolName}-${idx}`} toolCall={tc} />
+          {message.toolCalls.map((tc) => (
+            <ToolCallCard
+              key={tc.toolCallId}
+              toolCall={tc}
+              onAccept={onAcceptTool ? () => onAcceptTool(tc) : undefined}
+              onReject={onRejectTool ? () => onRejectTool(tc) : undefined}
+              isBusy={busyToolCallId === tc.toolCallId}
+            />
           ))}
         </View>
       )}

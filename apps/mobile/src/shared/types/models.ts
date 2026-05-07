@@ -171,23 +171,6 @@ export type AnnualGoal = PrimeOutcome;
 export type QuarterlyGoal = PrimeQuarterFocus;
 
 // ============================================================
-// POMODORO
-// ============================================================
-
-export type SessionType = 'focus' | 'short_break' | 'long_break';
-
-export interface PomodoroSession {
-  id: string;
-  taskId?: string;
-  sessionType: SessionType;
-  plannedDuration: number;
-  actualDuration?: number;
-  startedAt: string;
-  completedAt?: string;
-  isCompleted: boolean;
-}
-
-// ============================================================
 // SUSCRIPCIÓN
 // ============================================================
 

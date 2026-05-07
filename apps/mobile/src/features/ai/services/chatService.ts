@@ -59,12 +59,21 @@ function apiUrl(path: string) {
   return `${base.replace(/\/$/, '')}${path}`;
 }
 
+type UiMessagePart =
+  | { type: 'text'; text: string }
+  | { type: 'file'; mediaType: string; data: string }
+  | {
+      type: string;
+      toolCallId: string;
+      state: 'output-available';
+      input: Record<string, unknown>;
+      output: unknown;
+    };
+
 function toUiMessages(messages: ChatMessageData[]) {
   return messages.map((message) => {
-    const parts: Array<
-      | { type: 'text'; text: string }
-      | { type: 'file'; mediaType: string; data: string }
-    > = [];
+    const parts: UiMessagePart[] = [];
+
     if (message.attachments && message.attachments.length > 0) {
       for (const att of message.attachments) {
         if (!att.base64) continue;
@@ -75,12 +84,31 @@ function toUiMessages(messages: ChatMessageData[]) {
         });
       }
     }
+
     if (message.content) {
       parts.push({ type: 'text', text: message.content });
     }
+
+    // For assistant messages, replay any resolved tool calls so the model has
+    // full conversation context (including client-side accept/reject results)
+    // when continuing the stream.
+    if (message.role === 'assistant' && message.toolCalls && message.toolCalls.length > 0) {
+      for (const tc of message.toolCalls) {
+        if (tc.state !== 'result') continue;
+        parts.push({
+          type: `tool-${tc.toolName}`,
+          toolCallId: tc.toolCallId,
+          state: 'output-available',
+          input: tc.args ?? {},
+          output: tc.result ?? null,
+        });
+      }
+    }
+
     if (parts.length === 0) {
       parts.push({ type: 'text', text: '' });
     }
+
     return {
       id: message.id,
       role: message.role,
@@ -162,14 +190,20 @@ export const chatService = {
           }
         } else if (isToolInput(chunk)) {
           toolCallsById.set(chunk.toolCallId, {
+            toolCallId: chunk.toolCallId,
             toolName: chunk.toolName,
             args: chunk.input ?? {},
+            state: 'call',
           });
           flushToolCalls();
         } else if (isToolOutput(chunk)) {
           const existing = toolCallsById.get(chunk.toolCallId);
           if (existing) {
-            toolCallsById.set(chunk.toolCallId, { ...existing, result: chunk.output });
+            toolCallsById.set(chunk.toolCallId, {
+              ...existing,
+              state: 'result',
+              result: chunk.output,
+            });
             flushToolCalls();
           }
         } else if (isStreamError(chunk)) {

@@ -13,6 +13,7 @@ import { habitReadTools, habitClientTools, habitServerTools } from './habits.too
 import { goalReadTools, goalClientTools } from './goals.tools'
 import { calendarReadTools, calendarClientTools } from './calendar.tools'
 import { pomodoroClientTools } from './pomodoro.tools'
+import { brainClientTools } from './brain.tools'
 
 export function buildStreamTools(userId: string) {
   return {
@@ -25,6 +26,7 @@ export function buildStreamTools(userId: string) {
     ...goalClientTools(),
     ...calendarClientTools(),
     ...pomodoroClientTools(),
+    ...brainClientTools(),
   }
 }
 

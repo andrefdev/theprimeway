@@ -39,6 +39,40 @@ export const AI = {
   WEEKLY_PLAN: '/api/chat/weekly-plan',
 } as const;
 
+// Brain (second brain)
+export const BRAIN = {
+  ENTRIES: '/api/brain/entries',
+} as const;
+
+// Goals (vision → 3yr → annual → quarterly → weekly)
+export const GOALS = {
+  THREE_YEAR: '/api/goals/three-year',
+  THREE_YEAR_BY_ID: (id: string) => `/api/goals/three-year/${id}`,
+  ANNUAL: '/api/goals/annual',
+  ANNUAL_BY_ID: (id: string) => `/api/goals/annual/${id}`,
+  QUARTERLY: '/api/goals/quarterly',
+  QUARTERLY_BY_ID: (id: string) => `/api/goals/quarterly/${id}`,
+  WEEKLY_BY_ID: (id: string) => `/api/goals/weekly/${id}`,
+} as const;
+
+// Calendar (Google Calendar bridge)
+export const CALENDAR = {
+  TIME_BLOCK: '/api/calendar/time-block',
+  HABIT_BLOCK: '/api/calendar/habit-block',
+  EVENT: (calendarId: string, eventId: string) =>
+    `/api/calendar/events/${encodeURIComponent(calendarId)}/${encodeURIComponent(eventId)}`,
+} as const;
+
+// Pomodoro
+export const POMODORO = {
+  SESSIONS: '/api/pomodoro/sessions',
+} as const;
+
+// Scheduling (auto-schedule, deconflict, etc.)
+export const SCHEDULING = {
+  AUTO_SCHEDULE: '/api/scheduling/auto-schedule',
+} as const;
+
 // Profile & Settings
 export const USER = {
   PROFILE: '/api/profile',

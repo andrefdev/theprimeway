@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import type { ChatAttachment, ChatMessageData } from '../components/ChatMessage';
+import type { ToolCall } from '../components/ToolCallCard';
 import { ChatRequestError, chatService } from '../services/chatService';
 import { useTranslation } from '@shared/hooks/useTranslation';
 
@@ -17,11 +18,41 @@ function buildFallbackMessage(error: unknown, t: (key: string) => string) {
   return t('errors.connection');
 }
 
+function applyToolResult(
+  messages: ChatMessageData[],
+  toolCallId: string,
+  output: unknown
+): ChatMessageData[] {
+  return messages.map((msg) => {
+    if (!msg.toolCalls || msg.toolCalls.length === 0) return msg;
+    let changed = false;
+    const nextToolCalls = msg.toolCalls.map((tc) => {
+      if (tc.toolCallId !== toolCallId) return tc;
+      changed = true;
+      return { ...tc, state: 'result' as const, result: output };
+    });
+    return changed ? { ...msg, toolCalls: nextToolCalls } : msg;
+  });
+}
+
 export function useChatStream() {
   const { t } = useTranslation('features.ai');
   const [messages, setMessages] = useState<ChatMessageData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+
+  const addToolResult = useCallback((toolCallId: string, output: unknown) => {
+    setMessages((prev) => applyToolResult(prev, toolCallId, output));
+  }, []);
+
+  const rejectTool = useCallback((toolCallId: string) => {
+    setMessages((prev) =>
+      applyToolResult(prev, toolCallId, {
+        rejected: true,
+        reason: 'User rejected the action',
+      })
+    );
+  }, []);
 
   const sendMessage = useCallback(
     async (text: string, attachments: ChatAttachment[] = []) => {
@@ -77,7 +108,7 @@ export function useChatStream() {
           signal: controller.signal,
           messages: nextMessages,
           onDelta: appendAssistantText,
-          onToolCalls: (toolCalls) => {
+          onToolCalls: (toolCalls: ToolCall[]) => {
             setMessages((prev) =>
               prev.map((message) =>
                 message.id === assistantId ? { ...message, toolCalls } : message
@@ -114,5 +145,5 @@ export function useChatStream() {
     setIsLoading(false);
   }, []);
 
-  return { messages, isLoading, sendMessage, reset };
+  return { messages, isLoading, sendMessage, reset, addToolResult, rejectTool };
 }

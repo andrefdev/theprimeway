@@ -1,32 +1,32 @@
-import type { ToolHandler } from './types'
+import type { ToolHandler } from './types';
+import { saveBrainIdeaHandler } from './handlers/brain';
 import {
   createTaskHandler,
   updateTaskHandler,
   completeTaskHandler,
   deleteTaskHandler,
-} from './handlers/tasks'
+} from './handlers/tasks';
 import {
   createHabitHandler,
   updateHabitHandler,
   logHabitHandler,
   deleteHabitHandler,
-} from './handlers/habits'
+} from './handlers/habits';
 import {
   createGoalHandler,
   updateGoalProgressHandler,
   deleteGoalHandler,
-} from './handlers/goals'
+} from './handlers/goals';
 import {
   createTimeBlockHandler,
-  createHabitBlockHandler,
   updateCalendarEventHandler,
   deleteCalendarEventHandler,
-} from './handlers/calendar'
-import { startPomodoroHandler } from './handlers/pomodoro'
-import { autoScheduleTaskHandler } from './handlers/scheduling'
-import { saveBrainIdeaHandler } from './handlers/brain'
+} from './handlers/calendar';
+import { startPomodoroHandler } from './handlers/pomodoro';
+import { autoScheduleTaskHandler } from './handlers/scheduling';
 
 export const toolRegistry: Record<string, ToolHandler<never>> = {
+  saveBrainIdea: saveBrainIdeaHandler as ToolHandler<never>,
   createTask: createTaskHandler as ToolHandler<never>,
   updateTask: updateTaskHandler as ToolHandler<never>,
   completeTask: completeTaskHandler as ToolHandler<never>,
@@ -39,10 +39,8 @@ export const toolRegistry: Record<string, ToolHandler<never>> = {
   updateGoalProgress: updateGoalProgressHandler as ToolHandler<never>,
   deleteGoal: deleteGoalHandler as ToolHandler<never>,
   createTimeBlock: createTimeBlockHandler as ToolHandler<never>,
-  createHabitBlock: createHabitBlockHandler as ToolHandler<never>,
   updateCalendarEvent: updateCalendarEventHandler as ToolHandler<never>,
   deleteCalendarEvent: deleteCalendarEventHandler as ToolHandler<never>,
   startPomodoro: startPomodoroHandler as ToolHandler<never>,
   autoScheduleTask: autoScheduleTaskHandler as ToolHandler<never>,
-  saveBrainIdea: saveBrainIdeaHandler as ToolHandler<never>,
-}
+};

@@ -1,601 +1,320 @@
-# The Prime Way — Mobile App Architecture
+# The Prime Way — Mobile Architecture
 
-> This document is the **single source of truth** for all AI agents and developers working on this codebase.
-> Every decision, pattern, and constraint described here **MUST** be followed exactly.
+> **Norte del producto:** mobile = compañero diario IA-first. 3 tabs (IA / Progreso / Manual). NO duplica la web.
+> Para el qué, lee [`PLAN_DE_ACCION.md`](./PLAN_DE_ACCION.md). Este documento es el **cómo** — convenciones de código que TODO contributor (humano o IA) DEBE seguir.
 
 ---
 
-## 1. Tech Stack (Non-Negotiable)
+## 1. Tech stack
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| Framework | Expo SDK | 54 |
-| Runtime | React Native | 0.81 |
-| UI Framework | React | 19 |
+| Layer | Tech | Versión |
+|---|---|---|
+| Framework | Expo SDK | 55 |
+| Runtime | React Native | 0.83.6 |
+| UI | React | 19.2 |
 | Styling | NativeWind (Tailwind v3) | 4.2 |
-| Router | Expo Router | 6 |
-| State (remote) | TanStack Query | 5 |
-| State (local) | Zustand | 5 |
-| HTTP | Axios | 1.x |
-| Forms | React Hook Form + Zod | 7 + 4 |
-| Icons | lucide-react-native | 0.545+ |
-| Lists | @shopify/flash-list | 2.x |
-| Images | expo-image | 3.x |
-| Animations | react-native-reanimated + Moti | 4 + 0.30 |
-| Bottom Sheets | @gorhom/bottom-sheet | 5.x |
-| Secure Storage | expo-secure-store | 15.x |
-| Package Manager | **pnpm** | — |
-| Bundler | **Metro** | — |
-| Transpiler | **Babel** | — |
+| Router | Expo Router | 55.x (file-based) |
+| Server state | TanStack Query | 5 |
+| Local state | Zustand | 5 |
+| HTTP | Axios via `@shared/api/client` | — |
+| Forms | React Hook Form + Zod | — |
+| Iconos | `lucide-react-native` | — |
+| Listas | `@shopify/flash-list` | 2.x |
+| Imágenes | `expo-image` | — |
+| Animaciones | `react-native-reanimated` | 4.x |
+| Bottom sheets | `@gorhom/bottom-sheet` | 5.x |
+| Storage seguro | `expo-secure-store` (tokens), `react-native-mmkv` (prefs) | — |
+| Voz | `expo-speech-recognition` | — |
+| Image picker | `expo-image-picker` | — |
+| Package manager | **pnpm** (workspace) | 9.x |
 
-### NEVER use:
-- `npm` or `yarn` → always `pnpm`
-- `StyleSheet.create` → always NativeWind classes
-- `FlatList` / `SectionList` → always `FlashList`
-- `Image` from react-native → always `expo-image`
-- `Animated` from react-native → always `react-native-reanimated`
-- `AsyncStorage` → always `expo-secure-store` (tokens) or `react-native-mmkv` (prefs)
-- `fetch()` → always Axios via `@/shared/api/client`
-- `Context API` for global state → always Zustand
-- Tailwind v4 → we use **v3 only**
-- Webpack → we use **Metro only**
+### Reglas de stack
 
----
-
-## 2. Brand / Design System
-
-### 2.1 Color Palette
-
-```
-Primary / Electric Blue    #280FFB   hsl(246 97% 52%)
-Primary Hover              #331CFB   hsl(246 97% 55%)
-Secondary / Vivid Indigo   #4633FD   hsl(246 98% 60%)
-Accent / Soft Violet       #6454FD   hsl(246 98% 66%)
-Accent Light               #887CFD   hsl(246 97% 74%)
-Background Highlight       #B3ABFE   hsl(246 98% 83%)
-```
-
-### 2.2 Dark Theme (Default)
-
-```
-Background:  #0F1419  hsl(210 25% 8%)   — deep navy/charcoal
-Card:        #171D24  hsl(210 20% 11%)  — elevated surface
-Popover:     #1C2330  hsl(210 20% 13%)  — highest surface
-Muted bg:    #1E2530  hsl(210 15% 15%)  — subtle surface
-Border:      #262E38  hsl(210 15% 18%)  — borders/dividers
-Muted text:  #7A8494  hsl(210 10% 55%)  — secondary text
-Foreground:  #FAFAFA  hsl(0 0% 98%)     — primary text
-```
-
-### 2.3 Semantic Colors (NEVER change, used for meaning)
-
-| Token | Meaning | Value |
-|-------|---------|-------|
-| `success` | Positive, income, completed | green `hsl(142 71% 45%)` |
-| `warning` | Caution, medium priority | amber `hsl(38 92% 50%)` |
-| `destructive` | Error, expense, delete | red `hsl(0 72% 51%)` |
-| `info` | Neutral info, transfers | blue `hsl(199 89% 48%)` |
-| `income` | Financial income | = success green |
-| `expense` | Financial expense | = destructive red |
-| `transfer` | Financial transfer | = info blue |
-| `priority-high` | High priority tasks | = destructive red |
-| `priority-medium` | Medium priority | = warning amber |
-| `priority-low` | Low priority | = info blue |
-
-### 2.4 Color Usage Rules
-
-1. **NEVER hardcode hex/rgb colors** → always use CSS variable tokens (`bg-primary`, `text-muted-foreground`, etc.)
-2. **Primary (#280FFB)** → CTAs, active tabs, FABs, progress bars, active toggles, send buttons
-3. **Secondary (#4633FD)** → secondary buttons, card accents, gradient endpoints
-4. **Accent (#6454FD)** → badges, light accents, icon tints, category pills
-5. **Accent Light (#887CFD)** → subtle highlights, selected chips, secondary text accents
-6. **Background Highlight (#B3ABFE)** → very subtle tints, focus rings, glow effects
-7. **Green** → income, completed, success, streaks
-8. **Red** → expenses, errors, high priority, destructive actions
-9. **Amber** → warnings, medium priority, pending states
-10. **Blue (info)** → transfers, low priority, informational
-
-### 2.5 Typography
-
-- Font: System default (SF Pro on iOS, Roboto on Android)
-- Base: 16px (1rem)
-- Scale: `text-2xs` (10px), `text-xs` (12px), `text-sm` (14px), `text-base` (16px), `text-lg` (18px), `text-xl` (20px), `text-2xl` (24px), `text-3xl` (30px), `text-4xl` (36px)
-- Headings: `font-bold` or `font-semibold`, never `font-normal`
-- Body: `font-normal`, `leading-relaxed` for readability
-- Muted/secondary text: `text-muted-foreground`
-
-### 2.6 Spacing & Layout
-
-- Page padding: `px-4` (16px) horizontal, `pt-2 pb-6` vertical
-- Card padding: `p-4` (internal), gap `gap-3` between cards
-- Section spacing: `gap-6` between major sections
-- Border radius: `rounded-xl` (cards), `rounded-lg` (buttons/inputs), `rounded-full` (avatars/pills)
-- Bottom tab bar height: 80px (with safe area)
-
-### 2.7 Elevation (Dark Mode)
-
-```
-Level 0: bg-background     — page background
-Level 1: bg-card            — cards, list items
-Level 2: bg-popover         — modals, bottom sheets, dropdowns
-Level 3: bg-muted           — nested surfaces within cards
-```
+| ❌ NO usar | ✅ Usar |
+|---|---|
+| `npm` / `yarn` | `pnpm` |
+| `StyleSheet.create` | clases NativeWind |
+| `FlatList` / `SectionList` | `FlashList` |
+| `Image` de RN | `expo-image` |
+| `Animated` de RN | `react-native-reanimated` |
+| `AsyncStorage` directo | `expo-secure-store` o MMKV |
+| `fetch()` directo | `apiClient` de `@shared/api/client` |
+| `Context` para estado global | Zustand |
+| Tailwind v4 | Tailwind **v3** |
+| Strings hardcodeados en UI | `useTranslation()` con keys en `src/i18n/{en,es}.json` |
 
 ---
 
-## 3. Project Structure
+## 2. Estructura del proyecto
 
 ```
-theprimeway_app/
-├── app/                          # Expo Router (file-based routing)
-│   ├── _layout.tsx               # Root layout (providers, theme)
-│   ├── index.tsx                 # Entry redirect
-│   ├── (auth)/                   # Public routes
-│   │   ├── login.tsx
-│   │   ├── register.tsx
-│   │   └── verify-otp.tsx
-│   ├── (onboarding)/             # First-time setup
-│   │   ├── welcome.tsx
-│   │   └── ...
-│   └── (app)/                    # Protected routes (auth required)
-│       ├── _layout.tsx           # Auth guard + tab navigator
-│       ├── (tabs)/               # Bottom tab navigator
-│       │   ├── _layout.tsx       # Tab bar configuration
-│       │   ├── index.tsx         # Dashboard/Home
-│       │   ├── tasks/            # Tasks module
-│       │   ├── habits/           # Habits module
-│       │   ├── finances/         # Finances module
-│       │   └── goals/            # Goals module
-│       ├── ai.tsx                # AI Chat (modal)
-│       ├── calendar.tsx          # Calendar (modal)
-│       ├── notes/                # Notes module
-│       ├── profile.tsx           # Profile (modal)
-│       ├── settings.tsx          # Settings (modal)
-│       └── subscription.tsx      # Subscription (modal)
+apps/mobile/
+├── app/                          # Expo Router — solo thin routers
+│   ├── _layout.tsx               # Providers (Query, Auth, Theme)
+│   ├── index.tsx                 # Redirect: auth → /(app)/(tabs)/ai
+│   ├── (auth)/                   # Login, register, OTP, forgot
+│   ├── (onboarding)/             # Welcome, goals, habits, tasks
+│   └── (app)/                    # Protegido (auth guard en _layout)
+│       ├── (tabs)/               # Bottom tab bar — solo 3 tabs
+│       │   ├── _layout.tsx       # initialRouteName="ai"
+│       │   ├── ai.tsx            # IA (default)
+│       │   ├── index.tsx         # Progreso
+│       │   └── manual.tsx        # Manual (Tareas | Hábitos)
+│       ├── profile.tsx
+│       ├── settings.tsx
+│       ├── notifications.tsx
+│       ├── delete-account.tsx
+│       └── error.tsx
+│
 ├── src/
-│   ├── features/                 # Feature modules (domain logic)
-│   │   ├── {feature}/
-│   │   │   ├── components/       # Feature-specific UI
-│   │   │   ├── hooks/            # Feature hooks (queries, mutations)
-│   │   │   ├── services/         # API call functions
-│   │   │   └── types.ts          # Feature types
+│   ├── features/                 # Módulos de dominio
+│   │   ├── ai/
+│   │   ├── auth/
+│   │   ├── feature-flags/
+│   │   ├── gamification/
+│   │   ├── habits/
+│   │   ├── notifications/
+│   │   ├── onboarding/
+│   │   ├── profile/
+│   │   ├── settings/
+│   │   ├── tasks/
+│   │   └── widgets/
+│   │
 │   ├── shared/
-│   │   ├── api/
-│   │   │   ├── client.ts         # Axios instance + interceptors
-│   │   │   ├── endpoints.ts      # API URL constants
-│   │   │   └── queryKeys.ts      # TanStack Query keys
+│   │   ├── api/                  # client.ts, endpoints.ts, queryKeys.ts
 │   │   ├── components/
-│   │   │   ├── ui/               # Primitives (button, card, input...)
-│   │   │   ├── layout/           # Header, Screen, TabBar
-│   │   │   ├── feedback/         # EmptyState, ErrorState, Loading
-│   │   │   └── data-display/     # StatsCard, charts, etc.
-│   │   ├── hooks/                # Shared hooks
-│   │   ├── providers/            # AuthProvider, QueryProvider
-│   │   ├── stores/               # Zustand stores
-│   │   ├── types/                # Shared types (models, api)
-│   │   ├── utils/                # Utilities (cn, date, currency, format)
-│   │   ├── constants/            # Static data
-│   │   └── i18n/                 # Internationalization (en/es)
-├── assets/                       # Static assets (images, fonts)
-├── global.css                    # Design tokens (CSS variables)
-├── tailwind.config.js            # Tailwind + NativeWind config
-├── babel.config.js               # Babel config (nativewind + reanimated)
-├── metro.config.js               # Metro bundler config
-├── app.json                      # Expo config
-└── tsconfig.json                 # TypeScript (strict, path aliases)
+│   │   │   ├── ui/               # primitivos (button, card, input, ...)
+│   │   │   ├── layout/           # Header, Screen
+│   │   │   ├── feedback/         # EmptyState, ErrorState, Skeleton
+│   │   │   └── data-display/     # PriorityIndicator, etc.
+│   │   ├── hooks/                # cross-feature: useTranslation, useDebounce
+│   │   ├── providers/            # AuthProvider, QueryProvider, ThemeProvider
+│   │   ├── stores/               # Zustand: auth, settings, ui, biometric
+│   │   ├── types/models.ts       # tipos de dominio compartidos
+│   │   ├── utils/                # cn, date, currency, format
+│   │   └── repo-shared/          # tipos compartidos con backend (`@repo/shared`)
+│   │
+│   └── i18n/
+│       ├── en.json
+│       ├── es.json
+│       └── index.ts
+│
+├── assets/                       # imágenes, fuentes
+├── modules/widget-bridge/        # módulo nativo (iOS widgets)
+├── targets/                      # iOS app extensions (@bacons/apple-targets)
+├── plugins/                      # config plugins (with-android-widget.js)
+├── docs/
+│   ├── ARCHITECTURE.md           # este archivo
+│   ├── PLAN_DE_ACCION.md
+│   └── AI_RULES.md
+├── app.json
+├── babel.config.js
+├── metro.config.js
+├── tailwind.config.js
+└── tsconfig.json
 ```
 
 ---
 
-## 4. Component Architecture
+## 3. Convención de features ⚠️ (CRÍTICA)
 
-### 4.1 Component Hierarchy
-
-```
-Screen (page in app/ directory)
-└── Feature Components (src/features/{feature}/components/)
-    └── Shared Composites (src/shared/components/data-display/, layout/, feedback/)
-        └── UI Primitives (src/shared/components/ui/)
-```
-
-### 4.2 UI Primitives (`src/shared/components/ui/`)
-
-These are the base building blocks. They exist already from react-native-reusables:
-
-| Component | File | Usage |
-|-----------|------|-------|
-| Button | `button.tsx` | All tappable actions |
-| Text | `text.tsx` | All text display (h1-h4, p, muted, etc.) |
-| Input | `input.tsx` | Text inputs |
-| Textarea | `textarea.tsx` | Multiline inputs |
-| Card + parts | `card.tsx` | All card containers |
-| Badge | `badge.tsx` | Status/category labels |
-| Progress | `progress.tsx` | Progress bars |
-| Avatar | `avatar.tsx` | User/entity images |
-| Tabs | `tabs.tsx` | Tab navigation |
-| Switch | `switch.tsx` | Boolean toggles |
-| Checkbox | `checkbox.tsx` | Multi-select |
-| RadioGroup | `radio-group.tsx` | Single-select |
-| Select | `select.tsx` | Dropdown selects |
-| Dialog | `dialog.tsx` | Modal dialogs |
-| AlertDialog | `alert-dialog.tsx` | Confirmation dialogs |
-| DropdownMenu | `dropdown-menu.tsx` | Context menus |
-| Separator | `separator.tsx` | Visual dividers |
-| Collapsible | `collapsible.tsx` | Expandable sections |
-| Accordion | `accordion.tsx` | Multiple expandable sections |
-| Tooltip | `tooltip.tsx` | Info tooltips |
-| Popover | `popover.tsx` | Rich popover content |
-| Label | `label.tsx` | Form labels |
-| Toggle | `toggle.tsx` | Toggle buttons |
-| ToggleGroup | `toggle-group.tsx` | Grouped toggles |
-
-### 4.3 Shared Composites (to be created/styled)
-
-These combine primitives into reusable patterns:
-
-| Component | Location | Purpose |
-|-----------|----------|---------|
-| `Screen` | `layout/Screen.tsx` | SafeArea + scroll wrapper |
-| `Header` | `layout/Header.tsx` | Page header with back/title/actions |
-| `BottomSheet` | `layout/BottomSheet.tsx` | @gorhom/bottom-sheet wrapper |
-| `FAB` | `ui/fab.tsx` | Floating action button |
-| `StatsCard` | `data-display/StatsCard.tsx` | Metric display card |
-| `SectionHeader` | `data-display/SectionHeader.tsx` | Section title + action |
-| `EmptyState` | `feedback/EmptyState.tsx` | No data illustration |
-| `ErrorState` | `feedback/ErrorState.tsx` | Error with retry |
-| `LoadingOverlay` | `feedback/LoadingOverlay.tsx` | Full-screen loading |
-| `PillTabs` | `ui/pill-tabs.tsx` | Horizontal pill-style tab selector |
-| `IconCircle` | `ui/icon-circle.tsx` | Icon in colored circle bg |
-| `PriorityIndicator` | `data-display/PriorityIndicator.tsx` | Color bar/dot for priority |
-| `TransactionItem` | `data-display/TransactionItem.tsx` | Transaction row |
-| `ChipFilter` | `ui/chip-filter.tsx` | Horizontal filter chip row |
-
-### 4.4 Feature Components
-
-Each feature module has its own components that are NOT shared across features:
+### 3.1 Cada feature DEBE tener un `index.ts` (barrel)
 
 ```
-src/features/tasks/components/
-├── TaskCard.tsx          # Single task in list/timeline
-├── TaskTimeline.tsx      # Today timeline view
-├── WeekBoard.tsx         # Weekly kanban columns
-├── TaskForm.tsx          # Create/edit form (in BottomSheet)
-├── TaskFilters.tsx       # Tab pills (Today/Weekly/All/Focus)
-└── UnscheduledSection.tsx # Collapsible unscheduled tasks
+src/features/<feature>/
+├── components/
+├── hooks/
+├── services/
+├── types.ts          (opcional)
+└── index.ts          ← API pública del feature
+```
 
-src/features/habits/components/
-├── HabitCard.tsx         # Single habit with toggle
-├── HabitList.tsx         # Today's habits list
-├── HabitForm.tsx         # Create/edit (BottomSheet)
-├── StreakBanner.tsx       # Streak celebration
-├── HabitStats.tsx        # Completion rate, streaks
-└── WeekDots.tsx          # 7-day completion dots
+El `index.ts` re-exporta SOLO lo que el resto del código puede consumir. Todo lo demás es interno al feature.
 
-src/features/finances/components/
-├── BalanceCard.tsx       # Cash balance display
-├── NarrativeCard.tsx     # Financial narrative/status
-├── CashFlowRow.tsx       # Income/Expenses/Net cards
-├── BudgetCard.tsx        # Budget with progress
-├── TransactionForm.tsx   # Add transaction (BottomSheet)
-├── AccountCard.tsx       # Bank account card
-├── DebtCard.tsx          # Debt/loan card
-├── SavingsGoalCard.tsx   # Savings goal with progress
-├── HoldingCard.tsx       # Investment holding
-├── PortfolioChart.tsx    # Donut allocation chart
-└── NetWorthSparkline.tsx # 6-month trend line
+**Ejemplo (`src/features/tasks/index.ts`):**
+```ts
+export { TaskCard } from './components/TaskCard';
+export { TaskComposer } from './components/TaskComposer';
+export { TaskEditSheet } from './components/TaskEditSheet';
+export {
+  useTasks,
+  useTasksGrouped,
+  useCreateTask,
+  useUpdateTask,
+  useDeleteTask,
+} from './hooks/useTasks';
+export { tasksService } from './services/tasksService';
+export * from './types';
+```
 
-src/features/goals/components/
-├── VisionCard.tsx        # 10-year vision hero
-├── PillarCard.tsx        # Strategic pillar (expandable)
-├── OutcomeCard.tsx       # Annual outcome
-├── QuarterFocusCard.tsx  # Quarterly OKR card
-├── KeyResultRow.tsx      # KR with progress bar
-├── WeeklyGoalCard.tsx    # Weekly goal card
-├── GoalForm.tsx          # Create/edit goal (BottomSheet)
-└── RoadmapTree.tsx       # Collapsible hierarchy
+### 3.2 Cross-feature imports → SOLO via barrel
 
-src/features/notes/components/
-├── NoteCard.tsx          # Note preview card
-├── NoteEditor.tsx        # Rich text editor
-├── CategoryChips.tsx     # Category filter
-└── NoteSidePanel.tsx     # Tags, category, export
+```ts
+// ✅ CORRECTO — desde otro feature o desde app/
+import { TaskCard, useTasks } from '@features/tasks';
+import { useGamificationStore, LevelBadge } from '@features/gamification';
 
-src/features/reading/components/
-├── BookCard.tsx          # Book with cover + progress
-├── BookGrid.tsx          # 2-column book grid
-├── ReadingKanban.tsx     # Plan kanban board
-├── ReadingGoalCard.tsx   # Reading goal with ring
-└── BookDetailSheet.tsx   # Book detail bottom sheet
+// ❌ PROHIBIDO — imports profundos cross-feature
+import { TaskCard } from '@features/tasks/components/TaskCard';
+import { useGamificationStore } from '@features/gamification/stores/gamificationStore';
+```
 
-src/features/ai/components/
-├── ChatMessage.tsx       # User/AI message bubble
-├── ChatInput.tsx         # Input + send + mic
-├── ToolCallCard.tsx      # Tool execution display
-├── ConfirmationCard.tsx  # Write operation approval
-├── SuggestionPills.tsx   # Quick suggestion chips
-└── TypingIndicator.tsx   # Animated dots
+**Por qué:** renombrar/mover internos del feature no rompe consumidores externos. El barrel ES el contrato público. Si cambia, es un cambio breaking explícito.
+
+### 3.3 Dentro del propio feature → imports relativos
+
+```ts
+// ✅ CORRECTO — dentro de src/features/tasks/components/TaskCard.tsx
+import { useTasks } from '../hooks/useTasks';
+import type { Task } from '../types';
+
+// ❌ PROHIBIDO — un feature NUNCA importa su propio barrel (causa ciclos)
+import { useTasks } from '@features/tasks';
+```
+
+### 3.4 Capas (regla de dependencia)
+
+```
+app/  →  features/  →  shared/
+```
+
+- `app/*` puede importar de `@features/*` (via barrel) y de `@shared/*`
+- `@features/X` puede importar de `@features/Y` (via barrel) y de `@shared/*`
+- `@shared/*` NO puede importar de `@features/*` (sería un ciclo de capa)
+
+### 3.5 Tipos: dónde vive cada cosa
+
+Hay tres clases de tipos. Cada una vive en su lugar:
+
+| Clase | Ejemplo | Ubicación |
+|---|---|---|
+| **Wire format del API** (DTO de request) | `CreateTaskInput`, `CreateHabitInput` | `packages/shared/src/validators/*` — importado desde mobile vía `@repo/shared/validators` |
+| **Response shapes del API** | `Task`, `Habit`, `HabitStats`, `TasksGroupedResponse`, `GetTasksParams` | `packages/shared/src/types/*` — importado desde mobile vía `@repo/shared/types`. Si hay un response shape específico que aún no está en shared, vive temporalmente en `features/<feature>/types.ts` y se migra cuando toque |
+| **UI-only (esquema del FORM)** | `taskFormSchema`, `TaskFormData`, `habitFormSchema`, `HabitFormData` | **`apps/mobile/src/shared/types/forms.ts`** (mobile-only — el form del mobile NO es el del web) |
+
+**Nota:** mobile importa el paquete real `@repo/shared` directamente vía aliases en `tsconfig.json` y `babel.config.js` (`'@repo/shared': '../../packages/shared/src'`). NO hay mirror manual.
+
+Los features re-exportan los form types desde su barrel:
+```ts
+// src/features/tasks/types.ts
+export { taskFormSchema, type TaskFormData } from '@shared/types/forms';
+```
+
+Así los consumidores siguen importando `from '@features/tasks'`.
+
+### 3.6 `app/` = thin routers
+
+Las pantallas en `app/(*)/*.tsx` deben ser delgadas: importar el panel desde el feature y renderizar. Si un archivo en `app/` supera ~80 líneas o contiene fetch/business logic, hay que mover esa lógica a `src/features/<feature>/`.
+
+```tsx
+// ✅ CORRECTO — app/(app)/(tabs)/ai.tsx
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ChatPanel } from '@features/ai';
+
+export default function AiChatScreen() {
+  return (
+    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+      <ChatPanel />
+    </SafeAreaView>
+  );
+}
 ```
 
 ---
 
-## 5. Coding Patterns
+## 4. Patrones de código
 
-### 5.1 NativeWind Styling Rules
+### 4.1 Service (raw HTTP, sin React)
 
-```tsx
-// CORRECT: Use NativeWind classes
-<View className="bg-card rounded-xl p-4 gap-3">
-  <Text className="text-foreground text-lg font-bold">Title</Text>
-  <Text className="text-muted-foreground text-sm">Subtitle</Text>
-</View>
+```ts
+// src/features/<feature>/services/<feature>Service.ts
+import { apiClient } from '@shared/api/client';
+import { TASKS } from '@shared/api/endpoints';
+import type { Task } from '@shared/types/models';
 
-// WRONG: Never use StyleSheet
-const styles = StyleSheet.create({ container: { ... } }); // FORBIDDEN
+export const tasksService = {
+  list: (params?: GetTasksParams) =>
+    apiClient.get<Task[]>(TASKS.BASE, { params }).then((r) => r.data),
 
-// WRONG: Never hardcode colors
-<View style={{ backgroundColor: '#280FFB' }}> // FORBIDDEN
-<View className="bg-[#280FFB]"> // FORBIDDEN — use bg-primary instead
+  create: (data: CreateTaskDto) =>
+    apiClient.post<Task>(TASKS.BASE, data).then((r) => r.data),
+
+  update: (id: string, data: Partial<Task>) =>
+    apiClient.put<Task>(TASKS.BY_ID(id), data).then((r) => r.data),
+
+  delete: (id: string) => apiClient.delete(TASKS.BY_ID(id)),
+};
 ```
 
-### 5.2 Component Pattern
+### 4.2 Hook (React Query wrapper)
+
+```ts
+// src/features/<feature>/hooks/use<Feature>.ts
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@shared/api/queryKeys';
+import { tasksService } from '../services/tasksService';
+
+export function useTasks(params?: GetTasksParams) {
+  return useQuery({
+    queryKey: queryKeys.tasks.list(params),
+    queryFn: () => tasksService.list(params),
+  });
+}
+
+export function useCreateTask() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: tasksService.create,
+    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.tasks.all }),
+  });
+}
+```
+
+### 4.3 Component
 
 ```tsx
-// Standard feature component pattern
-import { View } from 'react-native';
-import { Text } from '@ui/text';
-import { Card, CardContent } from '@ui/card';
-import { Button } from '@ui/button';
-import { cn } from '@/shared/utils';
+// src/features/<feature>/components/<Component>.tsx
+import { View, Pressable } from 'react-native';
+import { Text } from '@shared/components/ui/text';
+import { Card, CardContent } from '@shared/components/ui/card';
+import { cn } from '@shared/utils/cn';
+import type { Task } from '@shared/types/models';
 
-type TaskCardProps = {
+interface TaskCardProps {
   task: Task;
   onToggle: (id: string) => void;
-  onPress: (id: string) => void;
-};
+}
 
-export function TaskCard({ task, onToggle, onPress }: TaskCardProps) {
+export function TaskCard({ task, onToggle }: TaskCardProps) {
   return (
-    <Card className={cn('gap-2', task.status === 'completed' && 'opacity-60')}>
-      <CardContent className="flex-row items-center gap-3">
-        {/* ... */}
+    <Card className={cn(task.status === 'completed' && 'opacity-60')}>
+      <CardContent>
+        <Text className="text-sm font-semibold text-foreground">{task.title}</Text>
       </CardContent>
     </Card>
   );
 }
 ```
 
-### 5.3 Data Fetching Pattern
+### 4.4 Bottom sheet (forms de crear/editar)
 
-```tsx
-// Hook in features/{feature}/hooks/
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '@/shared/api/queryKeys';
-import { taskService } from '../services/taskService';
+Todos los flujos de crear/editar entidades usan `@gorhom/bottom-sheet` envuelto en `FormSheet` (`@shared/components/ui/form-sheet`). Nunca usar `Dialog` para forms.
 
-export function useTasks(filter?: TaskFilter) {
-  return useQuery({
-    queryKey: queryKeys.tasks.list(filter),
-    queryFn: () => taskService.getAll(filter),
-  });
-}
+### 4.5 Estado global
 
-export function useCreateTask() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: taskService.create,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.tasks.all });
-    },
-  });
-}
-```
+| Tipo de estado | Dónde vive |
+|---|---|
+| Server state (cualquier cosa que viene de la API) | TanStack Query |
+| Auth (token, user) | `useAuthStore` |
+| Settings persistidas (locale, theme, biometric) | `useSettingsStore`, `useBiometricStore` |
+| UI efímera (active sheet, pomodoro running, badge counts) | `useUiStore` |
+| Gamificación (XP, nivel, racha) | `useGamificationStore` |
 
-### 5.4 Service Pattern
-
-```tsx
-// Service in features/{feature}/services/
-import { apiClient } from '@/shared/api/client';
-import { ENDPOINTS } from '@/shared/api/endpoints';
-
-export const taskService = {
-  getAll: (filter?: TaskFilter) =>
-    apiClient.get<Task[]>(ENDPOINTS.TASKS.LIST, { params: filter }).then(r => r.data),
-
-  create: (data: CreateTaskDto) =>
-    apiClient.post<Task>(ENDPOINTS.TASKS.CREATE, data).then(r => r.data),
-
-  update: (id: string, data: Partial<Task>) =>
-    apiClient.put<Task>(ENDPOINTS.TASKS.UPDATE(id), data).then(r => r.data),
-
-  delete: (id: string) =>
-    apiClient.delete(ENDPOINTS.TASKS.DELETE(id)),
-};
-```
-
-### 5.5 Screen Pattern
-
-```tsx
-// Screen in app/(app)/(tabs)/tasks/today.tsx
-import { Screen } from '@/shared/components/layout/Screen';
-import { Header } from '@/shared/components/layout/Header';
-import { TaskTimeline } from '@features/tasks/components/TaskTimeline';
-import { useTasks } from '@features/tasks/hooks/useTasks';
-
-export default function TasksTodayScreen() {
-  const { data: tasks, isLoading } = useTasks({ date: 'today' });
-
-  return (
-    <Screen>
-      <Header title="Today" />
-      <TaskTimeline tasks={tasks} isLoading={isLoading} />
-    </Screen>
-  );
-}
-```
-
-### 5.6 Bottom Sheet Pattern
-
-```tsx
-// All create/edit forms use @gorhom/bottom-sheet
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { useRef, useCallback } from 'react';
-
-export function TaskFormSheet({ visible, onClose }: Props) {
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['85%'], []);
-
-  return (
-    <BottomSheet
-      ref={bottomSheetRef}
-      snapPoints={snapPoints}
-      enablePanDownToClose
-      onClose={onClose}
-      backgroundStyle={{ backgroundColor: 'hsl(210, 20%, 11%)' }}
-      handleIndicatorStyle={{ backgroundColor: 'hsl(210, 10%, 55%)' }}
-    >
-      <BottomSheetView className="flex-1 px-4">
-        {/* Form content */}
-      </BottomSheetView>
-    </BottomSheet>
-  );
-}
-```
+**Regla:** si la fuente de verdad es el server, NO duplicar en Zustand. Si Zustand persiste algo del server, debe ser explícito como caché read-only sincronizada por el hook.
 
 ---
 
-## 6. Navigation Structure
-
-### 6.1 Tab Bar
-
-5 tabs in the bottom tab bar:
-
-| Tab | Icon | Route | Module |
-|-----|------|-------|--------|
-| Home | `House` | `/(app)/(tabs)/` | Dashboard |
-| Tasks | `CheckSquare` | `/(app)/(tabs)/tasks/` | Tasks |
-| Habits | `Flame` | `/(app)/(tabs)/habits/` | Habits |
-| Finances | `Wallet` | `/(app)/(tabs)/finances/` | Finances |
-| More | `LayoutGrid` | Opens More menu | Grid nav |
-
-### 6.2 "More" Menu Grid
-
-Accessible from 5th tab, opens grid of secondary modules:
-
-| Item | Icon | Route |
-|------|------|-------|
-| Goals | `Target` | `/(app)/(tabs)/goals/` |
-| Reading | `BookOpen` | Modal or nested |
-| Notes | `FileText` | `/(app)/notes/` |
-| AI Chat | `Sparkles` | `/(app)/ai` |
-| Calendar | `Calendar` | `/(app)/calendar` |
-| Pomodoro | `Timer` | `/(app)/pomodoro` |
-| Profile | `User` | `/(app)/profile` |
-| Settings | `Settings` | `/(app)/settings` |
-| Premium | `Crown` | `/(app)/subscription` |
-
-### 6.3 Tab Bar Styling
-
-```
-Background: bg-background (with blur on iOS)
-Active icon: text-primary (#280FFB)
-Inactive icon: text-muted-foreground
-Active indicator: 4px dot below icon, bg-primary
-Height: 80px (includes safe area)
-Border top: border-t border-border
-```
-
----
-
-## 7. Screen-by-Screen Specifications
-
-### Dashboard (Home)
-- Greeting + date + avatar
-- AI Daily Briefing card (primary border glow)
-- Stats row: 4 mini cards (tasks, habits, focus, budget)
-- Quick actions: 4 circular buttons (+ Task, Focus, + Transaction, + Note)
-- Today's agenda: task cards + habit circles
-- Scrollable, pull-to-refresh
-
-### Tasks Today
-- Timeline view with hourly markers
-- Task cards positioned at scheduled time
-- Priority color-coded left border (red/amber/blue)
-- Unscheduled section (collapsible bottom)
-- FAB to add task
-
-### Tasks Weekly
-- 7-day horizontal scroll columns
-- Compact task cards per day
-- Today highlighted with primary tint
-- Week summary bar with progress
-
-### Habits
-- Streak banner (if active streak)
-- Today's habits with one-tap toggle
-- 7-day mini dots per habit
-- Stats section (completion rate, top streaks)
-
-### Goals (Prime Roadmap)
-- Vision card (hero, primary gradient border)
-- Collapsible pillar tree
-- Tab pills: Roadmap / Quarterly / Weekly
-- Progress overview ring
-
-### Finances Overview
-- Narrative card (status message)
-- Cash balance (large number)
-- Daily capacity
-- Net worth sparkline
-- Quick actions (+ Expense, + Income)
-- Recent transactions
-
-### AI Chat
-- Message bubbles (user right, AI left)
-- Markdown rendering
-- Tool call timeline
-- Confirmation cards for writes
-- Suggestion pills on empty state
-- Input bar with send + attachment
-
-### Notes
-- Masonry grid of note cards
-- Category chips horizontal filter
-- Pinned section
-- Search bar
-
-### Reading Library
-- 2-column book grid with covers
-- Status filter chips
-- Progress bars on current reads
-- Reading goal card (bottom)
-
----
-
-## 8. Consistency Checklist
-
-Before submitting any screen, verify:
-
-- [ ] All colors use CSS variable tokens (no hardcoded hex)
-- [ ] Background is `bg-background` (Level 0) or `bg-card` (Level 1)
-- [ ] Primary accent is Electric Blue (`bg-primary`, `text-primary`) — NEVER gold/amber
-- [ ] Active tab icons use `text-primary` (#280FFB)
-- [ ] FAB buttons use `bg-primary` with white icon
-- [ ] Progress bars use `bg-primary` fill on `bg-primary/20` track
-- [ ] Cards use `bg-card rounded-xl border-border` consistently
-- [ ] Text hierarchy: `text-foreground` (primary), `text-muted-foreground` (secondary)
-- [ ] Spacing follows the system (px-4 page, p-4 cards, gap-3/gap-6)
-- [ ] Bottom sheet forms use `@gorhom/bottom-sheet` (never Dialog for forms)
-- [ ] Icons use `lucide-react-native` via Icon wrapper
-- [ ] Lists use `FlashList` (never FlatList)
-- [ ] Images use `expo-image` (never Image)
-- [ ] No `StyleSheet.create` anywhere
-- [ ] Semantic colors for finance/priority (green=income, red=expense, etc.)
-- [ ] Tab bar is consistent across all tab screens (5 tabs)
-- [ ] Font weights: bold for headings, normal for body, medium for labels
-
----
-
-## 9. Path Aliases
+## 5. Path aliases
 
 ```
 @/*         → src/
@@ -603,18 +322,102 @@ Before submitting any screen, verify:
 @features/* → src/features/
 @shared/*   → src/shared/
 @assets/*   → assets/
+@repo/shared/* → src/shared/repo-shared/
 ```
 
-Use these everywhere. Never use relative paths like `../../../shared/`.
+Configurados en `tsconfig.json` y `babel.config.js` (resolver). Usar **siempre** alias, nunca relativos profundos como `../../../shared/`.
+
+**Excepción:** dentro del mismo feature, usar relativos (`../hooks/useTasks`) para evitar ciclos con el barrel.
 
 ---
 
-## 10. API Integration
+## 6. i18n
 
-- Base URL: `EXPO_PUBLIC_API_URL` environment variable
-- Auth: Bearer JWT via `Authorization` header (auto-injected by Axios interceptor)
-- Endpoints: defined in `@/shared/api/endpoints.ts`
-- Query keys: defined in `@/shared/api/queryKeys.ts`
-- Stale time: 5 minutes, GC time: 30 minutes
-- 401 responses auto-logout and redirect to login
-- All API calls go through `@/shared/api/client.ts` — NEVER create separate Axios instances
+- Locales: `en` (default) y `es` en `src/i18n/{en,es}.json`
+- Hook: `useTranslation('features.<scope>')` — devuelve `t(key, params)` con namespacing
+- Cambio de idioma: `setLocale('en' | 'es')` desde `src/i18n/index.ts`; persistido en `useSettingsStore`
+- **NUNCA** strings hardcodeados en UI. Si ves `Alert.alert('Error', 'Could not...')`, mover a i18n
+
+```ts
+const { t } = useTranslation('features.tasks');
+return <Text>{t('actions.create')}</Text>;
+```
+
+---
+
+## 7. API integration
+
+- **Base URL**: `EXPO_PUBLIC_API_URL` (por entorno en `eas.json`)
+- **Auth**: Bearer JWT auto-inyectado por interceptor de Axios
+- **Endpoints**: constantes en `@shared/api/endpoints.ts` (NO strings sueltos en services)
+- **Query keys**: factory en `@shared/api/queryKeys.ts`
+- **Defaults Query**: `staleTime: 5min`, `gcTime: 30min`, `retry: 2`, `refetchOnWindowFocus: false`
+- **401**: el interceptor hace logout automático y redirige a login
+- **Streaming (chat IA)**: SSE custom via `fetch().body.getReader()` con protocolo Vercel AI SDK; ver `src/features/ai/services/chatService.ts`
+
+---
+
+## 8. Diseño visual
+
+> **Estado actual:** tema dark heredado del plan v1.
+> **Norte v2 (pendiente migración):** fondos claros, blanco / lavanda suave, acento azul/violeta, mucho whitespace, premium.
+
+Cuando se migre, **NO hardcodear hex**. Cambiar tokens en `global.css` (variables CSS) y `tailwind.config.js`. Las clases (`bg-primary`, `text-foreground`, etc.) no cambian.
+
+Tokens semánticos a respetar siempre:
+- `success` (verde) — completado, positivo
+- `destructive` (rojo) — eliminar, error, alta prioridad
+- `warning` (ámbar) — precaución, prioridad media
+- `info` (azul) — neutral, prioridad baja
+
+---
+
+## 9. Reglas de no-go (qué nunca hacer en mobile)
+
+Mobile es complemento, no réplica. **NO** se implementa en mobile:
+- Finanzas (transacciones, presupuestos, deudas, ahorros)
+- Notas / editor rich-text
+- Metas profundas (Vision/Pillar/Outcome/QuarterFocus)
+- Calendario / Google Calendar
+- Pomodoro
+- KYC
+- Gestión de suscripción (solo "abrir en web")
+- Configuración avanzada de work hours, currency, AI sharing
+
+Si alguien pide agregar uno de estos, redirigirlo al plan: la web ya lo tiene; mobile abre la web vía `expo-web-browser`.
+
+---
+
+## 10. Checklist antes de mergear
+
+- [ ] Cero imports profundos cross-feature (`@features/X/components/...`)
+- [ ] Cero ciclos: ningún archivo dentro de `features/X` importa `@features/X`
+- [ ] `pnpm type-check` pasa
+- [ ] Cero `StyleSheet.create`, cero hex hardcodeados
+- [ ] Strings en UI usan `useTranslation`
+- [ ] Si tocaste un screen de `app/(*)/...` y supera ~80 líneas, considerar mover lógica a `src/features/<feature>/screens/`
+- [ ] Listas con >20 items usan `FlashList`, no `FlatList`
+- [ ] Forms en bottom sheet (no Dialog)
+
+---
+
+## 11. Comandos útiles
+
+```powershell
+# Dev
+pnpm dev              # expo start -c
+pnpm android          # expo start -c --android
+pnpm ios              # expo start -c --ios
+
+# Verificación
+pnpm type-check       # tsc --noEmit
+pnpm lint             # eslint src/ app/
+
+# Build
+pnpm build:android    # eas build --platform android
+pnpm build:preview    # eas build --profile preview --platform all
+```
+
+---
+
+*Última actualización: 2026-05-06 — sincronizado con PLAN_DE_ACCION v2 y barrel-export refactor.*

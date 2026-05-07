@@ -8,7 +8,7 @@
       "@ui/*": ["src/shared/components/ui/*"],
       "@features/*": ["src/features/*"],
       "@shared/*": ["src/shared/*"],
-      "@repo/shared/*": ["src/shared/repo-shared/*"],
+      "@repo/shared/*": ["../../packages/shared/src/*"],
       "@assets/*": ["assets/*"],
       "widget-bridge": ["modules/widget-bridge/index.ts"],
       "tailwind.config": ["./tailwind.config.js"]

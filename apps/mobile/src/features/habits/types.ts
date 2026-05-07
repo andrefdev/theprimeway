@@ -1,18 +1,6 @@
-import { z } from 'zod/v4';
-
-export const habitFormSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  description: z.string().optional(),
-  category: z.string().optional(),
-  color: z.string().optional(),
-  targetFrequency: z.number().int().min(1).default(1),
-  frequencyType: z
-    .enum(['daily', 'week_days', 'times_per_week'])
-    .default('daily'),
-  weekDays: z.array(z.number().int().min(0).max(6)).optional(),
-});
-
-export type HabitFormData = z.infer<typeof habitFormSchema>;
+// Form schema lives in @shared/types/forms (UI-only, mobile-specific shape).
+// Re-export so consumers can keep importing from @features/habits.
+export { habitFormSchema, type HabitFormData } from '@shared/types/forms';
 
 export interface HabitWithLogs {
   id: string;
@@ -34,37 +22,8 @@ export interface HabitWithLogs {
   }[];
 }
 
-export interface HabitStats {
-  total_habits: number;
-  total_completed_today: number;
-  completion_rate: number;
-  streaks: {
-    longest: {
-      habit_id: string;
-      habit_name: string;
-      streak_days: number;
-    }[];
-    current: {
-      habit_id: string;
-      habit_name: string;
-      current_streak: number;
-    }[];
-  };
-  daily_progress: {
-    date: string;
-    total_habits: number;
-    completed_habits: number;
-    completion_rate: number;
-  }[];
-  habit_details: {
-    habit_id: string;
-    habit_name: string;
-    completion_rate: number;
-    current_streak: number;
-    longest_streak: number;
-    total_completions: number;
-  }[];
-}
+// Sourced from @repo/shared (single source of truth — matches backend response).
+export type { HabitStats } from '@repo/shared/types';
 
 export interface HabitLogPayload {
   date: string;

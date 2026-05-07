@@ -12,38 +12,11 @@ export const queryKeys = {
     stats: ['habits', 'stats'],
     logs: (id: string) => ['habits', id, 'logs'],
   },
-  goals: {
-    visions: ['goals', 'visions'],
-    pillars: ['goals', 'pillars'],
-    outcomes: ['goals', 'outcomes'],
-    focuses: ['goals', 'focuses'],
-    weekly: ['goals', 'weekly'],
-    healthSnapshots: ['goals', 'health-snapshots'],
-    focusLinks: (focusId: string) => ['goals', 'focus-links', focusId],
-  },
-  pomodoro: {
-    sessions: ['pomodoro', 'sessions'],
-    stats: ['pomodoro', 'stats'],
-  },
-  calendar: {
-    accounts: ['calendar', 'accounts'],
-    events: ['calendar', 'events'],
-  },
   ai: {
     threads: ['ai', 'threads'],
   },
-  brain: {
-    feeds: () => ['brain', 'feed'] as const,
-    feed: (params: { status?: string; search?: string } = {}) =>
-      ['brain', 'feed', params] as const,
-    entry: (id: string) => ['brain', 'entry', id] as const,
-  },
   profile: ['profile'],
   settings: ['settings'],
-  subscription: {
-    status: ['subscription', 'status'],
-    plans: ['subscription', 'plans'],
-  },
   notifications: {
     aggregated: ['notifications', 'aggregated'],
   },

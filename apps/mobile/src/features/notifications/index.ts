@@ -1,10 +1,10 @@
-export * from './antifatigue';
-export * from './morningBriefing';
-export * from './notificationRouter';
-export * from './pushNotifications';
-export * from './reminderNotifications';
-export * from './taskReminderContext';
-export * from './timerNotifications';
+export * from './briefing/morningBriefing';
+export * from './push/pushNotifications';
+export * from './quotas/antifatigue';
+export * from './reminders/reminderNotifications';
+export * from './reminders/taskReminderContext';
+export * from './routing/notificationRouter';
+export * from './timer/timerNotifications';
 export { useAggregatedNotifications, notificationsQueryKey } from './hooks/useNotifications';
 export {
   notificationsService,

@@ -63,6 +63,7 @@
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "expo": "~55.0.23",
+    "expo-apple-authentication": "~55.0.13",
     "expo-auth-session": "~55.0.15",
     "expo-build-properties": "~55.0.13",
     "expo-calendar": "~55.0.14",

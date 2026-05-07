@@ -10,3 +10,4 @@ export {
   useNotificationPreferences,
   useUpdateNotificationPreferences,
 } from './hooks/useSettings';
+export { SettingsScreen } from './screens/SettingsScreen';

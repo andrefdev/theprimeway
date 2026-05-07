@@ -45,6 +45,7 @@ const LABELS: Record<string, { title: string; verb: string }> = {
   updateCalendarEvent: { title: 'Update calendar event', verb: 'Update' },
   deleteCalendarEvent: { title: 'Delete calendar event', verb: 'Delete' },
   startPomodoro: { title: 'Start pomodoro', verb: 'Start' },
+  saveBrainIdea: { title: 'Save idea to brain', verb: 'Save' },
 }
 
 const READ_ONLY_TOOLS = new Set([

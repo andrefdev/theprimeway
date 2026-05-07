@@ -1,7 +1,7 @@
 // Shared types across web, api, and mobile
 
 export type { User, UserProfile, UserSettings } from './user'
-export type { Task, TaskStatus, TaskPriority, TaskBucket } from './task'
+export type { Task, TaskStatus, TaskPriority, TaskBucket, GetTasksParams, TasksGroupedResponse } from './task'
 export type { Habit, HabitLog, HabitStats } from './habit'
 export type {
   PrimeVision,

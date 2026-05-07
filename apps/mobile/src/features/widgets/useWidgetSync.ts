@@ -23,7 +23,6 @@ export function useWidgetSync() {
     const run = async () => {
     const taskList = Array.isArray(tasks) ? tasks : [];
     const habitList = Array.isArray(habits) ? habits : [];
-    const s: any = habitStats;
 
     const widgetTasks: WidgetTask[] = taskList.slice(0, 5).map((t: any) => ({
       id: t.id,
@@ -36,11 +35,8 @@ export function useWidgetSync() {
     }));
 
     const streakMap: Record<string, number> = {};
-    const cur = s?.streaks?.current ?? [];
-    for (const c of cur) {
-      const id = c.habit_id ?? c.habitId;
-      const streak = c.current_streak ?? c.currentStreak ?? 0;
-      if (id) streakMap[id] = streak;
+    for (const c of habitStats?.streaks?.current ?? []) {
+      streakMap[c.habitId] = c.currentStreak;
     }
 
     const pending: WidgetHabit[] = habitList
@@ -56,8 +52,7 @@ export function useWidgetSync() {
       })
       .filter((h) => !h.completed);
 
-    const longestArr = s?.streaks?.longest ?? [];
-    const longestStreak = longestArr[0]?.streakDays ?? longestArr[0]?.streak_days ?? 0;
+    const longestStreak = habitStats?.streaks?.longest?.[0]?.streakDays ?? 0;
     const currentStreak = Math.max(0, ...Object.values(streakMap));
 
     const snapshot: WidgetSnapshot = {

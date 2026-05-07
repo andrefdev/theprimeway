@@ -3,28 +3,23 @@ import * as Device from 'expo-device';
 import { Platform } from 'react-native';
 import { apiClient } from '@shared/api/client';
 import { NOTIFICATIONS } from '@shared/api/endpoints';
-import { useUiStore } from '@shared/stores/uiStore';
-import { canSendNotification, recordNotificationSent, type NotifPriority } from './antifatigue';
+import { canSendNotification, recordNotificationSent, type NotifPriority } from '../quotas/antifatigue';
 
 Notifications.setNotificationHandler({
   handleNotification: async (notification) => {
-    const { pomodoro, focusModeSilence } = useUiStore.getState();
-    const inFocus = focusModeSilence && pomodoro.status === 'running' && pomodoro.sessionType === 'focus';
-
     const data = (notification.request.content.data ?? {}) as { priority?: NotifPriority };
     const priority: NotifPriority = data.priority ?? 'normal';
     const withinQuota = await canSendNotification(priority);
 
-    const suppress = inFocus || !withinQuota;
-    if (!suppress) {
+    if (withinQuota) {
       await recordNotificationSent();
     }
     return {
-      shouldShowAlert: !suppress,
-      shouldPlaySound: !suppress,
+      shouldShowAlert: withinQuota,
+      shouldPlaySound: withinQuota,
       shouldSetBadge: true,
-      shouldShowBanner: !suppress,
-      shouldShowList: !suppress,
+      shouldShowBanner: withinQuota,
+      shouldShowList: withinQuota,
     };
   },
 });

@@ -25,8 +25,9 @@ export function HabitsAnalytics() {
     );
   }
 
-  const totalCompletions = (stats as any)?.totalCompletions ?? 0;
-  const longestStreak = (stats as any)?.longestStreak ?? 0;
+  const habitDetails = stats?.habitDetails ?? [];
+  const totalCompletions = habitDetails.reduce((sum, d) => sum + (d.totalCompletions ?? 0), 0);
+  const longestStreak = habitDetails.reduce((max, d) => Math.max(max, d.longestStreak ?? 0), 0);
   const activeHabits = list.length;
 
   return (

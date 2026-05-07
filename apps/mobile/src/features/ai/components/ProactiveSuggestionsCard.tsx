@@ -48,13 +48,10 @@ export function ProactiveSuggestionsCard() {
   }, []);
 
   const habitStreaks = useMemo(() => {
-    const s: any = habitStats;
     const map: Record<string, number> = {};
-    const cur = s?.streaks?.current ?? [];
+    const cur = habitStats?.streaks?.current ?? [];
     for (const c of cur) {
-      const id = c.habit_id ?? c.habitId;
-      const streak = c.current_streak ?? c.currentStreak ?? 0;
-      if (id) map[id] = streak;
+      map[c.habitId] = c.currentStreak;
     }
     return map;
   }, [habitStats]);

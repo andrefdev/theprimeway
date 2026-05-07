@@ -30,8 +30,8 @@ export interface HabitStats {
   totalCompletedToday: number
   completionRate: number
   streaks: {
-    longest: Array<{ habitId: string; streak: number }>
-    current: Array<{ habitId: string; streak: number }>
+    longest: Array<{ habitId: string; habitName: string; streakDays: number }>
+    current: Array<{ habitId: string; habitName: string; currentStreak: number }>
   }
   dailyProgress: Array<{
     date: string
@@ -39,5 +39,12 @@ export interface HabitStats {
     completedHabits: number
     completionRate: number
   }>
-  habitDetails: Array<Record<string, unknown>>
+  habitDetails: Array<{
+    habitId: string
+    habitName: string
+    completionRate: number
+    currentStreak: number
+    longestStreak: number
+    totalCompletions: number
+  }>
 }

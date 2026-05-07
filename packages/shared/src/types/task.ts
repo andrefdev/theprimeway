@@ -35,3 +35,19 @@ export interface Task {
   createdAt: string
   updatedAt: string
 }
+
+export interface GetTasksParams {
+  grouped?: boolean
+  date?: string
+  status?: 'open' | 'completed'
+  priority?: TaskPriority
+  search?: string
+}
+
+export interface TasksGroupedResponse {
+  overdue: Task[]
+  today: Task[]
+  tomorrow: Task[]
+  upcoming: Task[]
+  unscheduled: Task[]
+}
