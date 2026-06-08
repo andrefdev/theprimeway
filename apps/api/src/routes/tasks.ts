@@ -72,7 +72,7 @@ const createTaskSchema = z.object({
 })
 
 const updateTaskSchema = createTaskSchema.partial().extend({
-  status: z.enum(['open', 'completed']).optional(),
+  status: z.enum(['open', 'completed', 'archived']).optional(),
   archivedAt: z.string().nullable().optional(),
   orderInDay: z.number().optional(),
   actualStart: z.string().nullable().optional(),

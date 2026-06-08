@@ -182,7 +182,7 @@ export function TasksToday() {
 
   async function handleArchive(task: Task) {
     try {
-      await updateTask.mutateAsync({ id: task.id, data: { status: 'archived' } })
+      await updateTask.mutateAsync({ id: task.id, data: { archivedAt: new Date().toISOString() } })
       toast.success(t('taskArchived', { defaultValue: 'Task archived' }))
     } catch {
       toast.error(t('failedToUpdate'))

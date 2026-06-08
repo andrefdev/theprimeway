@@ -170,6 +170,25 @@ function moveArchiveToGroup(qc: QueryClient, taskId: string, patch: Partial<Task
   })
 }
 
+function moveGroupToArchive(qc: QueryClient, taskId: string, patch: Partial<Task>) {
+  patchQueries<GroupedTasksResponse>(qc, groupedKey, (cur) => {
+    let moved: Task | undefined
+    const groups = cur.groups.map((g) => {
+      const found = g.tasks.find((t) => t.id === taskId)
+      if (found) moved = { ...found, ...patch }
+      return { ...g, tasks: listOps.remove(g.tasks, taskId) }
+    })
+    if (!moved) {
+      // task isn't in a group — fall back to plain patch
+      return {
+        groups: cur.groups.map((g) => ({ ...g, tasks: listOps.patch(g.tasks, taskId, patch) })),
+        archive: listOps.patch(cur.archive, taskId, patch),
+      }
+    }
+    return { groups, archive: [moved, ...cur.archive] }
+  })
+}
+
 function removeFromGrouped(qc: QueryClient, taskId: string) {
   patchQueries<GroupedTasksResponse>(qc, groupedKey, (cur) => ({
     groups: cur.groups.map((g) => ({ ...g, tasks: listOps.remove(g.tasks, taskId) })),
@@ -294,6 +313,8 @@ export function useUpdateTask() {
       const groupedSnaps = qc.getQueriesData<GroupedTasksResponse>({ queryKey: groupedKey })
       if (data?.archivedAt === null) {
         moveArchiveToGroup(qc, id, data as Partial<Task>)
+      } else if (typeof data?.archivedAt === 'string') {
+        moveGroupToArchive(qc, id, data as Partial<Task>)
       } else {
         patchGrouped(qc, id, data as Partial<Task>)
       }
