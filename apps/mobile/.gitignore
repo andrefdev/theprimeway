@@ -15,10 +15,12 @@ ios/
 # Native
 *.orig.*
 *.jks
+*.keystore
 *.p8
 *.p12
 *.key
 *.mobileprovision
+play-service-account.json
 
 # Metro
 .metro-health-check*

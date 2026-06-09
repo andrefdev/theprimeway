@@ -16,7 +16,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.indrox.theprimeway",
       "appleTeamId": "P7S9GFT5VQ",
-      "buildNumber": "10",
+      "buildNumber": "11",
       "associatedDomains": [
         "applinks:theprimeway.com",
         "applinks:app.theprimeway.app"
@@ -41,6 +41,7 @@
     },
     "android": {
       "package": "app.theprimeway.twa",
+      "googleServicesFile": "./google-services.json",
       "versionCode": 31,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
