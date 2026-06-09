@@ -234,6 +234,21 @@ export function TasksToday() {
     }
   }
 
+  async function handleItemResize(item: CalendarItem, start: Date, end: Date) {
+    const realSessionId =
+      item.sessionId && !item.sessionId.startsWith('temp-') ? item.sessionId : undefined
+    try {
+      await moveSession.mutateAsync({
+        sessionId: realSessionId,
+        taskId: realSessionId ? undefined : item.task?.id,
+        start: start.toISOString(),
+        end: end.toISOString(),
+      })
+    } catch {
+      toast.error(t('failedToUpdate'))
+    }
+  }
+
   function handleDragStart(event: DragStartEvent) {
     // Both list items (SortableTask) and calendar session blocks
     // (DraggableEventBlock) carry `data.taskId`; calendar blocks use a
@@ -488,6 +503,7 @@ export function TasksToday() {
                     }}
                     enableSlotDrop
                     enableItemDrag
+                    onItemResize={handleItemResize}
                     dayStartHour={dayBounds.startHour}
                     dayEndHour={dayBounds.endHour}
                     onDayBoundsChange={handleDayBoundsChange}

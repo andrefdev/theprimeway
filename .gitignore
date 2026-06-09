@@ -12,6 +12,9 @@ dist/
 .env.local
 .env.*.local
 
+# credentials inventory (LOCAL ONLY — never commit)
+/CREDENTIALS.env
+
 # ide
 .vscode/
 .idea/

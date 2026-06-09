@@ -60,6 +60,12 @@ interface TimeGridProps {
    * Receives clock hours [0-24] in 0.5h steps. Caller persists the override.
    */
   onDayBoundsChange?: (next: { startHour: number; endHour: number }) => void
+  /**
+   * When provided (alongside enableItemDrag), session blocks get top/bottom
+   * resize handles that adjust the session start/end, snapped to SLOT_MINUTES.
+   * The caller persists the new times (e.g. via moveSession).
+   */
+  onItemResize?: (item: CalendarItem, start: Date, end: Date) => void
 }
 
 const ALL_DAY_COLLAPSED_LIMIT = 2
@@ -75,6 +81,7 @@ export function TimeGrid({
   dayStartHour,
   dayEndHour,
   onDayBoundsChange,
+  onItemResize,
 }: TimeGridProps) {
   const tz = useUserTimezone()
   const { dateFnsLocale } = useLocale()
@@ -313,6 +320,7 @@ export function TimeGrid({
                     col={col}
                     cols={cols}
                     onItemClick={onItemClick}
+                    onResize={onItemResize}
                   />
                 ) : (
                   <EventBlock
@@ -363,20 +371,60 @@ function EventBlock({
   cols,
   onItemClick,
   drag,
+  onResize,
 }: {
   item: CalendarItem
   col: number
   cols: number
   onItemClick: (item: CalendarItem, anchor: HTMLElement) => void
   drag?: EventBlockDrag
+  onResize?: (item: CalendarItem, start: Date, end: Date) => void
 }) {
+  const [resize, setResize] = useState<{ edge: 'top' | 'bottom'; px: number } | null>(null)
+
   const startHour = item.start.getHours() + item.start.getMinutes() / 60
   const durationMin = Math.max(differenceInMinutes(item.end, item.start), 15)
-  const top = Math.max((startHour - START_HOUR) * HOUR_HEIGHT, 0)
-  const height = Math.max((durationMin / 60) * HOUR_HEIGHT, 20)
+  const baseTop = Math.max((startHour - START_HOUR) * HOUR_HEIGHT, 0)
+  const baseHeight = Math.max((durationMin / 60) * HOUR_HEIGHT, 20)
+  const minPx = (SLOT_MINUTES / 60) * HOUR_HEIGHT
+
+  // Live preview while a resize handle is being dragged.
+  let top = baseTop
+  let height = baseHeight
+  if (resize) {
+    if (resize.edge === 'bottom') {
+      height = Math.max(baseHeight + resize.px, minPx)
+    } else {
+      const d = Math.min(resize.px, baseHeight - minPx)
+      top = baseTop + d
+      height = baseHeight - d
+    }
+  }
+
   const hex = resolveItemColor(item)
   const widthPct = 100 / cols
   const leftPct = col * widthPct
+  // Resize only for draggable session blocks with enough height for handles.
+  const canResize = !!drag && !!onResize && baseHeight >= 30
+
+  function commitResize(edge: 'top' | 'bottom', deltaPx: number) {
+    setResize(null)
+    if (!onResize) return
+    const deltaMin =
+      Math.round(((deltaPx / HOUR_HEIGHT) * 60) / SLOT_MINUTES) * SLOT_MINUTES
+    if (deltaMin === 0) return
+    const minMs = SLOT_MINUTES * 60_000
+    let start = item.start
+    let end = item.end
+    if (edge === 'bottom') {
+      end = new Date(item.end.getTime() + deltaMin * 60_000)
+      if (end.getTime() - start.getTime() < minMs) end = new Date(start.getTime() + minMs)
+    } else {
+      start = new Date(item.start.getTime() + deltaMin * 60_000)
+      if (end.getTime() - start.getTime() < minMs) start = new Date(end.getTime() - minMs)
+    }
+    onResize(item, start, end)
+  }
 
   return (
     <div
@@ -399,6 +447,9 @@ function EventBlock({
         width: `calc(${widthPct}% - 6px)`,
         backgroundColor: withAlpha(hex),
         borderLeftColor: hex,
+        // Sit above the slot drop-zones (z-1) so clicks/drags hit the block
+        // instead of falling through to the "create task" slot underneath.
+        zIndex: drag ? 5 : undefined,
         opacity: drag?.isDragging ? 0.4 : undefined,
       }}
       title={`${item.title} (${format(item.start, 'h:mm a')} – ${format(item.end, 'h:mm a')})`}
@@ -423,7 +474,66 @@ function EventBlock({
           {format(item.start, 'h:mm')}
         </span>
       )}
+
+      {canResize && !drag?.isDragging && (
+        <>
+          <ResizeHandle
+            edge="top"
+            onPreview={(px) => setResize({ edge: 'top', px })}
+            onCommit={(px) => commitResize('top', px)}
+          />
+          <ResizeHandle
+            edge="bottom"
+            onPreview={(px) => setResize({ edge: 'bottom', px })}
+            onCommit={(px) => commitResize('bottom', px)}
+          />
+        </>
+      )}
     </div>
+  )
+}
+
+/**
+ * Thin edge strip that resizes the event by dragging. Stops pointer
+ * propagation so it never starts the dnd-kit move-drag on the parent block.
+ */
+function ResizeHandle({
+  edge,
+  onPreview,
+  onCommit,
+}: {
+  edge: 'top' | 'bottom'
+  onPreview: (px: number) => void
+  onCommit: (px: number) => void
+}) {
+  const startY = useRef<number | null>(null)
+  return (
+    <div
+      className={cn(
+        'absolute left-0 right-0 h-1.5 cursor-ns-resize z-10',
+        edge === 'top' ? 'top-0' : 'bottom-0',
+      )}
+      onClick={(e) => e.stopPropagation()}
+      onPointerDown={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
+        startY.current = e.clientY
+      }}
+      onPointerMove={(e) => {
+        if (startY.current == null) return
+        e.stopPropagation()
+        onPreview(e.clientY - startY.current)
+      }}
+      onPointerUp={(e) => {
+        if (startY.current == null) return
+        e.stopPropagation()
+        const delta = e.clientY - startY.current
+        startY.current = null
+        ;(e.target as HTMLElement).releasePointerCapture(e.pointerId)
+        onCommit(delta)
+      }}
+    />
   )
 }
 
@@ -437,6 +547,7 @@ function DraggableEventBlock(props: {
   col: number
   cols: number
   onItemClick: (item: CalendarItem, anchor: HTMLElement) => void
+  onResize?: (item: CalendarItem, start: Date, end: Date) => void
 }) {
   const taskId = props.item.task!.id
   const { setNodeRef, listeners, attributes, isDragging } = useDraggable({
