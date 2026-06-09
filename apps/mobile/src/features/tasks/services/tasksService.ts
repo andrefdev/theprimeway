@@ -18,9 +18,18 @@ interface ApiGroupedResponse {
 
 export const tasksService = {
   getTasks: async (params?: GetTasksParams): Promise<Task[]> => {
-    const { grouped, ...rest } = params ?? {};
+    const { grouped, date, ...rest } = params ?? {};
     const url = grouped ? TASKS.GROUPED : TASKS.BASE;
-    const { data: response } = await apiClient.get(url, { params: rest });
+    // The API filters tasks for a given day via `filter=today` + `referenceDate`.
+    // There is NO `date` query param — sending it was silently ignored, so the
+    // endpoint returned ALL tasks capped at the default page size (the "50/50"
+    // bug). Map `date` to the supported filter instead.
+    const query: Record<string, unknown> = { ...rest };
+    if (date) {
+      query.filter = 'today';
+      query.referenceDate = date;
+    }
+    const { data: response } = await apiClient.get(url, { params: query });
     // API returns { data: [...], count: N } — extract the array
     const tasks = Array.isArray(response) ? response : (response?.data ?? []);
     return Array.isArray(tasks) ? tasks : [];
