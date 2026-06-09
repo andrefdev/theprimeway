@@ -235,7 +235,13 @@ export function TasksToday() {
   }
 
   function handleDragStart(event: DragStartEvent) {
-    const t = openTasks.find((x) => x.id === String(event.active.id))
+    // Both list items (SortableTask) and calendar session blocks
+    // (DraggableEventBlock) carry `data.taskId`; calendar blocks use a
+    // `calitem:{id}` drag id so they don't collide with the list's `{id}`.
+    const id =
+      (event.active.data.current as { taskId?: string } | undefined)?.taskId ??
+      String(event.active.id)
+    const t = openTasks.find((x) => x.id === id)
     setActiveDragTask(t ?? null)
   }
 
@@ -243,7 +249,9 @@ export function TasksToday() {
     setActiveDragTask(null)
     const { active, over } = event
     if (!over) return
-    const taskId = String(active.id)
+    const taskId =
+      (active.data.current as { taskId?: string } | undefined)?.taskId ??
+      String(active.id)
     const task = openTasks.find((x) => x.id === taskId)
     if (!task) return
 
@@ -479,6 +487,7 @@ export function TasksToday() {
                       }
                     }}
                     enableSlotDrop
+                    enableItemDrag
                     dayStartHour={dayBounds.startHour}
                     dayEndHour={dayBounds.endHour}
                     onDayBoundsChange={handleDayBoundsChange}

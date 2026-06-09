@@ -1,7 +1,7 @@
 import type { CalendarItem } from '../../hooks/use-calendar-items'
 
 export const SLOT_MINUTES = 30
-export const HOUR_HEIGHT = 48
+export const HOUR_HEIGHT = 80
 export const START_HOUR = 0
 export const END_HOUR = 24
 export const LABEL_WIDTH = 56

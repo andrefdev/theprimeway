@@ -2,7 +2,12 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { differenceInMinutes, format, isSameDay } from 'date-fns'
 import { ChevronDown } from 'lucide-react'
-import { useDroppable } from '@dnd-kit/core'
+import {
+  useDraggable,
+  useDroppable,
+  type DraggableAttributes,
+  type DraggableSyntheticListeners,
+} from '@dnd-kit/core'
 import { CheckIcon } from '@/shared/components/Icons'
 import { useLocale } from '@/i18n/useLocale'
 import { cn } from '@/shared/lib/utils'
@@ -39,6 +44,14 @@ interface TimeGridProps {
    * `slot-{ISO}` so a parent DndContext can route task-list drops here.
    */
   enableSlotDrop?: boolean
+  /**
+   * When true, in-app session blocks become draggable (id `calitem:{taskId}`,
+   * data `{ type: 'calitem', taskId }`) so a parent DndContext can reschedule
+   * them by re-using the same slot-drop handling as task-list drags. Only
+   * `session` items with a linked task are draggable — external Google events
+   * stay read-only. Requires the caller to wrap TimeGrid in a DndContext.
+   */
+  enableItemDrag?: boolean
   /** Visual band representing the working-hours window for the day. */
   dayStartHour?: number
   dayEndHour?: number
@@ -58,6 +71,7 @@ export function TimeGrid({
   onSlotClick,
   onItemClick,
   enableSlotDrop = false,
+  enableItemDrag = false,
   dayStartHour,
   dayEndHour,
   onDayBoundsChange,
@@ -290,54 +304,24 @@ export function TimeGrid({
               )}
 
               {laidOut.map(({ item, col, cols }) => {
-                const startHour = item.start.getHours() + item.start.getMinutes() / 60
-                const durationMin = Math.max(differenceInMinutes(item.end, item.start), 15)
-                const top = Math.max((startHour - START_HOUR) * HOUR_HEIGHT, 0)
-                const height = Math.max((durationMin / 60) * HOUR_HEIGHT, 20)
-                const hex = resolveItemColor(item)
-                const widthPct = 100 / cols
-                const leftPct = col * widthPct
-
-                return (
-                  <div
+                const draggable =
+                  enableItemDrag && item.type === 'session' && !!item.task?.id
+                return draggable ? (
+                  <DraggableEventBlock
                     key={item.id}
-                    data-event
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onItemClick(item, e.currentTarget)
-                    }}
-                    className="absolute rounded-md border-l-[3px] px-1.5 py-0.5 overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
-                    style={{
-                      top: top + 1,
-                      height: height - 2,
-                      left: `calc(${leftPct}% + 3px)`,
-                      width: `calc(${widthPct}% - 6px)`,
-                      backgroundColor: withAlpha(hex),
-                      borderLeftColor: hex,
-                    }}
-                    title={`${item.title} (${format(item.start, 'h:mm a')} – ${format(item.end, 'h:mm a')})`}
-                  >
-                    <div className="flex items-start gap-1">
-                      {item.status === 'completed' && (
-                        <CheckIcon size={8} className="text-emerald-500 mt-0.5 flex-shrink-0" />
-                      )}
-                      <span
-                        className={cn(
-                          'text-[11px] font-medium leading-tight truncate',
-                          item.status === 'completed'
-                            ? 'line-through text-muted-foreground'
-                            : 'text-foreground',
-                        )}
-                      >
-                        {item.title}
-                      </span>
-                    </div>
-                    {height >= HOUR_HEIGHT && (
-                      <span className="text-[9px] text-muted-foreground">
-                        {format(item.start, 'h:mm')}
-                      </span>
-                    )}
-                  </div>
+                    item={item}
+                    col={col}
+                    cols={cols}
+                    onItemClick={onItemClick}
+                  />
+                ) : (
+                  <EventBlock
+                    key={item.id}
+                    item={item}
+                    col={col}
+                    cols={cols}
+                    onItemClick={onItemClick}
+                  />
                 )
               })}
 
@@ -364,6 +348,107 @@ function clampHour(h: number): number {
   if (h < 0) return 0
   if (h > 24) return 24
   return h
+}
+
+interface EventBlockDrag {
+  setNodeRef: (el: HTMLElement | null) => void
+  listeners: DraggableSyntheticListeners
+  attributes: DraggableAttributes
+  isDragging: boolean
+}
+
+function EventBlock({
+  item,
+  col,
+  cols,
+  onItemClick,
+  drag,
+}: {
+  item: CalendarItem
+  col: number
+  cols: number
+  onItemClick: (item: CalendarItem, anchor: HTMLElement) => void
+  drag?: EventBlockDrag
+}) {
+  const startHour = item.start.getHours() + item.start.getMinutes() / 60
+  const durationMin = Math.max(differenceInMinutes(item.end, item.start), 15)
+  const top = Math.max((startHour - START_HOUR) * HOUR_HEIGHT, 0)
+  const height = Math.max((durationMin / 60) * HOUR_HEIGHT, 20)
+  const hex = resolveItemColor(item)
+  const widthPct = 100 / cols
+  const leftPct = col * widthPct
+
+  return (
+    <div
+      ref={drag?.setNodeRef}
+      data-event
+      onClick={(e) => {
+        e.stopPropagation()
+        onItemClick(item, e.currentTarget)
+      }}
+      {...(drag?.listeners ?? {})}
+      {...(drag?.attributes ?? {})}
+      className={cn(
+        'absolute rounded-md border-l-[3px] px-1.5 py-0.5 overflow-hidden hover:shadow-md transition-shadow',
+        drag ? 'cursor-grab active:cursor-grabbing touch-none' : 'cursor-pointer',
+      )}
+      style={{
+        top: top + 1,
+        height: height - 2,
+        left: `calc(${leftPct}% + 3px)`,
+        width: `calc(${widthPct}% - 6px)`,
+        backgroundColor: withAlpha(hex),
+        borderLeftColor: hex,
+        opacity: drag?.isDragging ? 0.4 : undefined,
+      }}
+      title={`${item.title} (${format(item.start, 'h:mm a')} – ${format(item.end, 'h:mm a')})`}
+    >
+      <div className="flex items-start gap-1">
+        {item.status === 'completed' && (
+          <CheckIcon size={8} className="text-emerald-500 mt-0.5 flex-shrink-0" />
+        )}
+        <span
+          className={cn(
+            'text-[11px] font-medium leading-tight truncate',
+            item.status === 'completed'
+              ? 'line-through text-muted-foreground'
+              : 'text-foreground',
+          )}
+        >
+          {item.title}
+        </span>
+      </div>
+      {height >= HOUR_HEIGHT && (
+        <span className="text-[9px] text-muted-foreground">
+          {format(item.start, 'h:mm')}
+        </span>
+      )}
+    </div>
+  )
+}
+
+/**
+ * Draggable variant — only rendered for in-app session blocks inside a
+ * DndContext (tasks/today). The `useDraggable` hook is isolated here so it
+ * never runs in the read-only week calendar (which has no DndContext).
+ */
+function DraggableEventBlock(props: {
+  item: CalendarItem
+  col: number
+  cols: number
+  onItemClick: (item: CalendarItem, anchor: HTMLElement) => void
+}) {
+  const taskId = props.item.task!.id
+  const { setNodeRef, listeners, attributes, isDragging } = useDraggable({
+    id: `calitem:${taskId}`,
+    data: { type: 'calitem', taskId },
+  })
+  return (
+    <EventBlock
+      {...props}
+      drag={{ setNodeRef, listeners, attributes, isDragging }}
+    />
+  )
 }
 
 function SlotDroppable({ start, top, height }: { start: Date; top: number; height: number }) {

@@ -17,7 +17,6 @@
  * outage doesn't block the local DB write that initiated the push.
  */
 import { prisma } from '../../lib/prisma'
-import { calendarRepo } from '../../repositories/calendar.repo'
 import { ensureAccessToken } from './google-token.service'
 
 export type PushResult =
@@ -47,16 +46,14 @@ export async function pushSessionToCalendar(sessionId: string): Promise<PushResu
     }
   }
 
-  // Fallback: account default / primary calendar for this user.
-  if (!calendar) {
-    const target = await calendarRepo.findTargetCalendarForUser(session.userId)
-    if (!target) return { ok: false, reason: 'no_target_calendar' }
-    calendar = await prisma.calendar.findUnique({
-      where: { id: target.calendar.id },
-      include: { account: true },
-    })
-  }
-  if (!calendar) return { ok: false, reason: 'calendar_not_found' }
+  // Push ONLY when the task's channel is explicitly bound to a target calendar
+  // via Channel.timeboxToCalendarId. We intentionally DO NOT fall back to the
+  // user's primary/default calendar: auto-scheduled WorkingSessions are
+  // internal time-blocks (tasks), not calendar events, and must not appear on
+  // the user's Google Calendar unless they explicitly opted a channel into
+  // timeboxing. Pulling Google events INTO the app is handled elsewhere and is
+  // unaffected by this.
+  if (!calendar) return { ok: false, reason: 'no_target_calendar' }
 
   const accessToken = await ensureAccessToken(calendar.calendarAccountId)
   if (!accessToken) return { ok: false, reason: 'no_access_token' }
