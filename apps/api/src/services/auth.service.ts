@@ -78,17 +78,51 @@ async function generateTokens(userId: string, email: string): Promise<AuthTokens
   return { token, refreshToken }
 }
 
+// Google's JWKS for verifying ID tokens (native mobile sign-in). jose caches
+// and refreshes the keys in-process.
+const googleJwks = jose.createRemoteJWKSet(
+  new URL('https://www.googleapis.com/oauth2/v3/certs'),
+)
+
+// Accepted audiences for Google ID tokens. With @react-native-google-signin the
+// idToken's `aud` is the webClientId (= AUTH_GOOGLE_ID). The iOS / Android client
+// ids are also accepted when configured, for robustness across platforms.
+const GOOGLE_AUDIENCES = [
+  process.env.AUTH_GOOGLE_ID,
+  process.env.AUTH_GOOGLE_IOS_ID,
+  process.env.AUTH_GOOGLE_ANDROID_ID,
+].filter((x): x is string => !!x)
+
 async function getGoogleUserInfo(token: string): Promise<OAuthUserInfo | null> {
-  // Try as ID token (JWT) first
+  // ID token (JWT — native mobile sign-in): verify signature + issuer +
+  // audience against Google. A forged or wrong-audience token is rejected
+  // (previously the payload was decoded WITHOUT any verification).
   if (token.split('.').length === 3) {
+    if (GOOGLE_AUDIENCES.length === 0) {
+      console.error('[google-oauth] AUTH_GOOGLE_ID missing — cannot verify id_token')
+      return null
+    }
     try {
-      const payload = JSON.parse(Buffer.from(token.split('.')[1]!, 'base64url').toString())
-      if (payload.email && payload.sub) {
-        return { email: payload.email, name: payload.name, image: payload.picture, providerAccountId: payload.sub }
+      const { payload } = await jose.jwtVerify(token, googleJwks, {
+        issuer: ['https://accounts.google.com', 'accounts.google.com'],
+        audience: GOOGLE_AUDIENCES,
+      })
+      const email = typeof payload.email === 'string' ? payload.email : null
+      const sub = typeof payload.sub === 'string' ? payload.sub : null
+      if (!email || !sub) return null
+      return {
+        email,
+        name: typeof payload.name === 'string' ? payload.name : undefined,
+        image: typeof payload.picture === 'string' ? payload.picture : undefined,
+        providerAccountId: sub,
       }
-    } catch { /* Not a valid JWT, fallback */ }
+    } catch (err) {
+      console.error('[google-oauth] id_token verification failed', err)
+      return null
+    }
   }
-  // Fallback: access token
+  // Access token (web implicit flow): Google validates the token and returns
+  // the owning user's profile — only a token Google recognizes resolves here.
   const res = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
     headers: { Authorization: `Bearer ${token}` },
   })
