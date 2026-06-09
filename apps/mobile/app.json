@@ -15,6 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.indrox.theprimeway",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "appleTeamId": "P7S9GFT5VQ",
       "buildNumber": "11",
       "associatedDomains": [
@@ -115,7 +116,12 @@
       "expo-localization",
       "expo-web-browser",
       "expo-apple-authentication",
-      "@react-native-google-signin/google-signin",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.1088238129956-hfpuvqsoqh16btesnbmq4mmeru2tlqe7"
+        }
+      ],
       "@bacons/apple-targets",
       "./plugins/with-android-widget.js",
       [

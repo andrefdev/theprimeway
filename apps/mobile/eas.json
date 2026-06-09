@@ -34,14 +34,16 @@
       "env": {
         "EXPO_PUBLIC_API_URL": "https://staging.theprimeway.app",
         "EXPO_PUBLIC_ENV": "staging",
-        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "1088238129956-mr4jodt6367qf8gcd7asnfabo3kaa5h4.apps.googleusercontent.com"
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "1088238129956-mr4jodt6367qf8gcd7asnfabo3kaa5h4.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "1088238129956-hfpuvqsoqh16btesnbmq4mmeru2tlqe7.apps.googleusercontent.com"
       }
     },
     "production": {
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api.theprimeway.app",
         "EXPO_PUBLIC_ENV": "production",
-        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "1088238129956-mr4jodt6367qf8gcd7asnfabo3kaa5h4.apps.googleusercontent.com"
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "1088238129956-mr4jodt6367qf8gcd7asnfabo3kaa5h4.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "1088238129956-hfpuvqsoqh16btesnbmq4mmeru2tlqe7.apps.googleusercontent.com"
       },
       "autoIncrement": true
     }

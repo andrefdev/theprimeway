@@ -20,6 +20,10 @@
             "package_name": "app.theprimeway.twa",
             "certificate_hash": "e78347a2320f0db767956b107679e6899d7caf9a"
           }
+        },
+        {
+          "client_id": "1088238129956-herqond67rt0b38c2tdsnc34hv2b09u0.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [
@@ -29,7 +33,20 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1088238129956-herqond67rt0b38c2tdsnc34hv2b09u0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1088238129956-hfpuvqsoqh16btesnbmq4mmeru2tlqe7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.indrox.theprimeway",
+                "app_store_id": "6748329617"
+              }
+            }
+          ]
         }
       }
     }
