@@ -2,6 +2,8 @@
 // Placeholders (__FB_*__) are replaced at Docker build time via sed from
 // VITE_FIREBASE_* build args (see apps/web/Dockerfile).
 // For local dev: replace them manually or leave blank (FCM will no-op).
+// Firebase project: theprimeway (sender 1088238129956). appId MUST be the
+// 1:NUM:web:HASH value — an invalid appId makes getToken() fail silently.
 importScripts('https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js')
 importScripts('https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js')
 
