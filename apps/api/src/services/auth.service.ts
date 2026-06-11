@@ -136,16 +136,25 @@ const appleJwks = jose.createRemoteJWKSet(
   new URL('https://appleid.apple.com/auth/keys'),
 )
 
+// Accepted audiences for Apple ID tokens:
+//   - AUTH_APPLE_ID: the Services ID (web "Sign in with Apple" → aud = Services ID)
+//   - the native app bundle id: expo-apple-authentication on iOS issues an
+//     id_token whose aud is the BUNDLE ID, not the Services ID. Verifying only
+//     the Services ID broke native iOS sign-in (App Store rejection 2.1(a)).
+const APPLE_AUDIENCES = [
+  process.env.AUTH_APPLE_ID,
+  process.env.AUTH_APPLE_BUNDLE_ID || 'com.indrox.theprimeway',
+].filter((x): x is string => !!x)
+
 async function getAppleUserInfo(idToken: string): Promise<OAuthUserInfo | null> {
-  const expectedAudience = process.env.AUTH_APPLE_ID
-  if (!expectedAudience) {
+  if (APPLE_AUDIENCES.length === 0) {
     console.error('[apple-oauth] AUTH_APPLE_ID env var missing — cannot verify id_token')
     return null
   }
   try {
     const { payload } = await jose.jwtVerify(idToken, appleJwks, {
       issuer: 'https://appleid.apple.com',
-      audience: expectedAudience,
+      audience: APPLE_AUDIENCES,
     })
     const email = typeof payload.email === 'string' ? payload.email : null
     const sub = typeof payload.sub === 'string' ? payload.sub : null

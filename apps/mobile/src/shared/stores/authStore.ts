@@ -11,6 +11,7 @@ type LoginResponse = AuthResponse | { requiresVerification: true; email: string 
 
 const TOKEN_KEY = 'auth_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
+const USER_KEY = 'auth_user';
 
 interface AuthState {
   token: string | null;
@@ -29,10 +30,13 @@ interface AuthState {
 
 let loadStoredAuthPromise: Promise<void> | null = null;
 
-async function persistAuth(token: string, refreshToken?: string | null) {
+async function persistAuth(token: string, refreshToken?: string | null, user?: User | null) {
   await SecureStore.setItemAsync(TOKEN_KEY, token);
   if (refreshToken) {
     await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
+  }
+  if (user) {
+    await SecureStore.setItemAsync(USER_KEY, JSON.stringify(user));
   }
 }
 
@@ -51,7 +55,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         err.code = 'verification_required';
         throw err;
       } else {
-        await persistAuth(data.token, data.refreshToken);
+        await persistAuth(data.token, data.refreshToken, data.user);
         set({ token: data.token, user: data.user, isAuthenticated: true });
       }
     } catch (error) {
@@ -66,18 +70,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  loginWithOAuth: async (provider, accessToken) => {
+  loginWithOAuth: async (provider, token) => {
+    // Native sign-in hands us a single token: for Apple it's the identity token
+    // (server verifies it as `idToken`), for Google it's the id token (server
+    // verifies it as `accessToken`/JWT). Send it in BOTH fields — same as the
+    // web client — so either provider path on the server resolves it. Apple was
+    // failing because only `accessToken` was sent and the server requires
+    // `idToken` for Apple.
     const { data } = await apiClient.post<AuthResponse>(AUTH.OAUTH, {
       provider,
-      accessToken,
+      accessToken: token,
+      idToken: token,
     });
-    await persistAuth(data.token, data.refreshToken);
+    await persistAuth(data.token, data.refreshToken, data.user);
     set({ token: data.token, user: data.user, isAuthenticated: true });
   },
 
   register: async (payload) => {
     const { data } = await apiClient.post<AuthResponse>(AUTH.REGISTER, payload);
-    await persistAuth(data.token, data.refreshToken);
+    await persistAuth(data.token, data.refreshToken, data.user);
     set({ token: data.token, user: data.user, isAuthenticated: true });
   },
 
@@ -92,6 +103,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
     await SecureStore.deleteItemAsync(TOKEN_KEY);
     await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
+    await SecureStore.deleteItemAsync(USER_KEY);
     set({ token: null, user: null, isAuthenticated: false });
   },
 
@@ -108,7 +120,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         { refreshToken },
         { timeout: 8000, headers: { 'Content-Type': 'application/json' } }
       );
-      await persistAuth(data.token, data.refreshToken);
+      await persistAuth(data.token, data.refreshToken, data.user ?? get().user);
       set({
         token: data.token,
         user: data.user ?? get().user,
@@ -137,25 +149,44 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           set({ isLoading: false });
           return;
         }
-        // Hydrate token first so apiClient interceptor can attach it
-        set({ token });
+        // Hydrate token + cached user first, so the interceptor can attach the
+        // token and the app has user data even if the network is unreachable.
+        let cachedUser: User | null = null;
+        try {
+          const raw = await SecureStore.getItemAsync(USER_KEY);
+          if (raw) cachedUser = JSON.parse(raw) as User;
+        } catch {
+          // ignore corrupt cache
+        }
+        set({ token, user: cachedUser });
         try {
           __l('before apiClient.get AUTH.ME');
           const { data } = await apiClient.get<{ user: User }>(AUTH.ME, {
             timeout: 8000,
           });
           __l('after apiClient.get AUTH.ME success');
+          await SecureStore.setItemAsync(USER_KEY, JSON.stringify(data.user));
           set({ user: data.user, isAuthenticated: true, isLoading: false });
         } catch (e) {
           __l('apiClient.get AUTH.ME ERROR: ' + String((e as Error)?.message ?? e));
-          // 401 will have been handled by interceptor (refresh attempt or logout)
-          // If still unauthenticated, ensure cleanup
-          if (!get().isAuthenticated) {
+          const status = axios.isAxiosError(e) ? e.response?.status : undefined;
+          const isAuthRejection = status === 401 || status === 403;
+          if (isAuthRejection) {
+            // Genuine auth failure: the interceptor already tried a token refresh
+            // and it failed. The stored credentials are invalid — clear them.
+            __l('AUTH.ME rejected auth (' + status + ') → clearing session');
             await SecureStore.deleteItemAsync(TOKEN_KEY);
             await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
-            set({ token: null, user: null, isAuthenticated: false });
+            await SecureStore.deleteItemAsync(USER_KEY);
+            set({ token: null, user: null, isAuthenticated: false, isLoading: false });
+          } else {
+            // No HTTP response (offline / timeout / server unreachable) or a
+            // transient 5xx. The token is likely still valid — keep the stored
+            // session instead of logging the user out. It is revalidated on the
+            // next authenticated request; a real 401 there triggers refresh/logout.
+            __l('AUTH.ME network/transient error → keeping stored session');
+            set({ isAuthenticated: true, isLoading: false });
           }
-          set({ isLoading: false });
         }
       } catch (e) {
         __l('outer catch: ' + String((e as Error)?.message ?? e));
