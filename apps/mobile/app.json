@@ -17,7 +17,7 @@
       "bundleIdentifier": "com.indrox.theprimeway",
       "googleServicesFile": "./GoogleService-Info.plist",
       "appleTeamId": "P7S9GFT5VQ",
-      "buildNumber": "13",
+      "buildNumber": "14",
       "associatedDomains": [
         "applinks:theprimeway.com",
         "applinks:app.theprimeway.app"
@@ -29,8 +29,8 @@
       },
       "infoPlist": {
         "NSCalendarsUsageDescription": "To sync your tasks with your calendar",
-        "NSCameraUsageDescription": "To add photos to your receipts and profile",
-        "NSPhotoLibraryUsageDescription": "To upload profile pictures and receipts",
+        "NSCameraUsageDescription": "The Prime Way uses the camera so you can photograph a receipt to attach it to an expense, or take a profile picture. For example, snap a photo of a store receipt and it is saved with the matching transaction.",
+        "NSPhotoLibraryUsageDescription": "The Prime Way accesses your photo library so you can attach an existing receipt image to an expense or choose a photo as your profile picture. For example, pick a saved receipt photo to attach it to a transaction.",
         "NSFaceIDUsageDescription": "To authenticate securely",
         "NSMicrophoneUsageDescription": "To capture voice input for AI chat and task creation",
         "NSSpeechRecognitionUsageDescription": "To transcribe your speech to text",
@@ -43,7 +43,7 @@
     "android": {
       "package": "app.theprimeway.twa",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 32,
+      "versionCode": 33,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#280FFB"
@@ -135,8 +135,14 @@
           "ios": {
             "deploymentTarget": "15.1",
             "extraPods": [
-              { "name": "GoogleUtilities", "modular_headers": true },
-              { "name": "RecaptchaInterop", "modular_headers": true }
+              {
+                "name": "GoogleUtilities",
+                "modular_headers": true
+              },
+              {
+                "name": "RecaptchaInterop",
+                "modular_headers": true
+              }
             ]
           }
         }
