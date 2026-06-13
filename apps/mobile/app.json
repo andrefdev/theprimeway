@@ -17,7 +17,7 @@
       "bundleIdentifier": "com.indrox.theprimeway",
       "googleServicesFile": "./GoogleService-Info.plist",
       "appleTeamId": "P7S9GFT5VQ",
-      "buildNumber": "11",
+      "buildNumber": "13",
       "associatedDomains": [
         "applinks:theprimeway.com",
         "applinks:app.theprimeway.app"
@@ -43,7 +43,7 @@
     "android": {
       "package": "app.theprimeway.twa",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 31,
+      "versionCode": 32,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#280FFB"
@@ -133,7 +133,11 @@
             "compileSdkVersion": 36
           },
           "ios": {
-            "deploymentTarget": "15.1"
+            "deploymentTarget": "15.1",
+            "extraPods": [
+              { "name": "GoogleUtilities", "modular_headers": true },
+              { "name": "RecaptchaInterop", "modular_headers": true }
+            ]
           }
         }
       ],
